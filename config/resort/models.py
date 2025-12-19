@@ -30,7 +30,7 @@ class Trip(models.Model):
 class TripMedia(models.Model):
     """Модель для хранения медиафайлов, связанных с поездкой."""
     trip = models.ForeignKey(Trip, on_delete=models.CASCADE, related_name='media')
-    image = models.ImageField(upload_to='trip_photos/')
+    image = models.ImageField(upload_to='trip_photos/')     # Для работы с ImageField требуется Pillow
     uploaded_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
