@@ -11,7 +11,7 @@
 {% for trip in trips %}
     <div class="card card-custom mb-3">
         <div class="card-body">
-            <h5 class="card-title">{{ trip.resort.name }}</h5>
+            <h5 class="card-title">{{ trip.resort }}</h5>
             <p class="card-text">{{ trip.start_date }} — {{ trip.end_date }}</p>
             <a href="{% url 'trip_detail' trip.id %}" class="btn btn-sm btn-outline-primary">Открыть</a>
         </div>

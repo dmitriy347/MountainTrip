@@ -8,19 +8,55 @@ menu = [
     {'title': "Обратная связь", 'url_name': 'contact'},
     {'title': "Войти", 'url_name': 'login'},]
 
-data_db = [
-    {'title': 'Первый курорт', 'content': 'Описание первого курорта', 'id': 1},
-    {'title': 'Второй курорт', 'content': 'Описание второго курорта', 'id': 2},
-    {'title': 'Третий курорт', 'content': 'Описание третьего курорта', 'id': 3},
+resort = [
+    {'name': 'Губаха', 'region': 'Пермский край', 'id': 1},
+    {'name': 'Шерешеш', 'region': 'Кемеровская область', 'id': 2},
+    {'name': 'Белая', 'region': 'Свердловская область', 'id': 3},
 ]
 
 def home(request):
     data = {
         'title': 'Главная страница',
         'menu': menu,
-        'data_db': data_db,
+        'resorts': resort,
     }
     return render(request, 'resort/home.html', context=data)
+
+
+def resort_detail(request, resort_id):
+    return render(request, 'resort/resort_detail.html')
+
+
+def resort_list(request):
+    context = {
+        'resorts': resort,
+    }
+    return render(request, 'resort/resort_list.html', context=context)
+
+
+def trip_detail(request, trip_id):
+    return render(request, 'resort/trip_detail.html')
+
+
+def trip_list(request):
+    trips = [
+        {
+            'id': 1,
+            'resort': 'Губаха',
+            'start_date': '2024-02-10',
+            'end_date': '2024-02-15',
+        }
+    ]
+    return render(request, 'resort/trip_list.html', {'trips': trips})
+
+def trip_create(request):
+    return HttpResponse("Создание новой поездки")
+
+
+def trip_edit(request, trip_id):
+    return HttpResponse(f"Редактирование поездки")
+
+
 
 
 def about(request):
