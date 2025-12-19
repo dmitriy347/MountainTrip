@@ -25,8 +25,7 @@ SECRET_KEY = 'django-insecure-!msk++9uh3l5mf-cy^kpr-0y!9^1@0my!d7w36()oh+-opcdgo
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = ['127.0.0.1']
 
 # Application definition
 
@@ -55,7 +54,9 @@ ROOT_URLCONF = 'config.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+            BASE_DIR / 'templates',
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -116,7 +117,8 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = 'static/'  # Это префикс для всех статических файлов, которые используются в шаблонах HTML.
+STATICFILES_DIRS = [BASE_DIR / 'config/static']  # Если бы статические файлы хранились в нестандартном месте, нужно было бы указать путь к ним здесь.
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
