@@ -1,0 +1,18 @@
+<!--главная страница-->
+{% extends 'base.html' %}
+
+{% block title %}SkiTrip Journal — журнал поездок{% endblock %}
+
+{% block content %}
+<div class="text-center py-5">
+    <h1 class="mb-3">SkiTrip Journal</h1>
+    <p class="lead">Журнал поездок на горнолыжные курорты России</p>
+
+    {% if user.is_authenticated %}
+        <a href="{% url 'trip_list' %}" class="btn btn-primary mt-3">Мои поездки</a>
+    {% else %}
+        <a href="{% url 'login' %}" class="btn btn-primary mt-3">Войти</a>
+    {% endif %}
+</div>
+{% endblock %}
+

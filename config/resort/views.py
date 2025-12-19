@@ -20,7 +20,7 @@ def home(request):
         'menu': menu,
         'data_db': data_db,
     }
-    return render(request, 'resort/index.html', context=data)
+    return render(request, 'resort/home.html', context=data)
 
 
 def about(request):

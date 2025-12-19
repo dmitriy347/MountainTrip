@@ -1,0 +1,27 @@
+<!--детали поездки-->
+{% extends 'base.html' %}
+
+{% block title %}Поездка — SkiTrip Journal{% endblock %}
+
+{% block content %}
+<h2>{{ trip.resort.name }}</h2>
+<p>{{ trip.start_date }} — {{ trip.end_date }}</p>
+<p>{{ trip.comment }}</p>
+
+{% if trip.user == request.user %}
+    <a href="{% url 'trip_edit' trip.id %}" class="btn btn-sm btn-outline-secondary">Редактировать</a>
+{% endif %}
+
+<hr>
+<h4 class="mt-4">Фотографии</h4>
+
+<div class="row">
+    {% for photo in photos %}
+        <div class="col-md-4 mb-3">
+            <img src="{{ photo.image.url }}" class="img-fluid trip-image">
+        </div>
+    {% empty %}
+        <p>Фотографии не добавлены.</p>
+    {% endfor %}
+</div>
+{% endblock %}

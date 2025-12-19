@@ -1,0 +1,24 @@
+<!--список курортов-->
+{% extends 'base.html' %}
+
+{% block title %}Курорты — SkiTrip Journal{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">Горнолыжные курорты</h2>
+
+<div class="row">
+    {% for resort in resorts %}
+        <div class="col-md-4 mb-4">
+            <div class="card card-custom h-100">
+                <div class="card-body">
+                    <h5 class="card-title">{{ resort.name }}</h5>
+                    <p class="card-text">{{ resort.region }}</p>
+                    <a href="{% url 'resort_detail' resort.id %}" class="btn btn-outline-primary">Подробнее</a>
+                </div>
+            </div>
+        </div>
+    {% empty %}
+        <p>Курорты пока не добавлены.</p>
+    {% endfor %}
+</div>
+{% endblock %}
