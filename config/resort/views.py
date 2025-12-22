@@ -2,14 +2,11 @@ from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect
 from django.shortcuts import redirect, render, get_object_or_404
 from django.template.loader import render_to_string
 
-from resort.models import Resort, Trip
+from .forms import TripForm
+from .models import Resort, Trip
 
 
-resort = [
-    {'name': 'Губаха', 'region': 'Пермский край', 'id': 1},
-    {'name': 'Шерешеш', 'region': 'Кемеровская область', 'id': 2},
-    {'name': 'Белая', 'region': 'Свердловская область', 'id': 3},
-]
+
 
 def index(request):
     """Главная страница"""
@@ -65,7 +62,22 @@ def trip_list(request):
 
 
 def trip_create(request):
-    return HttpResponse("Создание новой поездки")
+    """Создание новой поездки"""
+    if request.method == 'POST':
+        form = TripForm(request.POST)
+        if form.is_valid():
+            trip = form.save(commit=False)
+            trip.user = request.user
+            trip.save()
+            return redirect('trip_list')
+    else:
+        form = TripForm()
+
+    data = {
+        'title': 'Новая поездка',
+        'form': form,
+    }
+    return render(request, 'resort/trip_form.html', context=data)
 
 
 def trip_edit(request, trip_id):
@@ -74,16 +86,11 @@ def trip_edit(request, trip_id):
 
 
 
+
+
+
 def about(request):
     return render(request, 'resort/about.html', {'title': 'О сайте'})
-
-
-def show_post(request, post_id):
-    return render(request, 'resort/post.html')
-
-
-def add_page(request):
-    return HttpResponse("Добавление статьи")
 
 
 def contact(request):
