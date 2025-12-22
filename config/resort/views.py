@@ -1,12 +1,9 @@
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render, get_object_or_404
 from django.template.loader import render_to_string
 
-menu = [
-    {'title': "О сайте", 'url_name': 'about'},
-    {'title': "Добавить статью", 'url_name': 'add_page'},
-    {'title': "Обратная связь", 'url_name': 'contact'},
-    {'title': "Войти", 'url_name': 'login'},]
+from resort.models import Resort, Trip
+
 
 resort = [
     {'name': 'Губаха', 'region': 'Пермский край', 'id': 1},
@@ -14,40 +11,58 @@ resort = [
     {'name': 'Белая', 'region': 'Свердловская область', 'id': 3},
 ]
 
-def home(request):
+def index(request):
+    """Главная страница"""
+    resorts = Resort.objects.all()
     data = {
-        'title': 'Главная страница',
-        'menu': menu,
-        'resorts': resort,
+        'title': 'Горнолыжные курорты России',
+        'resorts': resorts,
     }
-    return render(request, 'resort/home.html', context=data)
+    return render(request, 'resort/index.html', context=data)
 
 
 def resort_detail(request, resort_id):
-    return render(request, 'resort/resort_detail.html')
+    """Страница курорта"""
+    resort = get_object_or_404(Resort, pk=resort_id)
+    trips = resort.trips.all()
+    data = {
+        'title': resort.name,
+        'resort': resort,
+        'trips': trips,
+    }
+    return render(request, 'resort/resort_detail.html', context=data)
 
 
 def resort_list(request):
+    """Список курортов"""
+    resorts = Resort.objects.all()
+
     context = {
-        'resorts': resort,
+        'title': 'Список курортов',
+        'resorts': resorts,
     }
     return render(request, 'resort/resort_list.html', context=context)
 
 
 def trip_detail(request, trip_id):
-    return render(request, 'resort/trip_detail.html')
+    """Страница поездки"""
+    trip = get_object_or_404(Trip, pk=trip_id)
+    data = {
+        'title': f"Поездка в {trip.resort.name}",
+        'trip': trip,
+    }
+    return render(request, 'resort/trip_detail.html', context=data)
 
 
 def trip_list(request):
-    trips = [
-        {
-            'id': 1,
-            'resort': 'Губаха',
-            'start_date': '2024-02-10',
-            'end_date': '2024-02-15',
-        }
-    ]
-    return render(request, 'resort/trip_list.html', {'trips': trips})
+    """Список поездок пользователя"""
+    trips = Trip.objects.filter(user=request.user)
+    data = {
+        'title': 'Мои поездки',
+        'trips': trips,
+    }
+    return render(request, 'resort/trip_list.html', context=data)
+
 
 def trip_create(request):
     return HttpResponse("Создание новой поездки")
@@ -60,7 +75,7 @@ def trip_edit(request, trip_id):
 
 
 def about(request):
-    return render(request, 'resort/about.html', {'title': 'О сайте', 'menu': menu})
+    return render(request, 'resort/about.html', {'title': 'О сайте'})
 
 
 def show_post(request, post_id):

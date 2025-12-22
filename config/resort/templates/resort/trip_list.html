@@ -4,14 +4,14 @@
 {% block title %}Мои поездки — SkiTrip Journal{% endblock %}
 
 {% block content %}
-<h2 class="mb-4">Мои поездки</h2>
+<h2 class="mb-4">{{ title }}</h2>
 
 <a href="{% url 'trip_create' %}" class="btn btn-primary mb-3">Добавить поездку</a>
 
 {% for trip in trips %}
     <div class="card card-custom mb-3">
         <div class="card-body">
-            <h5 class="card-title">{{ trip.resort }}</h5>
+            <h5 class="card-title">{{ trip.resort.name }}</h5>
             <p class="card-text">{{ trip.start_date }} — {{ trip.end_date }}</p>
             <a href="{% url 'trip_detail' trip.id %}" class="btn btn-sm btn-outline-primary">Открыть</a>
         </div>
