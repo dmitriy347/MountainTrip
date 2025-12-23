@@ -9,7 +9,13 @@
 <p>{{ trip.comment }}</p>
 
 {% if trip.user == request.user %}
-    <a href="{% url 'trip_edit' trip.id %}" class="btn btn-sm btn-outline-secondary">Редактировать</a>
+    <a href="{% url 'trip_edit' trip.id %}" class="btn btn-sm btn-outline-secondary">
+        Редактировать
+    </a>
+
+    <a href="{% url 'trip_delete' trip.id %}" class="btn btn-sm btn-outline-danger">
+        Удалить
+    </a>
 {% endif %}
 
 <hr>

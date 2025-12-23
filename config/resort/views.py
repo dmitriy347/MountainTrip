@@ -106,6 +106,21 @@ def trip_edit(request, trip_id):
     return render(request, 'resort/trip_form.html', context=data)
 
 
+@login_required
+def trip_delete(request, trip_id):
+    """Удаление поездки"""
+    trip = get_object_or_404(Trip, pk=trip_id)
+    if trip.user != request.user:
+        raise Http404("Поездка не найдена")
+    if request.method == 'POST':
+        trip.delete()
+        return redirect('trip_list')
+
+    data = {
+        'title': 'Удаление поездки',
+        'trip': trip,
+    }
+    return render(request, 'resort/trip_confirm_delete.html', context=data)
 
 
 

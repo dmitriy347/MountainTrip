@@ -10,6 +10,7 @@ urlpatterns = [
     path('trips/', views.trip_list, name='trip_list'),
     path('trips/create', views.trip_create, name='trip_create'),
     path('trips/<int:trip_id>/edit', views.trip_edit, name='trip_edit'),
+    path('trips/<int:trip_id>/delete', views.trip_delete, name='trip_delete'),
     path('login/', views.login, name='login'),
 
 
