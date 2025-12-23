@@ -3,7 +3,7 @@ from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect
 from django.shortcuts import redirect, render, get_object_or_404
 from django.template.loader import render_to_string
 
-from .forms import TripForm
+from .forms import TripForm, TripMediaForm
 from .models import Resort, Trip
 
 
@@ -122,6 +122,30 @@ def trip_delete(request, trip_id):
     }
     return render(request, 'resort/trip_confirm_delete.html', context=data)
 
+
+@login_required
+def trip_media_add(request, trip_id):
+    """Добавления медиафайлов к поездке"""
+    trip = get_object_or_404(Trip, pk=trip_id)
+    if trip.user != request.user:
+        raise Http404("Поездка не найдена")
+
+    if request.method == 'POST':
+        form = TripMediaForm(request.POST, request.FILES)
+        if form.is_valid():
+            media = form.save(commit=False) # Создаем объект, но не сохраняем в БД
+            media.trip = trip               # Привязываем медиафайл к поездке
+            media.save()                    # Сохраняем объект в БД
+            return redirect('trip_detail', trip_id=trip.id)
+    else:
+        form = TripMediaForm()
+
+    data = {
+        'title': 'Добавить фото к поездке',
+        'form': form,
+        'trip': trip,
+    }
+    return render(request, 'resort/trip_media_form.html', context=data)
 
 
 

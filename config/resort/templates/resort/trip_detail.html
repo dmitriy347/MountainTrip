@@ -21,13 +21,22 @@
 <hr>
 <h4 class="mt-4">Фотографии</h4>
 
-<div class="row">
-    {% for photo in photos %}
-        <div class="col-md-4 mb-3">
-            <img src="{{ photo.image.url }}" class="img-fluid trip-image">
-        </div>
-    {% empty %}
-        <p>Фотографии не добавлены.</p>
-    {% endfor %}
-</div>
+{% if trip.media.all %}
+    <div class="row">
+        {% for photo in trip.media.all %}
+            <div class="col-md-4 mb-3">
+                <img src="{{ photo.image.url }}" class="img-fluid trip-image">
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <p>Фотографии не добавлены.</p>
+{% endif %}
+
+{% if trip.user == request.user %}
+    <a href="{% url 'trip_media_add' trip.id %}" class="btn btn-outline-primary mt-3">
+        Добавить фото
+    </a>
+{% endif %}
+
 {% endblock %}

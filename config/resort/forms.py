@@ -1,5 +1,6 @@
 from django import forms
-from .models import Trip
+from .models import Trip, TripMedia
+
 
 class TripForm(forms.ModelForm):
     """Форма для создания и редактирования поездок"""
@@ -11,3 +12,10 @@ class TripForm(forms.ModelForm):
             'end_date': forms.DateInput(attrs={'type': 'date'}, format='%Y-%m-%d'),
             'comment': forms.Textarea(attrs={'rows': 4}),
         }
+
+
+class TripMediaForm(forms.ModelForm):
+    """Форма для загрузки медиафайлов поездки"""
+    class Meta:
+        model = TripMedia
+        fields = ['image']
