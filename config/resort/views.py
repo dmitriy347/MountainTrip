@@ -1,4 +1,5 @@
-from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect
+from django.contrib.auth.decorators import login_required
+from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect, Http404
 from django.shortcuts import redirect, render, get_object_or_404
 from django.template.loader import render_to_string
 
@@ -61,14 +62,15 @@ def trip_list(request):
     return render(request, 'resort/trip_list.html', context=data)
 
 
+@login_required
 def trip_create(request):
     """Создание новой поездки"""
     if request.method == 'POST':
         form = TripForm(request.POST)
         if form.is_valid():
-            trip = form.save(commit=False)
-            trip.user = request.user
-            trip.save()
+            trip = form.save(commit=False)  # Создаем объект, но не сохраняем в БД
+            trip.user = request.user    # Дополняем форму данными о текущем пользователе
+            trip.save()                 # Только теперь сохраняем объект в БД
             return redirect('trip_list')
     else:
         form = TripForm()
@@ -80,8 +82,30 @@ def trip_create(request):
     return render(request, 'resort/trip_form.html', context=data)
 
 
+@login_required
 def trip_edit(request, trip_id):
-    return HttpResponse(f"Редактирование поездки")
+    """Редактирование поездки"""
+    trip = get_object_or_404(Trip, pk=trip_id)
+
+    # Защита от редактирования чужих поездок
+    if trip.user != request.user:
+        raise Http404("Поездка не найдена")
+
+    if request.method == 'POST':
+        form = TripForm(request.POST, instance=trip)    # Заполняем форму данными из объекта trip
+        if form.is_valid():
+            form.save()
+            return redirect('trip_detail', trip_id=trip.id)
+    else:
+        form = TripForm(instance=trip)
+
+    data = {
+        'title': 'Редактирование поездки',
+        'form': form,
+    }
+    return render(request, 'resort/trip_form.html', context=data)
+
+
 
 
 
