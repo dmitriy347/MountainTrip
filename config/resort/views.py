@@ -69,9 +69,9 @@ def trip_create(request):
         form = TripForm(request.POST)
         if form.is_valid():
             trip = form.save(commit=False)  # Создаем объект, но не сохраняем в БД
-            trip.user = request.user    # Дополняем форму данными о текущем пользователе
-            trip.save()                 # Только теперь сохраняем объект в БД
-            return redirect('trip_list')
+            trip.user = request.user        # Дополняем форму данными о текущем пользователе
+            trip.save()                     # Только теперь сохраняем объект в БД
+            return redirect('trip_detail', trip_id=trip.id)     # После сохранения перенаправляем на страницу детали поездки, где пользователь сможет добавить фото
     else:
         form = TripForm()
 
