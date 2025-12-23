@@ -7,7 +7,7 @@ class TripForm(forms.ModelForm):
         model = Trip
         fields = ['resort', 'start_date', 'end_date', 'comment']
         widgets = {
-            'start_date': forms.DateInput(attrs={'type': 'date'}),
-            'end_date': forms.DateInput(attrs={'type': 'date'}),
+            'start_date': forms.DateInput(attrs={'type': 'date'}, format='%Y-%m-%d'),
+            'end_date': forms.DateInput(attrs={'type': 'date'}, format='%Y-%m-%d'),
             'comment': forms.Textarea(attrs={'rows': 4}),
         }
