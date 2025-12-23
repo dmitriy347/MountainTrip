@@ -121,6 +121,9 @@ USE_TZ = True
 STATIC_URL = 'static/'  # Это префикс для всех статических файлов, которые используются в шаблонах HTML.
 # STATICFILES_DIRS = [BASE_DIR / 'config/static']  # Если бы статические файлы хранились в нестандартном месте, нужно было бы указать путь к ним здесь.
 
+MEDIA_URL = '/media/'           # По какому URL будут доступны загруженные медиафайлы.
+MEDIA_ROOT = BASE_DIR / 'media' # Путь на файловой системе, где будут храниться загруженные медиафайлы.
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
