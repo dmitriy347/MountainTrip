@@ -1,8 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect, Http404
 from django.shortcuts import redirect, render, get_object_or_404
-from django.template.loader import render_to_string
-from django.views.generic import ListView
+from django.views.generic import ListView, DetailView
 
 from .forms import TripForm, TripMediaForm
 from .models import Resort, Trip, TripMedia
@@ -16,16 +15,34 @@ def index(request):
     return render(request, 'resort/index.html', context=data)
 
 
-def resort_detail(request, resort_slug):
-    """Страница курорта"""
-    resort = get_object_or_404(Resort, slug=resort_slug)
-    trips = resort.trips.all()
-    data = {
-        'title': resort.name,
-        'resort': resort,
-        'trips': trips,
-    }
-    return render(request, 'resort/resort_detail.html', context=data)
+# def resort_detail(request, resort_slug):
+#     """Страница курорта"""
+#     resort = get_object_or_404(Resort, slug=resort_slug)
+#     trips = resort.trips.all()
+#     data = {
+#         'title': resort.name,
+#         'resort': resort,
+#         'trips': trips,
+#     }
+#     return render(request, 'resort/resort_detail.html', context=data)
+
+
+class ResortDetailView(DetailView):
+    """Класс-представление для страницы курорта"""
+    model = Resort
+    template_name = 'resort/resort_detail.html'
+    context_object_name = 'resort'
+    slug_field = 'slug'
+    slug_url_kwarg = 'resort_slug'
+
+    def get_context_data(self, **kwargs):
+        """Добавляем в контекст заголовок и список поездок"""
+        context = super().get_context_data(**kwargs)
+        context['title'] = self.object.name
+        context['trips'] = self.object.trips.all()
+        return context
+
+
 
 
 # def resort_list(request):
