@@ -62,14 +62,39 @@ class ResortListView(ListView):
     context_object_name = 'resorts'
 
 
-def trip_detail(request, trip_id):
-    """Страница поездки"""
-    trip = get_object_or_404(Trip, pk=trip_id)
-    data = {
-        'title': f"Поездка в {trip.resort.name}",
-        'trip': trip,
-    }
-    return render(request, 'resort/trip_detail.html', context=data)
+# def trip_detail(request, trip_id):
+#     """Страница поездки"""
+#     trip = get_object_or_404(Trip, pk=trip_id)
+#     data = {
+#         'title': f"Поездка в {trip.resort.name}",
+#         'trip': trip,
+#     }
+#     return render(request, 'resort/trip_detail.html', context=data)
+
+
+class TripDetailView(LoginRequiredMixin, DetailView):
+    """Класс-представление для страницы поездки"""
+    model = Trip
+    template_name = 'resort/trip_detail.html'
+    context_object_name = 'trip'
+    pk_url_kwarg = 'trip_id'
+
+    def get_context_data(self, **kwargs):
+        """Добавляем в контекст заголовок страницы"""
+        context = super().get_context_data(**kwargs)
+        context['title'] = f"Поездка в {self.object.resort.name}"
+        context['media_list'] = self.object.media.all()
+        return context
+
+    def get_queryset(self):
+        """Фильтрация поездок по текущему пользователю"""
+        return (
+            Trip.objects
+                .select_related('resort')   # Оптимизация: сразу подтягиваем связанные объекты Resort
+                .prefetch_related('media')  # Оптимизация: сразу подтягиваем связанные объекты TripMedia
+                .filter(user=self.request.user)
+        )
+
 
 
 
@@ -97,7 +122,11 @@ class TripListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         """Фильтрация поездок по текущему пользователю"""
-        return Trip.objects.filter(user=self.request.user)
+        return (
+            Trip.objects
+                .select_related('resort')       # Оптимизация: сразу подтягиваем связанные объекты Resort
+                .filter(user=self.request.user)
+        )
 
 
 @login_required

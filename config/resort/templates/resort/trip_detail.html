@@ -8,22 +8,20 @@
 <p>{{ trip.start_date }} — {{ trip.end_date }}</p>
 <p>{{ trip.comment }}</p>
 
-{% if trip.user == request.user %}
-    <a href="{% url 'trip_edit' trip.id %}" class="btn btn-sm btn-outline-secondary">
-        Редактировать
-    </a>
+<a href="{% url 'trip_edit' trip.id %}" class="btn btn-sm btn-outline-secondary">
+    Редактировать
+</a>
 
-    <a href="{% url 'trip_delete' trip.id %}" class="btn btn-sm btn-outline-danger">
-        Удалить
-    </a>
-{% endif %}
+<a href="{% url 'trip_delete' trip.id %}" class="btn btn-sm btn-outline-danger">
+    Удалить
+</a>
 
 <hr>
 <h4 class="mt-4">Фотографии</h4>
 
 {% if trip.media.all %}
     <div class="row">
-        {% for photo in trip.media.all %}
+        {% for photo in media_list %}
             <div class="col-md-4 mb-3">
                 <img src="{{ photo.image.url }}" class="img-fluid trip-image">
                 {% if trip.user == request.user %}
