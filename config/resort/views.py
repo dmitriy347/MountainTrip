@@ -155,7 +155,7 @@ def trip_media_delete(request, media_id):
         raise Http404("Фото не найдено")
 
     if request.method == 'POST':
-        media.image.delete(save=False)  # Сначала удаляем файл
+        # media.image.delete(save=False)  # Сначала удаляем сам файл (эта строка уже не обязательна, т.к. подключен сигнал post_delete - отлавливает удаление файлов автоматически)
         media.delete()                  # Затем удаляем запись из БД
         return redirect('trip_detail', trip_id=media.trip.id)
 
