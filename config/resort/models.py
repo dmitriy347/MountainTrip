@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from django.db import models
 from django.urls import reverse
+from slugify import slugify
 
 
 class Resort(models.Model):
@@ -9,7 +10,7 @@ class Resort(models.Model):
     region = models.CharField(max_length=100)
     description = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    slug = models.SlugField(max_length=150, unique=True)
+    slug = models.SlugField(max_length=150, unique=True, blank=True)
 
     def __str__(self):
         return self.name
@@ -17,6 +18,12 @@ class Resort(models.Model):
     def get_absolute_url(self):
         """Динамический URL для курорта."""
         return reverse('resort_detail', kwargs={'resort_slug': self.slug})
+
+    def save(self, *args, **kwargs):
+        """Автоматическое создание slug из названия курорта при сохранении."""
+        if not self.slug:
+            self.slug = slugify(self.name)
+        super().save(*args, **kwargs)
 
 
 class Trip(models.Model):
