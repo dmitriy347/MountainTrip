@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from django.db import models
+from django.urls import reverse
 
 
 class Resort(models.Model):
@@ -8,9 +9,14 @@ class Resort(models.Model):
     region = models.CharField(max_length=100)
     description = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    slug = models.SlugField(max_length=150, unique=True)
 
     def __str__(self):
         return self.name
+
+    def get_absolute_url(self):
+        """Динамический URL для курорта."""
+        return reverse('resort_detail', kwargs={'resort_slug': self.slug})
 
 
 class Trip(models.Model):

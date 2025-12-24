@@ -13,7 +13,7 @@
                 <div class="card-body">
                     <h5 class="card-title">{{ resort.name }}</h5>
                     <p class="card-text">{{ resort.region }}</p>
-                    <a href="{% url 'resort_detail' resort.id %}" class="btn btn-outline-primary">Подробнее</a>
+                    <a href="{{ resort.get_absolute_url }}" class="btn btn-outline-primary">Подробнее</a>
                 </div>
             </div>
         </div>

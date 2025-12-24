@@ -9,17 +9,15 @@ from .models import Resort, Trip, TripMedia
 
 def index(request):
     """Главная страница"""
-    resorts = Resort.objects.all()
     data = {
         'title': 'Горнолыжные курорты России',
-        'resorts': resorts,
     }
     return render(request, 'resort/index.html', context=data)
 
 
-def resort_detail(request, resort_id):
+def resort_detail(request, resort_slug):
     """Страница курорта"""
-    resort = get_object_or_404(Resort, pk=resort_id)
+    resort = get_object_or_404(Resort, slug=resort_slug)
     trips = resort.trips.all()
     data = {
         'title': resort.name,
@@ -167,17 +165,6 @@ def trip_media_delete(request, media_id):
     return render(request, 'resort/trip_media_confirm_delete.html', context=data)
 
 
-
-
-
-
-
-def about(request):
-    return render(request, 'resort/about.html', {'title': 'О сайте'})
-
-
-def contact(request):
-    return HttpResponse("Обратная связь")
 
 
 def login(request):
