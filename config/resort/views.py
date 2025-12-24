@@ -4,9 +4,7 @@ from django.shortcuts import redirect, render, get_object_or_404
 from django.template.loader import render_to_string
 
 from .forms import TripForm, TripMediaForm
-from .models import Resort, Trip
-
-
+from .models import Resort, Trip, TripMedia
 
 
 def index(request):
@@ -146,6 +144,28 @@ def trip_media_add(request, trip_id):
         'trip': trip,
     }
     return render(request, 'resort/trip_media_form.html', context=data)
+
+
+@login_required()
+def trip_media_delete(request, media_id):
+    """Удаление медиафайлов из поездки"""
+    media = get_object_or_404(TripMedia, pk=media_id)
+
+    if media.trip.user != request.user:
+        raise Http404("Фото не найдено")
+
+    if request.method == 'POST':
+        media.image.delete(save=False)  # Сначала удаляем файл
+        media.delete()                  # Затем удаляем запись из БД
+        return redirect('trip_detail', trip_id=media.trip.id)
+
+    data = {
+        'title': 'Удаление фото из поездки',
+        'media': media,
+        'trip': media.trip,
+    }
+    return render(request, 'resort/trip_media_confirm_delete.html', context=data)
+
 
 
 

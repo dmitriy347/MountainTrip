@@ -26,6 +26,11 @@
         {% for photo in trip.media.all %}
             <div class="col-md-4 mb-3">
                 <img src="{{ photo.image.url }}" class="img-fluid trip-image">
+                {% if trip.user == request.user %}
+                    <a href="{% url 'trip_media_delete' photo.id %}" class="btn btn-sm btn-outline-danger">
+                        Удалить
+                    </a>
+                {% endif %}
             </div>
         {% endfor %}
     </div>
