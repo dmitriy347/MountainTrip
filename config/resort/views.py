@@ -2,6 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect, Http404
 from django.shortcuts import redirect, render, get_object_or_404
 from django.template.loader import render_to_string
+from django.views.generic import ListView
 
 from .forms import TripForm, TripMediaForm
 from .models import Resort, Trip, TripMedia
@@ -27,15 +28,22 @@ def resort_detail(request, resort_slug):
     return render(request, 'resort/resort_detail.html', context=data)
 
 
-def resort_list(request):
-    """Список курортов"""
-    resorts = Resort.objects.all()
+# def resort_list(request):
+#     """Список курортов"""
+#     resorts = Resort.objects.all()
+#
+#     context = {
+#         'title': 'Список курортов',
+#         'resorts': resorts,
+#     }
+#     return render(request, 'resort/resort_list.html', context=context)
 
-    context = {
-        'title': 'Список курортов',
-        'resorts': resorts,
-    }
-    return render(request, 'resort/resort_list.html', context=context)
+
+class ResortListView(ListView):
+    """Класс-представление для списка курортов"""
+    model = Resort
+    template_name = 'resort/resort_list.html'
+    context_object_name = 'resorts'
 
 
 def trip_detail(request, trip_id):
