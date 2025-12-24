@@ -1,4 +1,5 @@
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect, Http404
 from django.shortcuts import redirect, render, get_object_or_404
 from django.views.generic import ListView, DetailView
@@ -43,8 +44,6 @@ class ResortDetailView(DetailView):
         return context
 
 
-
-
 # def resort_list(request):
 #     """Список курортов"""
 #     resorts = Resort.objects.all()
@@ -73,14 +72,32 @@ def trip_detail(request, trip_id):
     return render(request, 'resort/trip_detail.html', context=data)
 
 
-def trip_list(request):
-    """Список поездок пользователя"""
-    trips = Trip.objects.filter(user=request.user)
-    data = {
-        'title': 'Мои поездки',
-        'trips': trips,
-    }
-    return render(request, 'resort/trip_list.html', context=data)
+
+# def trip_list(request):
+#     """Список поездок пользователя"""
+#     trips = Trip.objects.filter(user=request.user)
+#     data = {
+#         'title': 'Мои поездки',
+#         'trips': trips,
+#     }
+#     return render(request, 'resort/trip_list.html', context=data)
+
+
+class TripListView(LoginRequiredMixin, ListView):
+    """Класс-представление для списка поездок пользователя"""
+    model = Trip
+    template_name = 'resort/trip_list.html'
+    context_object_name = 'trips'
+
+    def get_context_data(self, **kwargs):
+        """Добавляем в контекст заголовок страницы"""
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Мои поездки'
+        return context
+
+    def get_queryset(self):
+        """Фильтрация поездок по текущему пользователю"""
+        return Trip.objects.filter(user=self.request.user)
 
 
 @login_required

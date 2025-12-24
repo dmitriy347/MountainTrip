@@ -39,6 +39,9 @@ class Trip(models.Model):
     def __str__(self):
         return f"{self.user.username} - {self.resort.name}"
 
+    class Meta:
+        ordering = ['-start_date']
+
 
 class TripMedia(models.Model):
     """Модель для хранения медиафайлов, связанных с поездкой."""
