@@ -42,6 +42,10 @@ class Trip(models.Model):
     class Meta:
         ordering = ['-start_date']
 
+    def get_absolute_url(self):
+        """Динамический URL для поездки."""
+        return reverse('trip_detail', kwargs={'trip_id': self.id})
+
 
 class TripMedia(models.Model):
     """Модель для хранения медиафайлов, связанных с поездкой."""

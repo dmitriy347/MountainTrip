@@ -2,7 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect, Http404
 from django.shortcuts import redirect, render, get_object_or_404
-from django.views.generic import ListView, DetailView
+from django.views.generic import ListView, DetailView, CreateView
 
 from .forms import TripForm, TripMediaForm
 from .models import Resort, Trip, TripMedia
@@ -16,20 +16,11 @@ def index(request):
     return render(request, 'resort/index.html', context=data)
 
 
-# def resort_detail(request, resort_slug):
-#     """Страница курорта"""
-#     resort = get_object_or_404(Resort, slug=resort_slug)
-#     trips = resort.trips.all()
-#     data = {
-#         'title': resort.name,
-#         'resort': resort,
-#         'trips': trips,
-#     }
-#     return render(request, 'resort/resort_detail.html', context=data)
-
-
 class ResortDetailView(DetailView):
-    """Класс-представление для страницы курорта"""
+    """
+    Класс-представление для страницы курорта
+    После выбора курорта происходит перенаправление по get_absolute_url модели Resort
+    """
     model = Resort
     template_name = 'resort/resort_detail.html'
     context_object_name = 'resort'
@@ -44,15 +35,16 @@ class ResortDetailView(DetailView):
         return context
 
 
-# def resort_list(request):
-#     """Список курортов"""
-#     resorts = Resort.objects.all()
-#
-#     context = {
-#         'title': 'Список курортов',
-#         'resorts': resorts,
+# def resort_detail(request, resort_slug):
+#     """Страница курорта"""
+#     resort = get_object_or_404(Resort, slug=resort_slug)
+#     trips = resort.trips.all()
+#     data = {
+#         'title': resort.name,
+#         'resort': resort,
+#         'trips': trips,
 #     }
-#     return render(request, 'resort/resort_list.html', context=context)
+#     return render(request, 'resort/resort_detail.html', context=data)
 
 
 class ResortListView(ListView):
@@ -62,14 +54,15 @@ class ResortListView(ListView):
     context_object_name = 'resorts'
 
 
-# def trip_detail(request, trip_id):
-#     """Страница поездки"""
-#     trip = get_object_or_404(Trip, pk=trip_id)
-#     data = {
-#         'title': f"Поездка в {trip.resort.name}",
-#         'trip': trip,
+# def resort_list(request):
+#     """Список курортов"""
+#     resorts = Resort.objects.all()
+#
+#     context = {
+#         'title': 'Список курортов',
+#         'resorts': resorts,
 #     }
-#     return render(request, 'resort/trip_detail.html', context=data)
+#     return render(request, 'resort/resort_list.html', context=context)
 
 
 class TripDetailView(LoginRequiredMixin, DetailView):
@@ -96,16 +89,14 @@ class TripDetailView(LoginRequiredMixin, DetailView):
         )
 
 
-
-
-# def trip_list(request):
-#     """Список поездок пользователя"""
-#     trips = Trip.objects.filter(user=request.user)
+# def trip_detail(request, trip_id):
+#     """Страница поездки"""
+#     trip = get_object_or_404(Trip, pk=trip_id)
 #     data = {
-#         'title': 'Мои поездки',
-#         'trips': trips,
+#         'title': f"Поездка в {trip.resort.name}",
+#         'trip': trip,
 #     }
-#     return render(request, 'resort/trip_list.html', context=data)
+#     return render(request, 'resort/trip_detail.html', context=data)
 
 
 class TripListView(LoginRequiredMixin, ListView):
@@ -129,24 +120,55 @@ class TripListView(LoginRequiredMixin, ListView):
         )
 
 
-@login_required
-def trip_create(request):
-    """Создание новой поездки"""
-    if request.method == 'POST':
-        form = TripForm(request.POST)
-        if form.is_valid():
-            trip = form.save(commit=False)  # Создаем объект, но не сохраняем в БД
-            trip.user = request.user        # Дополняем форму данными о текущем пользователе
-            trip.save()                     # Только теперь сохраняем объект в БД
-            return redirect('trip_detail', trip_id=trip.id)     # После сохранения перенаправляем на страницу детали поездки, где пользователь сможет добавить фото
-    else:
-        form = TripForm()
+# def trip_list(request):
+#     """Список поездок пользователя"""
+#     trips = Trip.objects.filter(user=request.user)
+#     data = {
+#         'title': 'Мои поездки',
+#         'trips': trips,
+#     }
+#     return render(request, 'resort/trip_list.html', context=data)
 
-    data = {
+
+class TripCreateView(LoginRequiredMixin, CreateView):
+    """
+    Класс-представление для создания новой поездки
+    После сохранения происходит перенаправление по get_absolute_url модели Trip
+    """
+    form_class = TripForm
+    template_name = 'resort/trip_form.html'
+    extra_context = {
         'title': 'Новая поездка',
-        'form': form,
     }
-    return render(request, 'resort/trip_form.html', context=data)
+
+    def form_valid(self, form):
+        """Дополняем форму данными о текущем пользователе перед сохранением"""
+        trip = form.save(commit=False)  # Создаем объект, но не сохраняем в БД
+        trip.user = self.request.user   # Дополняем форму данными о текущем пользователе (т.к. User не вводится через форму)
+        trip.save()                     # Только теперь сохраняем объект в БД
+        return super().form_valid(form)
+
+
+# @login_required
+# def trip_create(request):
+#     """Создание новой поездки"""
+#     if request.method == 'POST':
+#         form = TripForm(request.POST)
+#         if form.is_valid():
+#             trip = form.save(commit=False)  # Создаем объект, но не сохраняем в БД
+#             trip.user = request.user        # Дополняем форму данными о текущем пользователе
+#             trip.save()                     # Только теперь сохраняем объект в БД
+#             return redirect('trip_detail', trip_id=trip.id)     # После сохранения перенаправляем на страницу детали поездки, где пользователь сможет добавить фото
+#     else:
+#         form = TripForm()
+#
+#     data = {
+#         'title': 'Новая поездка',
+#         'form': form,
+#     }
+#     return render(request, 'resort/trip_form.html', context=data)
+
+
 
 
 @login_required
