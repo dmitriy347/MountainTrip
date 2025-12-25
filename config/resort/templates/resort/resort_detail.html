@@ -14,7 +14,7 @@
 {% for trip in trips %}
     <div class="mb-3">
         <strong>{{ trip.user.username }}</strong> - {{ trip.start_date }} - {{ trip.end_date }}
-        <a href="{% url 'trip_detail' trip.id %}">Подробнее</a>
+        <a href="{{ trip.get_absolute_url }}">Подробнее</a>
     </div>
 {% empty %}
     <p>Пока никто не добавил поездки на этот курорт.</p>

@@ -2,7 +2,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect, Http404
 from django.shortcuts import redirect, render, get_object_or_404
-from django.views.generic import ListView, DetailView, CreateView, UpdateView
+from django.urls import reverse_lazy
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 
 from .forms import TripForm, TripMediaForm
 from .models import Resort, Trip, TripMedia
@@ -208,21 +209,41 @@ class TripUpdateView(LoginRequiredMixin, UpdateView):
 #     return render(request, 'resort/trip_form.html', context=data)
 
 
-@login_required
-def trip_delete(request, trip_id):
-    """Удаление поездки"""
-    trip = get_object_or_404(Trip, pk=trip_id)
-    if trip.user != request.user:
-        raise Http404("Поездка не найдена")
-    if request.method == 'POST':
-        trip.delete()
-        return redirect('trip_list')
-
-    data = {
+class TripDeleteView(LoginRequiredMixin, DeleteView):
+    """
+    Класс-представление для удаления поездки
+    После удаления происходит перенаправление на страницу списка поездок
+    """
+    model = Trip
+    template_name = 'resort/trip_confirm_delete.html'
+    context_object_name = 'trip'
+    pk_url_kwarg = 'trip_id'
+    success_url = reverse_lazy('trip_list')
+    extra_context = {
         'title': 'Удаление поездки',
-        'trip': trip,
     }
-    return render(request, 'resort/trip_confirm_delete.html', context=data)
+
+    def get_queryset(self):
+        """Фильтрация поездок по текущему пользователю для защиты от удаления чужих поездок"""
+        return Trip.objects.filter(user=self.request.user)
+
+
+
+# @login_required
+# def trip_delete(request, trip_id):
+#     """Удаление поездки"""
+#     trip = get_object_or_404(Trip, pk=trip_id)
+#     if trip.user != request.user:
+#         raise Http404("Поездка не найдена")
+#     if request.method == 'POST':
+#         trip.delete()
+#         return redirect('trip_list')
+#
+#     data = {
+#         'title': 'Удаление поездки',
+#         'trip': trip,
+#     }
+#     return render(request, 'resort/trip_confirm_delete.html', context=data)
 
 
 class TripMediaAddView(LoginRequiredMixin, CreateView):

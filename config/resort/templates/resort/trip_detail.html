@@ -24,11 +24,9 @@
         {% for photo in media_list %}
             <div class="col-md-4 mb-3">
                 <img src="{{ photo.image.url }}" class="img-fluid trip-image">
-                {% if trip.user == request.user %}
-                    <a href="{% url 'trip_media_delete' photo.id %}" class="btn btn-sm btn-outline-danger">
-                        Удалить
-                    </a>
-                {% endif %}
+                <a href="{% url 'trip_media_delete' photo.id %}" class="btn btn-sm btn-outline-danger">
+                    Удалить
+                </a>
             </div>
         {% endfor %}
     </div>
@@ -36,10 +34,8 @@
     <p>Фотографии не добавлены.</p>
 {% endif %}
 
-{% if trip.user == request.user %}
-    <a href="{% url 'trip_media_add' trip.id %}" class="btn btn-outline-primary mt-3">
-        Добавить фото
-    </a>
-{% endif %}
+<a href="{% url 'trip_media_add' trip.id %}" class="btn btn-outline-primary mt-3">
+    Добавить фото
+</a>
 
 {% endblock %}
