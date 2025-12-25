@@ -228,7 +228,6 @@ class TripDeleteView(LoginRequiredMixin, DeleteView):
         return Trip.objects.filter(user=self.request.user)
 
 
-
 # @login_required
 # def trip_delete(request, trip_id):
 #     """Удаление поездки"""
@@ -292,25 +291,47 @@ class TripMediaAddView(LoginRequiredMixin, CreateView):
 #     return render(request, 'resort/trip_media_form.html', context=data)
 
 
-@login_required()
-def trip_media_delete(request, media_id):
-    """Удаление медиафайлов из поездки"""
-    media = get_object_or_404(TripMedia, pk=media_id)
-
-    if media.trip.user != request.user:
-        raise Http404("Фото не найдено")
-
-    if request.method == 'POST':
-        # media.image.delete(save=False)  # Сначала удаляем сам файл (эта строка уже не обязательна, т.к. подключен сигнал post_delete - отлавливает удаление файлов автоматически)
-        media.delete()                  # Затем удаляем запись из БД
-        return redirect('trip_detail', trip_id=media.trip.id)
-
-    data = {
+class TripMediaDeleteView(LoginRequiredMixin, DeleteView):
+    """
+    Класс-представление для удаления медиафайлов из поездки
+    Удаление медиафайла из файловой системы происходит автоматически с помощью сигнала post_delete
+    """
+    model = TripMedia
+    template_name = 'resort/trip_media_confirm_delete.html'
+    context_object_name = 'media'
+    pk_url_kwarg = 'media_id'
+    extra_context = {
         'title': 'Удаление фото из поездки',
-        'media': media,
-        'trip': media.trip,
     }
-    return render(request, 'resort/trip_media_confirm_delete.html', context=data)
+
+    def get_queryset(self):
+        """Фильтрация медиафайлов по текущему пользователю для защиты от удаления чужих медиафайлов"""
+        return TripMedia.objects.filter(trip__user=self.request.user)
+
+    def get_success_url(self):
+        """После удаления перенаправляем на страницу детали поездки"""
+        return reverse_lazy('trip_detail', kwargs={'trip_id': self.object.trip.id})
+
+
+# @login_required()
+# def trip_media_delete(request, media_id):
+#     """Удаление медиафайлов из поездки"""
+#     media = get_object_or_404(TripMedia, pk=media_id)
+#
+#     if media.trip.user != request.user:
+#         raise Http404("Фото не найдено")
+#
+#     if request.method == 'POST':
+#         # media.image.delete(save=False)  # Сначала удаляем сам файл (эта строка уже не обязательна, т.к. подключен сигнал post_delete - отлавливает удаление файлов автоматически)
+#         media.delete()                  # Затем удаляем запись из БД
+#         return redirect('trip_detail', trip_id=media.trip.id)
+#
+#     data = {
+#         'title': 'Удаление фото из поездки',
+#         'media': media,
+#         'trip': media.trip,
+#     }
+#     return render(request, 'resort/trip_media_confirm_delete.html', context=data)
 
 
 
