@@ -75,7 +75,7 @@ class TripListView(LoginRequiredMixin, ListView):
     model = Trip
     template_name = 'resort/trip_list.html'
     context_object_name = 'trips'
-    paginate_by = 3
+    paginate_by = 5
 
     def get_context_data(self, **kwargs):
         """Добавляем в контекст заголовок страницы"""

@@ -32,3 +32,38 @@ body {
     object-fit: cover;
     border-radius: 12px;
 }
+
+/* Пагинация */
+.list-pages ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+}
+
+.list-pages .page-num {
+    display: inline-block;
+}
+
+.list-pages .page-num a,
+.list-pages .page-num span {
+    display: block;
+    padding: 6px 12px;
+    border-radius: 6px;
+    background: #f1f1f1;
+    color: #333;
+    text-decoration: none;
+}
+
+.list-pages .page-num.active span {
+    background: #0d6efd;
+    color: white;
+    font-weight: bold;
+}
+
+.list-pages .page-num a:hover {
+    background: #0b5ed7;
+    color: white;
+}
