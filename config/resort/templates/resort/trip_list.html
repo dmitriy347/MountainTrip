@@ -19,4 +19,9 @@
 {% empty %}
     <p>У вас пока нет поездок.</p>
 {% endfor %}
+
+{% if is_paginated %}
+    {% include 'resort/includes/pagination.html' %}
+{% endif %}
+
 {% endblock %}

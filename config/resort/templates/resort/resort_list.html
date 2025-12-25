@@ -23,33 +23,7 @@
 </div>
 
 {% if is_paginated %}
-<div class="list-pages">
-    <ul>
-        {% if page_obj.has_previous %}
-            <li class="page-num">
-                <a href="?page={{ page_obj.previous_page_number }}">&laquo;</a>
-            </li>
-        {% endif %}
-
-        {% for page in paginator.page_range %}
-            {% if page == page_obj.number %}
-                <li class="page-num active">
-                    <span>{{ page }}</span>
-                </li>
-            {% elif page >= page_obj.number|add:-2 and page <= page_obj.number|add:2 %}
-                <li class="page-num">
-                    <a href="?page={{ page }}">{{ page }}</a>
-                </li>
-            {% endif %}
-        {% endfor %}
-
-        {% if page_obj.has_next %}
-            <li class="page-num">
-                <a href="?page={{ page_obj.next_page_number }}">&raquo;</a>
-            </li>
-        {% endif %}
-    </ul>
-</div>
+    {% include 'resort/includes/pagination.html' %}
 {% endif %}
 
 {% endblock %}
