@@ -143,9 +143,7 @@ class TripCreateView(LoginRequiredMixin, CreateView):
 
     def form_valid(self, form):
         """Дополняем форму данными о текущем пользователе перед сохранением"""
-        trip = form.save(commit=False)  # Создаем объект, но не сохраняем в БД
-        trip.user = self.request.user   # Дополняем форму данными о текущем пользователе (т.к. User не вводится через форму)
-        trip.save()                     # Только теперь сохраняем объект в БД
+        form.instance.user = self.request.user  # Альтернативный способ присвоения пользователя через form.instance (это объект модели Trip, который будет сохранен)
         return super().form_valid(form)
 
 
@@ -167,8 +165,6 @@ class TripCreateView(LoginRequiredMixin, CreateView):
 #         'form': form,
 #     }
 #     return render(request, 'resort/trip_form.html', context=data)
-
-
 
 
 @login_required
@@ -212,29 +208,50 @@ def trip_delete(request, trip_id):
     return render(request, 'resort/trip_confirm_delete.html', context=data)
 
 
-@login_required
-def trip_media_add(request, trip_id):
-    """Добавления медиафайлов к поездке"""
-    trip = get_object_or_404(Trip, pk=trip_id)
-    if trip.user != request.user:
-        raise Http404("Поездка не найдена")
-
-    if request.method == 'POST':
-        form = TripMediaForm(request.POST, request.FILES)
-        if form.is_valid():
-            media = form.save(commit=False) # Создаем объект, но не сохраняем в БД
-            media.trip = trip               # Привязываем медиафайл к поездке
-            media.save()                    # Сохраняем объект в БД
-            return redirect('trip_detail', trip_id=trip.id)
-    else:
-        form = TripMediaForm()
-
-    data = {
+class TripMediaAddView(LoginRequiredMixin, CreateView):
+    """
+    Класс-представление для добавления медиафайлов к поездке
+    После сохранения происходит перенаправление по get_absolute_url модели TripMedia
+    """
+    form_class = TripMediaForm
+    template_name = 'resort/trip_media_form.html'
+    extra_context = {
         'title': 'Добавить фото к поездке',
-        'form': form,
-        'trip': trip,
     }
-    return render(request, 'resort/trip_media_form.html', context=data)
+
+    def form_valid(self, form):
+        """Дополняем форму данными о текущей поездке перед сохранением"""
+        trip_id = self.kwargs['trip_id']
+        user = self.request.user    # Защита от добавления фото к чужой поездке
+        trip = get_object_or_404(Trip, pk=trip_id, user=user)
+
+        form.instance.trip = trip   # Привязываем медиафайл к поездке ДО сохранения
+        return super().form_valid(form)
+
+
+# @login_required
+# def trip_media_add(request, trip_id):
+#     """Добавления медиафайлов к поездке"""
+#     trip = get_object_or_404(Trip, pk=trip_id)
+#     if trip.user != request.user:
+#         raise Http404("Поездка не найдена")
+#
+#     if request.method == 'POST':
+#         form = TripMediaForm(request.POST, request.FILES)
+#         if form.is_valid():
+#             media = form.save(commit=False) # Создаем объект, но не сохраняем в БД
+#             media.trip = trip               # Привязываем медиафайл к поездке
+#             media.save()                    # Сохраняем объект в БД
+#             return redirect('trip_detail', trip_id=trip.id)
+#     else:
+#         form = TripMediaForm()
+#
+#     data = {
+#         'title': 'Добавить фото к поездке',
+#         'form': form,
+#         'trip': trip,
+#     }
+#     return render(request, 'resort/trip_media_form.html', context=data)
 
 
 @login_required()

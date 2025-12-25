@@ -55,3 +55,7 @@ class TripMedia(models.Model):
 
     def __str__(self):
         return f"Media for trip {self.trip.id}"
+
+    def get_absolute_url(self):
+        """Динамический URL для медиафайла."""
+        return self.trip.get_absolute_url()

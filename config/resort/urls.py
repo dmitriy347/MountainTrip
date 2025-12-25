@@ -11,7 +11,7 @@ urlpatterns = [
     path('trips/create', views.TripCreateView.as_view(), name='trip_create'),
     path('trips/<int:trip_id>/edit', views.trip_edit, name='trip_edit'),
     path('trips/<int:trip_id>/delete', views.trip_delete, name='trip_delete'),
-    path('trips/<int:trip_id>/media/add', views.trip_media_add, name='trip_media_add'),
+    path('trips/<int:trip_id>/media/add', views.TripMediaAddView.as_view(), name='trip_media_add'),
     path('media/<int:media_id>/delete/', views.trip_media_delete, name='trip_media_delete'),
     path('login/', views.login, name='login'),
 ]
