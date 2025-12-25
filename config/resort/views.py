@@ -6,6 +6,7 @@ from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 
 from .forms import TripForm, TripMediaForm
+from .mixins import OwnerQuerySetMixin
 from .models import Resort, Trip, TripMedia
 
 
@@ -42,6 +43,7 @@ class ResortListView(ListView):
     model = Resort
     template_name = 'resort/resort_list.html'
     context_object_name = 'resorts'
+    paginate_by = 3
 
 
 class TripDetailView(LoginRequiredMixin, DetailView):
@@ -73,6 +75,7 @@ class TripListView(LoginRequiredMixin, ListView):
     model = Trip
     template_name = 'resort/trip_list.html'
     context_object_name = 'trips'
+    paginate_by = 3
 
     def get_context_data(self, **kwargs):
         """Добавляем в контекст заголовок страницы"""
@@ -106,10 +109,11 @@ class TripCreateView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
 
-class TripUpdateView(LoginRequiredMixin, UpdateView):
+class TripUpdateView(LoginRequiredMixin, OwnerQuerySetMixin, UpdateView):
     """
     Класс-представление для редактирования поездки
     После сохранения происходит перенаправление по get_absolute_url модели Trip
+    Доступ к редактированию ограничен владельцем поездки через миксин OwnerQuerySetMixin
     """
     form_class = TripForm
     template_name = 'resort/trip_form.html'
@@ -118,15 +122,12 @@ class TripUpdateView(LoginRequiredMixin, UpdateView):
         'title': 'Редактирование поездки',
     }
 
-    def get_queryset(self):
-        """Фильтрация поездок по текущему пользователю для защиты от редактирования чужих поездок"""
-        return Trip.objects.filter(user=self.request.user)
 
-
-class TripDeleteView(LoginRequiredMixin, DeleteView):
+class TripDeleteView(LoginRequiredMixin, OwnerQuerySetMixin, DetailView):
     """
     Класс-представление для удаления поездки
     После удаления происходит перенаправление на страницу списка поездок
+    Доступ к удалению ограничен владельцем поездки через миксин OwnerQuerySetMixin
     """
     model = Trip
     template_name = 'resort/trip_confirm_delete.html'
@@ -136,10 +137,6 @@ class TripDeleteView(LoginRequiredMixin, DeleteView):
     extra_context = {
         'title': 'Удаление поездки',
     }
-
-    def get_queryset(self):
-        """Фильтрация поездок по текущему пользователю для защиты от удаления чужих поездок"""
-        return Trip.objects.filter(user=self.request.user)
 
 
 class TripMediaAddView(LoginRequiredMixin, CreateView):
@@ -163,22 +160,20 @@ class TripMediaAddView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
 
-class TripMediaDeleteView(LoginRequiredMixin, DeleteView):
+class TripMediaDeleteView(LoginRequiredMixin, OwnerQuerySetMixin, DeleteView):
     """
     Класс-представление для удаления медиафайлов из поездки
     Удаление медиафайла из файловой системы происходит автоматически с помощью сигнала post_delete
+    Доступ к удалению ограничен владельцем медиафайлов через миксин OwnerQuerySetMixin
     """
     model = TripMedia
     template_name = 'resort/trip_media_confirm_delete.html'
     context_object_name = 'media'
     pk_url_kwarg = 'media_id'
+    owner_field = 'trip__user'
     extra_context = {
         'title': 'Удаление фото из поездки',
     }
-
-    def get_queryset(self):
-        """Фильтрация медиафайлов по текущему пользователю для защиты от удаления чужих медиафайлов"""
-        return TripMedia.objects.filter(trip__user=self.request.user)
 
     def get_success_url(self):
         """После удаления перенаправляем на страницу детали поездки"""
