@@ -2,7 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect, Http404
 from django.shortcuts import redirect, render, get_object_or_404
-from django.views.generic import ListView, DetailView, CreateView
+from django.views.generic import ListView, DetailView, CreateView, UpdateView
 
 from .forms import TripForm, TripMediaForm
 from .models import Resort, Trip, TripMedia
@@ -167,28 +167,45 @@ class TripCreateView(LoginRequiredMixin, CreateView):
 #     return render(request, 'resort/trip_form.html', context=data)
 
 
-@login_required
-def trip_edit(request, trip_id):
-    """Редактирование поездки"""
-    trip = get_object_or_404(Trip, pk=trip_id)
-
-    # Защита от редактирования чужих поездок
-    if trip.user != request.user:
-        raise Http404("Поездка не найдена")
-
-    if request.method == 'POST':
-        form = TripForm(request.POST, instance=trip)    # Заполняем форму данными из объекта trip
-        if form.is_valid():
-            form.save()
-            return redirect('trip_detail', trip_id=trip.id)
-    else:
-        form = TripForm(instance=trip)
-
-    data = {
+class TripUpdateView(LoginRequiredMixin, UpdateView):
+    """
+    Класс-представление для редактирования поездки
+    После сохранения происходит перенаправление по get_absolute_url модели Trip
+    """
+    form_class = TripForm
+    template_name = 'resort/trip_form.html'
+    pk_url_kwarg = 'trip_id'
+    extra_context = {
         'title': 'Редактирование поездки',
-        'form': form,
     }
-    return render(request, 'resort/trip_form.html', context=data)
+
+    def get_queryset(self):
+        """Фильтрация поездок по текущему пользователю для защиты от редактирования чужих поездок"""
+        return Trip.objects.filter(user=self.request.user)
+
+
+# @login_required
+# def trip_edit(request, trip_id):
+#     """Редактирование поездки"""
+#     trip = get_object_or_404(Trip, pk=trip_id)
+#
+#     # Защита от редактирования чужих поездок
+#     if trip.user != request.user:
+#         raise Http404("Поездка не найдена")
+#
+#     if request.method == 'POST':
+#         form = TripForm(request.POST, instance=trip)    # Заполняем форму данными из объекта trip
+#         if form.is_valid():
+#             form.save()
+#             return redirect('trip_detail', trip_id=trip.id)
+#     else:
+#         form = TripForm(instance=trip)
+#
+#     data = {
+#         'title': 'Редактирование поездки',
+#         'form': form,
+#     }
+#     return render(request, 'resort/trip_form.html', context=data)
 
 
 @login_required
