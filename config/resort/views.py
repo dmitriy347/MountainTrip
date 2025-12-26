@@ -1,7 +1,7 @@
-from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect, Http404
-from django.shortcuts import redirect, render, get_object_or_404
+from django.http import HttpResponse, HttpResponseNotFound
+from django.shortcuts import render, get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 
@@ -43,7 +43,7 @@ class ResortListView(ListView):
     model = Resort
     template_name = 'resort/resort_list.html'
     context_object_name = 'resorts'
-    paginate_by = 3
+    paginate_by = 5
 
 
 class TripDetailView(LoginRequiredMixin, DetailView):
@@ -75,7 +75,7 @@ class TripListView(LoginRequiredMixin, ListView):
     model = Trip
     template_name = 'resort/trip_list.html'
     context_object_name = 'trips'
-    paginate_by = 1
+    paginate_by = 5
 
     def get_context_data(self, **kwargs):
         """Добавляем в контекст заголовок страницы"""
@@ -104,8 +104,12 @@ class TripCreateView(LoginRequiredMixin, CreateView):
     }
 
     def form_valid(self, form):
-        """Дополняем форму данными о текущем пользователе перед сохранением"""
+        """
+        Дополняем форму данными о текущем пользователе перед сохранением.
+        Добавляем сообщение об успешном создании.
+        """
         form.instance.user = self.request.user  # Альтернативный способ присвоения пользователя через form.instance (это объект модели Trip, который будет сохранен)
+        messages.success(self.request, "Поездка успешно создана.")
         return super().form_valid(form)
 
 
@@ -116,14 +120,21 @@ class TripUpdateView(LoginRequiredMixin, OwnerQuerySetMixin, UpdateView):
     Доступ к редактированию ограничен владельцем поездки через миксин OwnerQuerySetMixin
     """
     form_class = TripForm
+    model = Trip
     template_name = 'resort/trip_form.html'
     pk_url_kwarg = 'trip_id'
+    owner_field = 'user'
     extra_context = {
         'title': 'Редактирование поездки',
     }
 
+    def form_valid(self, form):
+        """Добавляем сообщение об успешном сохранении"""
+        messages.success(self.request, "Поездка успешно изменена.")
+        return super().form_valid(form)
 
-class TripDeleteView(LoginRequiredMixin, OwnerQuerySetMixin, DetailView):
+
+class TripDeleteView(LoginRequiredMixin, OwnerQuerySetMixin, DeleteView):
     """
     Класс-представление для удаления поездки
     После удаления происходит перенаправление на страницу списка поездок
@@ -134,9 +145,15 @@ class TripDeleteView(LoginRequiredMixin, OwnerQuerySetMixin, DetailView):
     context_object_name = 'trip'
     pk_url_kwarg = 'trip_id'
     success_url = reverse_lazy('trip_list')
+    owner_field = 'user'
     extra_context = {
         'title': 'Удаление поездки',
     }
+
+    def form_valid(self, form):
+        """Добавляем сообщение об успешном удалении"""
+        messages.success(self.request, "Поездка удалена.")
+        return super().form_valid(form)
 
 
 class TripMediaAddView(LoginRequiredMixin, CreateView):
@@ -157,6 +174,7 @@ class TripMediaAddView(LoginRequiredMixin, CreateView):
         trip = get_object_or_404(Trip, pk=trip_id, user=user)
 
         form.instance.trip = trip   # Привязываем медиафайл к поездке ДО сохранения
+        messages.success(self.request, "Фото успешно добавлено.")
         return super().form_valid(form)
 
 
@@ -174,6 +192,11 @@ class TripMediaDeleteView(LoginRequiredMixin, OwnerQuerySetMixin, DeleteView):
     extra_context = {
         'title': 'Удаление фото из поездки',
     }
+
+    def form_valid(self, form):
+        """Добавляем сообщение об успешном удалении"""
+        messages.success(self.request, "Фото удалено.")
+        return super().form_valid(form)
 
     def get_success_url(self):
         """После удаления перенаправляем на страницу детали поездки"""
