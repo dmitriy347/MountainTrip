@@ -34,7 +34,14 @@ class ResortDetailView(DetailView):
         """Добавляем в контекст заголовок и список поездок"""
         context = super().get_context_data(**kwargs)
         context['title'] = self.object.name
-        context['trips'] = self.object.trips.all()
+        context['public_trips'] = (
+                    self.object.trips
+                    .filter(
+                        is_public=True
+                    )
+                    .select_related('user')
+                    .order_by('-created_at')
+                )
         return context
 
 

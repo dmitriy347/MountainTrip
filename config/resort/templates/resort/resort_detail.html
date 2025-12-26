@@ -10,13 +10,22 @@
 
 <hr>
 <h4 class="mt-4">Поездки пользователей</h4>
+<h2>Публичные поездки</h2>
 
-{% for trip in trips %}
-    <div class="mb-3">
-        <strong>{{ trip.user.username }}</strong> - {{ trip.start_date }} - {{ trip.end_date }}
-        <a href="{{ trip.get_absolute_url }}">Подробнее</a>
-    </div>
-{% empty %}
-    <p>Пока никто не добавил поездки на этот курорт.</p>
-{% endfor %}
+{% if public_trips %}
+    <ul>
+        {% for trip in public_trips %}
+            <li>
+                Пользователь: {{ trip.user.username }}<br>
+                Период: {{ trip.start_date }} — {{ trip.end_date }}<br>
+
+                <a href="{% url 'trip_detail' trip.id %}">
+                    Посмотреть поездку
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>Пока нет публичных поездок.</p>
+{% endif %}
 {% endblock %}
