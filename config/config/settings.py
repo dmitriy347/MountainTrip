@@ -129,3 +129,7 @@ MEDIA_ROOT = BASE_DIR / 'media' # Путь на файловой системе,
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+LOGIN_URL = 'users:login'          # URL для перенаправления на страницу авторизации
+LOGIN_REDIRECT_URL = 'trip_list'   # Перенаправление после успешной авторизации
+LOGOUT_REDIRECT_URL = 'home'       # Перенаправление после выхода из системы

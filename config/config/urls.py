@@ -24,6 +24,7 @@ from resort.views import page_not_found
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('resort.urls')),
+    path('users/', include('users.urls', namespace='users')),
 ]
 
 if settings.DEBUG:

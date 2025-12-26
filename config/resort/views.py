@@ -203,10 +203,6 @@ class TripMediaDeleteView(LoginRequiredMixin, OwnerQuerySetMixin, DeleteView):
         return reverse_lazy('trip_detail', kwargs={'trip_id': self.object.trip.id})
 
 
-def login(request):
-    return HttpResponse("Вход на сайт")
-
-
 def page_not_found(request, exception):
     """Обработчик ошибки 404"""
     return HttpResponseNotFound("404 страница не найдена", status=404)
