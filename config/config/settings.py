@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_extensions',
     'resort.apps.ResortConfig',
+    'users.apps.UsersConfig',
 ]
 
 MIDDLEWARE = [
