@@ -29,7 +29,11 @@
                 <div class="list-group-item">
                     <div class="d-flex justify-content-between">
                         <div>
-                            <strong>{{ trip.user.username }}</strong>
+                            {% if trip.user == request.user %}
+                                <strong>Вы</strong>
+                            {% else %}
+                                <strong>{{ trip.user.username }}</strong>
+                            {% endif %}
                             <small class="text-muted">
                                 {{ trip.start_date }} — {{ trip.end_date }}
                             </small>
