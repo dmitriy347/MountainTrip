@@ -1,6 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db.models import Q
+from django.db.models import Q, Count
 from django.http import HttpResponse, HttpResponseNotFound
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse_lazy
@@ -38,11 +38,15 @@ class ResortDetailView(DetailView):
         context = super().get_context_data(**kwargs)
         context['title'] = self.object.name
         user = self.request.user                # Получаем текущего пользователя
-        all_trips = self.object.trips.all()     # Все поездки, связанные с курортом
+        trips_qs = self.object.trips.all()      # Все поездки, связанные с курортом
+
+        counts = trips_qs.aggregate(    # словарь counts с общим количеством поездок и количеством публичных поездок
+            total=Count('id'),
+            public=Count('id', filter=Q(is_public=True)))
 
         # 0. Количество поездок к курорту (видят все)
-        context['total_trips_count'] = all_trips.count()
-        context['public_trips_count'] = all_trips.filter(is_public=True).count()
+        context['total_trips_count'] = counts.get('total', 0)
+        context['public_trips_count'] = counts.get('public', 0)
 
         # 1. Гость - не видит список поездок
         if not user.is_authenticated:
@@ -50,9 +54,9 @@ class ResortDetailView(DetailView):
             return context
 
         # 2. Авторизованные
-        context['trips'] = all_trips.filter(
+        context['trips'] = trips_qs.filter(
             Q(is_public=True) | Q(user=user)
-        )
+        ).select_related('user', 'resort')                # Оптимизация: сразу подтягиваем связанные объекты User
         return context
 
 
