@@ -4,18 +4,26 @@
 {% block title %}Поездка — SkiTrip Journal{% endblock %}
 
 {% block content %}
-<h2>{{ trip.resort.name }}</h2>
-<p>{{ trip.start_date }} — {{ trip.end_date }}</p>
-<p>{{ trip.comment }}</p>
+<h2 class="mb-1">{{ trip.resort.name }}</h2>
+<p class="text-muted">
+    {{ trip.start_date }} — {{ trip.end_date }}
+</p>
+
+{% if trip.comment %}
+<div class="p-3 mb-4 bg-light rounded">
+    {{ trip.comment }}
+</div>
+{% endif %}
 
 {% if trip.user == request.user %}
-<a href="{% url 'trip_edit' trip.id %}" class="btn btn-sm btn-outline-secondary">
-    Редактировать
-</a>
-
-<a href="{% url 'trip_delete' trip.id %}" class="btn btn-sm btn-outline-danger">
-    Удалить
-</a>
+<div class="mb-4">
+    <a href="{% url 'trip_edit' trip.id %}" class="btn btn-sm btn-outline-secondary">
+        Редактировать
+    </a>
+    <a href="{% url 'trip_delete' trip.id %}" class="btn btn-sm btn-outline-danger">
+        Удалить
+    </a>
+</div>
 {% endif %}
 
 <hr>
@@ -26,6 +34,7 @@
         {% for photo in media_list %}
             <div class="col-md-4 mb-3">
                 <img src="{{ photo.image.url }}" class="img-fluid trip-image">
+
                 {% if trip.user == request.user %}
                     <a href="{% url 'trip_media_delete' photo.id %}" class="btn btn-sm btn-outline-danger">
                         Удалить
