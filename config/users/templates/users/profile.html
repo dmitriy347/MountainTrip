@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>{{ title }}</h1>
+
+<p><strong>Имя пользователя:</strong> {{ request.user.username }}</p>
+<p><strong>Email:</strong> {{ request.user.email|default:"не указан" }}</p>
+<p><strong>Дата регистрации:</strong> {{ request.user.date_joined|date:"d.m.Y" }}</p>
+
+<hr>
+
+<a href="{% url 'password_change' %}">Сменить пароль</a>
+{% endblock %}

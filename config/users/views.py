@@ -1,8 +1,9 @@
 from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView, LogoutView
 from django.urls import reverse_lazy
-from django.views.generic import CreateView
+from django.views.generic import CreateView, TemplateView
 
 from users.forms import CustomUserCreationForm
 
@@ -36,4 +37,12 @@ class UserRegisterView(CreateView):
     success_url = reverse_lazy('users:login')
     extra_context = {
         'title': 'Регистрация'
+    }
+
+
+class ProfileView(LoginRequiredMixin, TemplateView):
+    """Класс-представление для профиля пользователя."""
+    template_name = 'users/profile.html'
+    extra_context = {
+        'title': 'Профиль'
     }
