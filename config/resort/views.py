@@ -85,10 +85,11 @@ class TripDetailView(LoginRequiredMixin, DetailView):
     def get_queryset(self):
         """Фильтрация поездок по текущему пользователю и публичности"""
         user = self.request.user
-        return Trip.objects.filter(
-            Q(is_public=True) | Q(user=user)
+        return (Trip.objects.filter(
+            Q(is_public=True) | Q(user=user))
+            .select_related('user', 'resort')
+            .prefetch_related('media')    # Оптимизация: сразу подтягиваем связанные объекты User, Resort и медиафайлы
         )
-
 
 class TripListView(LoginRequiredMixin, ListView):
     """Класс-представление для списка поездок пользователя"""
