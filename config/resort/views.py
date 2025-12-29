@@ -41,7 +41,8 @@ class ResortDetailView(DetailView):
         all_trips = self.object.trips.all()     # Все поездки, связанные с курортом
 
         # 0. Количество поездок к курорту (видят все)
-        context['trips_count'] = all_trips.count()
+        context['total_trips_count'] = all_trips.count()
+        context['public_trips_count'] = all_trips.filter(is_public=True).count()
 
         # 1. Гость - не видит список поездок
         if not user.is_authenticated:

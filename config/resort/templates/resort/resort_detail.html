@@ -6,29 +6,47 @@
 {% block content %}
 <h2>{{ title }}</h2>
 <p class="text-muted">{{ resort.region }}</p>
-<p>{{ resort.description }}</p>
+<p class="mb-4">{{ resort.description }}</p>
 
 <hr>
-<p>Всего поездок: {{ trips_count }}</p>
+<div class="p-3 mb-4 bg-light rounded">
+    <p class="mb-1">
+        <strong>Всего поездок на курорт:</strong> {{ total_trips_count }}
+    </p>
+    <p class="mb-0 text-muted">
+        Публичных поездок: {{ public_trips_count }}
+    </p>
+</div>
 
 {% if not user.is_authenticated %}
-        <p><em>Войдите, чтобы посмотреть поездки пользователей</em></p>
+    <p class="text-muted">
+        Войдите, чтобы посмотреть публичные поездки пользователей
+    </p>
 {% else %}
     {% if trips %}
-        <ul>
+        <div class="list-group">
             {% for trip in trips %}
-                <li>
-                    Поездка в {{ trip.resort.name }}
-                    {% if trip.is_public %}
-                        (публичная)
-                    {% else %}
-                        (личная)
-                    {% endif %}
+                <div class="list-group-item">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <strong>{{ trip.user.username }}</strong>
+                            <small class="text-muted">
+                                {{ trip.start_date }} — {{ trip.end_date }}
+                            </small>
+                        </div>
+                        {% if not trip.is_public %}
+                            {% if trip.user == user %}
+                                <span class="badge bg-secondary">Приватная запись</span>
 
-                    <a href="{{ trip.get_absolute_url }}">Посмотреть поездку</a>
-                </li>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                    <a href="{{ trip.get_absolute_url }}" class="btn btn-sm btn-outline-primary mt-2">
+                        Подробнее
+                    </a>
+                </div>
             {% endfor %}
-        </ul>
+        </div>
     {% else %}
         <p>Пока нет поездок</p>
     {% endif %}
