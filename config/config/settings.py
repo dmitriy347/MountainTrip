@@ -133,3 +133,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_URL = 'users:login'          # URL для перенаправления на страницу авторизации
 LOGIN_REDIRECT_URL = 'trip_list'   # Перенаправление после успешной авторизации
 LOGOUT_REDIRECT_URL = 'home'       # Перенаправление после выхода из системы
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'    # Использование консольного бэкенда для отправки писем (для разработки)
