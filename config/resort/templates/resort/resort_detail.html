@@ -9,23 +9,29 @@
 <p>{{ resort.description }}</p>
 
 <hr>
-<h4 class="mt-4">Поездки пользователей</h4>
-<h2>Публичные поездки</h2>
+<p>Всего поездок: {{ trips_count }}</p>
 
-{% if public_trips %}
-    <ul>
-        {% for trip in public_trips %}
-            <li>
-                Пользователь: {{ trip.user.username }}<br>
-                Период: {{ trip.start_date }} — {{ trip.end_date }}<br>
-
-                <a href="{% url 'trip_detail' trip.id %}">
-                    Посмотреть поездку
-                </a>
-            </li>
-        {% endfor %}
-    </ul>
+{% if not user.is_authenticated %}
+        <p><em>Войдите, чтобы посмотреть поездки пользователей</em></p>
 {% else %}
-    <p>Пока нет публичных поездок.</p>
+    {% if trips %}
+        <ul>
+            {% for trip in trips %}
+                <li>
+                    Поездка в {{ trip.resort.name }}
+                    {% if trip.is_public %}
+                        (публичная)
+                    {% else %}
+                        (личная)
+                    {% endif %}
+
+                    <a href="{{ trip.get_absolute_url }}">Посмотреть поездку</a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Пока нет поездок</p>
+    {% endif %}
+
 {% endif %}
 {% endblock %}
