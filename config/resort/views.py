@@ -1,5 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import Q
 from django.http import HttpResponse, HttpResponseNotFound
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse_lazy
@@ -31,17 +32,26 @@ class ResortDetailView(DetailView):
     slug_url_kwarg = 'resort_slug'
 
     def get_context_data(self, **kwargs):
-        """Добавляем в контекст заголовок и список поездок"""
+        """
+        Добавляем в контекст заголовок страницы и фильтрацию поездки по текущему пользователю и публичности
+        """
         context = super().get_context_data(**kwargs)
         context['title'] = self.object.name
-        context['public_trips'] = (
-                    self.object.trips
-                    .filter(
-                        is_public=True
-                    )
-                    .select_related('user')
-                    .order_by('-created_at')
-                )
+        user = self.request.user                # Получаем текущего пользователя
+        all_trips = self.object.trips.all()     # Все поездки, связанные с курортом
+
+        # 0. Количество поездок к курорту (видят все)
+        context['trips_count'] = all_trips.count()
+
+        # 1. Гость - не видит список поездок
+        if not user.is_authenticated:
+            context['trips'] = None
+            return context
+
+        # 2. Авторизованные
+        context['trips'] = all_trips.filter(
+            Q(is_public=True) | Q(user=user)
+        )
         return context
 
 
@@ -68,12 +78,10 @@ class TripDetailView(LoginRequiredMixin, DetailView):
         return context
 
     def get_queryset(self):
-        """Фильтрация поездок по текущему пользователю"""
-        return (
-            Trip.objects
-                .select_related('resort')   # Оптимизация: сразу подтягиваем связанные объекты Resort
-                .prefetch_related('media')  # Оптимизация: сразу подтягиваем связанные объекты TripMedia
-                .filter(user=self.request.user)
+        """Фильтрация поездок по текущему пользователю и публичности"""
+        user = self.request.user
+        return Trip.objects.filter(
+            Q(is_public=True) | Q(user=user)
         )
 
 
