@@ -12,6 +12,9 @@ class TripForm(forms.ModelForm):
             'end_date': forms.DateInput(attrs={'type': 'date'}, format='%Y-%m-%d'),
             'comment': forms.Textarea(attrs={'rows': 4}),
         }
+        labels = {
+            'is_public': 'Показать всем пользователям',
+        }
 
 
 class TripMediaForm(forms.ModelForm):
