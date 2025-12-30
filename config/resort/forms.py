@@ -6,7 +6,7 @@ class TripForm(forms.ModelForm):
     """Форма для создания и редактирования поездок"""
     class Meta:
         model = Trip
-        fields = ['resort', 'start_date', 'end_date', 'comment']
+        fields = ['resort', 'start_date', 'end_date', 'comment', 'is_public']
         widgets = {
             'start_date': forms.DateInput(attrs={'type': 'date'}, format='%Y-%m-%d'),
             'end_date': forms.DateInput(attrs={'type': 'date'}, format='%Y-%m-%d'),
