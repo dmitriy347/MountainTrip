@@ -5,12 +5,12 @@ from django.contrib.auth.views import LoginView, LogoutView
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, TemplateView
 
-from users.forms import CustomUserCreationForm
+from users.forms import CustomUserCreationForm, UserLoginForm
 
 
 class UserLoginView(LoginView):
     """Класс-представление для авторизации пользователя."""
-    form_class = AuthenticationForm
+    form_class = UserLoginForm
     template_name = 'users/login.html'
     extra_context = {
         'title': 'Авторизация',

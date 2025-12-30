@@ -20,3 +20,28 @@ class CustomUserCreationForm(UserCreationForm):
         if User.objects.filter(email=email).exists():
             raise forms.ValidationError('Пользователь с таким email уже существует.')
         return email
+
+
+from django import forms
+from django.contrib.auth.forms import AuthenticationForm
+
+
+class UserLoginForm(AuthenticationForm):
+    username = forms.CharField(
+        label='',
+        widget=forms.TextInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'Имя пользователя',
+            }
+        )
+    )
+    password = forms.CharField(
+        label='',
+        widget=forms.PasswordInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'Пароль',
+            }
+        )
+    )

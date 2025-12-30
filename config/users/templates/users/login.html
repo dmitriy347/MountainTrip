@@ -1,23 +1,44 @@
 {% extends "base.html" %}
 {% load socialaccount %}
 
+{% block title %}{{ title }}{% endblock %}
+
 {% block content %}
-<h1>{{ title }}</h1>
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
 
-<form method="post">
-    {% csrf_token %}
-    <input type="hidden" name="next" value="{{ next }}" />
-    {{ form.as_p }}
-    <button type="submit">Войти</button>
-</form>
+        <div class="card shadow-sm">
+            <div class="card-body">
 
-<a href="{% provider_login_url 'github' %}"
-   class="btn btn-outline-dark w-100 mt-2">
-    Войти через GitHub
-</a>
+                <h2 class="text-center mb-4">Вход</h2>
 
-<hr>
-<a href="{% url 'password_reset' %}">
-    Забыли пароль?
-</a>
+                <form method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="next" value="{{ next }}"/>
+                    {{ form.as_p }}
+                    <button type="submit" class="btn btn-primary w-100">
+                        Войти
+                    </button>
+                </form>
+
+                <div class="text-center text-muted my-3">
+                    или
+                </div>
+
+                <a href="{% provider_login_url 'github' %}"
+                   class="btn btn-dark w-100 mb-3">
+                    Войти через GitHub
+                </a>
+
+                <div class="text-center">
+                    <a href="{% url 'password_reset' %}" class="text-decoration-none">
+                        Забыли пароль?
+                    </a>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
 {% endblock %}
