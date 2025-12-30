@@ -101,3 +101,7 @@ body {
     background: #cff4fc;
     color: #055160;
 }
+
+.navbar .dropdown-toggle::after {
+    margin-left: 0.35rem;
+}
