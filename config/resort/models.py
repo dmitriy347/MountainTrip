@@ -1,4 +1,5 @@
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.urls import reverse
 from slugify import slugify
@@ -42,6 +43,11 @@ class Trip(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.resort.name}"
+
+    def clean(self):
+        """Валидация: дата начала не может быть позже даты окончания."""
+        if self.start_date > self.end_date:
+            raise ValidationError('Дата начала поездки не может быть позже даты окончания.')
 
     class Meta:
         ordering = ['-start_date']
