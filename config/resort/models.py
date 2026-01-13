@@ -35,10 +35,10 @@ class Trip(models.Model):
     """Модель поездка пользователя."""
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='trips', verbose_name='Пользователь')
     resort = models.ForeignKey(Resort, on_delete=models.CASCADE, related_name='trips', verbose_name='Курорт')
-    start_date = models.DateField(verbose_name='Дата начала поездки')
+    start_date = models.DateField(verbose_name='Дата начала поездки', db_index=True)
     end_date = models.DateField(verbose_name='Дата окончания поездки')
     comment = models.TextField(blank=True, verbose_name='Комментарий')
-    is_public = models.BooleanField(default=False, verbose_name='Публичная поездка')
+    is_public = models.BooleanField(default=False, verbose_name='Публичная поездка', db_index=True)
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата создания')
 
     def __str__(self):
@@ -51,6 +51,10 @@ class Trip(models.Model):
 
     class Meta:
         ordering = ['-start_date']
+        indexes = [
+            models.Index(fields=['user', 'is_public']),
+            models.Index(fields=['-start_date'])
+        ]
         verbose_name = 'Поездку'
         verbose_name_plural = 'Поездки'
 
