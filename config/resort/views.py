@@ -32,6 +32,8 @@ class ResortDetailView(DetailView):
     slug_field = 'slug'
     slug_url_kwarg = 'resort_slug'
 
+    CACHE_TIMEOUT = 60 * 10  # 10 минут
+
     def get_context_data(self, **kwargs):
         """
         Добавляем в контекст заголовок страницы и фильтрацию поездки по текущему пользователю и публичности
@@ -41,20 +43,26 @@ class ResortDetailView(DetailView):
         user = self.request.user                # Получаем текущего пользователя
         trips_qs = self.object.trips.all()      # Все поездки, связанные с курортом
 
-        counts = trips_qs.aggregate(    # словарь counts с общим количеством поездок и количеством публичных поездок
-            total=Count('id'),
-            public=Count('id', filter=Q(is_public=True)))
+        # Кэширование количества поездок: счетчики
+        counts_cache_key = f'resort:{self.object.id}:counts'       # ключ кэша для количества поездок
+        cached_counts = cache.get(counts_cache_key)
+        if cached_counts is None:
+            cached_counts = trips_qs.aggregate(    # словарь cached_counts с общим количеством поездок и количеством публичных поездок
+                total=Count('id'),
+                public=Count('id', filter=Q(is_public=True))
+            )
+            cache.set(counts_cache_key, cached_counts, self.CACHE_TIMEOUT)
 
-        # 0. Количество поездок к курорту (видят все)
-        context['total_trips_count'] = counts.get('total', 0)
-        context['public_trips_count'] = counts.get('public', 0)
+        # Количество поездок к курорту (видят все)
+        context['total_trips_count'] = cached_counts['total']
+        context['public_trips_count'] = cached_counts['public']
 
         # 1. Гость - не видит список поездок
         if not user.is_authenticated:
             context['trips'] = None
             return context
 
-        # 2. Авторизованные
+        # 2. Авторизованные пользователи - видят свои поездки и публичные поездки других пользователей
         context['trips'] = trips_qs.filter(
             Q(is_public=True) | Q(user=user)
         ).select_related('user', 'resort')                # Оптимизация: сразу подтягиваем связанные объекты User
@@ -67,7 +75,7 @@ class ResortListView(ListView):
     template_name = 'resort/resort_list.html'
     context_object_name = 'resorts'
     paginate_by = 5
-    CACHE_KEY = 'resort_list'
+    CACHE_KEY = 'resort_list'           # ключ кэша для списка курортов
     CACHE_TIMEOUT = 60 * 10  # 10 минут
 
     def get_queryset(self):
