@@ -1,10 +1,11 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q, Count
-from django.http import HttpResponse, HttpResponseNotFound
+from django.http import HttpResponseNotFound
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.core.cache import cache
 
 from .forms import TripForm, TripMediaForm
 from .mixins import OwnerQuerySetMixin
@@ -66,6 +67,19 @@ class ResortListView(ListView):
     template_name = 'resort/resort_list.html'
     context_object_name = 'resorts'
     paginate_by = 5
+    CACHE_KEY = 'resort_list'
+    CACHE_TIMEOUT = 60 * 10  # 10 минут
+
+    def get_queryset(self):
+        """
+        Попытка получить список курортов из кэша,
+        если отсутствует - получить из базы и записать в кэш
+        """
+        resorts = cache.get(self.CACHE_KEY)
+        if resorts is None:
+            resorts = list(Resort.objects.all())    # list() для кэширования QuerySet как списка
+            cache.set(self.CACHE_KEY, resorts, self.CACHE_TIMEOUT)
+        return resorts
 
 
 class TripDetailView(LoginRequiredMixin, DetailView):
