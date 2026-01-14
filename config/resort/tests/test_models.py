@@ -6,24 +6,32 @@ from django.utils.text import slugify
 
 from resort.models import Resort, Trip, TripMedia
 
+
 @pytest.mark.django_db
-def test_resort_str():
+def test_resort_str(resort):
     """__str__ должен возвращать название курорта."""
-    resort = Resort.objects.create(name="Test Resort", region="Test Region")
     assert str(resort) == "Test Resort"
 
 
 @pytest.mark.django_db
-def test_resort_slug_created(db):
+def test_resort_slug_created(resort):
     """Slug должен автоматически создаваться при сохранении курорта."""
-    resort = Resort.objects.create(name="Test Resort", region="Test Region")
-    assert resort.slug == slugify("Test Resort")
+    assert resort.slug == slugify(resort.name)
+    assert 'test' in resort.slug or 'resort' in resort.slug # нужна ли эта проверка?
 
 
 @pytest.mark.django_db
-def test_resort_get_absolute_url():
+def test_resort_get_absolute_url(resort):
     """get_absolute_url должен возвращать корректный URL"""
-    resort = Resort.objects.create(name="URL Resort", region="URL Region")
     url = resort.get_absolute_url()
-
     assert resort.slug in url
+
+
+# @pytest.mark.django_db
+# def test_trip_str(trip):
+#     """__str__ должен возвращать строку с именем пользователя и названием курорта."""
+#     assert str(trip) == f"{trip.user.username} - {trip.resort.name}"
+
+
+# @pytest.mark.django_db
+# def test_trip_clean_
