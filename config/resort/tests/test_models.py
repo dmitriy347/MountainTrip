@@ -15,7 +15,6 @@ def test_resort_str(resort):
 def test_resort_slug_created(resort):
     """Slug должен автоматически создаваться при сохранении курорта."""
     assert resort.slug == slugify(resort.name)
-    assert 'test' in resort.slug or 'resort' in resort.slug # нужна ли эта проверка?
 
 
 @pytest.mark.django_db
@@ -48,6 +47,7 @@ def test_trip_clean_invalid_dates(trip_invalid):
         trip_invalid.clean()
 
 
+@pytest.mark.django_db
 def test_trip_get_absolute_url(trip):
     """get_absolute_url должен возвращать корректный URL для поездки."""
     url = trip.get_absolute_url()

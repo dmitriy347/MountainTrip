@@ -40,17 +40,6 @@ def resort(db):
         description="Test description",
     )
 
-# ПОД ВОПРОСОМ НУЖНА ЛИ ЭТА ФИКСТУРА
-@pytest.fixture
-def resort_with_custom_slug(db):
-    """Курорт с кастомным slug (для тестов urls / 404)"""
-    return Resort.objects.create(
-        name="Another Resort",
-        region="Another Region",
-        description="Another description",
-        slug="another-resort"
-    )
-
 
 @pytest.fixture
 def trip(db, user, resort):
