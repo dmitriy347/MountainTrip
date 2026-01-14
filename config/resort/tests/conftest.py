@@ -8,6 +8,8 @@ from resort.models import Resort, Trip, TripMedia
 User = get_user_model()
 
 # Используем pytest fixtures для создания тестовых данных
+# Общие фикстуры для тестов: пользователи, курорт, поездка, image и клиент.
+
 
 @pytest.fixture
 def user(db):
@@ -36,7 +38,6 @@ def resort(db):
         name="Test Resort",
         region="Test Region",
         description="Test description",
-        slug="test-resort"
     )
 
 
