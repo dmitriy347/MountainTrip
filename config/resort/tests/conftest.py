@@ -65,6 +65,18 @@ def trip(db, user, resort):
 
 
 @pytest.fixture
+def trip_invalid(db, user, resort):
+    """Поездка пользователя с некорректными датами (для теста валидации)"""
+    return Trip(
+        user=user,
+        resort=resort,
+        start_date="2023-12-10",
+        end_date="2023-12-01",
+        is_public=False
+    )
+
+
+@pytest.fixture
 def public_trip(another_user, resort):
     """Публичная поездка другого пользователя"""
     return Trip.objects.create(
