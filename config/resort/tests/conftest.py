@@ -42,6 +42,16 @@ def resort(db):
 
 
 @pytest.fixture
+def another_resort(db):
+    """Другой курорт (для проверки разных поездок)"""
+    return Resort.objects.create(
+        name="Another Resort",
+        region="Another Region",
+        description="Another description",
+    )
+
+
+@pytest.fixture
 def trip(db, user, resort):
     """Поездка пользователя на курорт"""
     return Trip.objects.create(
@@ -66,14 +76,25 @@ def trip_invalid(db, user, resort):
 
 
 @pytest.fixture
-def public_trip(another_user, resort):
+def public_trip_another_user(another_user, another_resort):
     """Публичная поездка другого пользователя"""
     return Trip.objects.create(
         user=another_user,
-        resort=resort,
+        resort=another_resort,
         start_date="2023-11-01",
         end_date="2023-11-05",
         is_public=True
+    )
+
+@pytest.fixture
+def private_trip_another_user(another_user, another_resort):
+    """Приватная поездка другого пользователя"""
+    return Trip.objects.create(
+        user=another_user,
+        resort=another_resort,
+        start_date="2023-10-01",
+        end_date="2023-10-05",
+        is_public=False
     )
 
 
