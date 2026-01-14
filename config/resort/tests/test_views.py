@@ -17,6 +17,31 @@ import pytest
 from django.urls import reverse
 
 
+def test_trip_list_view_requires_login(client):
+    """Тест доступа к странице списка поездок (требуется авторизация)"""
+    url = reverse('trip_list')
+    response = client.get(url)  # Выполняем GET-запрос к странице списка поездок
+    assert response.status_code == 302  # Ожидаем перенаправление на страницу логина
+    assert '/sign-in/' in response.url  # Проверяем, что перенаправление ведет на страницу логина
+
+
+@pytest.mark.django_db
+def test_trip_list_view_shows_only_user_trips(auth_client, another_user, trip, public_trip_another_user, private_trip_another_user):
+    """Пользователь должен видеть ТОЛЬКО свои поездки в списке поездок (OwnerQuerySetMixin)"""
+    url = reverse('trip_list')
+    response = auth_client.get(url)  # Выполняем GET-запрос к странице списка поездок
+    content = response.content.decode() # Получаем содержимое ответа в виде строки
+    assert response.status_code == 200
+    assert trip.resort.name in content                          # Проверяем, что видна поездка текущего пользователя
+    assert public_trip_another_user.resort.name not in content  # Проверяем, что НЕ видна публичная поездка другого пользователя
+    assert private_trip_another_user.resort.name not in content # Проверяем, что НЕ видна приватная поездка другого пользователя
+
+
+
+
+
+
+
 @pytest.mark.django_db
 def test_index_view(client):
     """Тест главной страницы"""
