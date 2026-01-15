@@ -140,6 +140,16 @@ def test_trip_detail_view_public_trip_visible(auth_client, public_trip_another_u
     assert response.context['trip'] == public_trip_another_user
 
 
+@pytest.mark.django_db
+def test_trip_detail_view_private_trip_visible(auth_client, private_trip_another_user):
+    """Авторизованный пользователь НЕ может видеть приватную поездку другого пользователя"""
+    url = reverse('trip_detail', kwargs={'trip_id': private_trip_another_user.id})
+    response = auth_client.get(url)             # Выполняем GET-запрос к странице детали поездки
+    assert response.status_code == 404          # Ожидаем 404, так как поездка приватная и не принадлежит пользователю
+
+
+
+
 
 
 
