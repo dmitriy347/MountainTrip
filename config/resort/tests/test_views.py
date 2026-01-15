@@ -216,6 +216,13 @@ def test_trip_create_requires_login(client):
     assert '/sign-in/' in response.url  # Проверяем, что перенаправление
 
 
+@pytest.mark.django_db
+def test_trip_create_view(auth_client):
+    """Тест страницы создания поездки для авторизованного пользователя"""
+    url = reverse('trip_create')
+    response = auth_client.get(url)     # Выполняем GET-запрос к странице создания поездки
+    assert response.status_code == 200
+    assert 'form' in response.context   # Проверяем, что авторизованный пользователь видит форму создания поездки
 
 
 
@@ -230,9 +237,3 @@ def test_index_view(client):
     assert response.status_code == 200
 
 
-@pytest.mark.django_db
-def test_trip_create_view(auth_client):
-    """Тест страницы создания поездки для авторизованного пользователя"""
-    url = reverse('trip_create')
-    response = auth_client.get(url)  # Выполняем GET-запрос к странице создания поездки
-    assert response.status_code == 200
