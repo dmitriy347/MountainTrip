@@ -15,8 +15,9 @@
 
 import pytest
 from django.urls import reverse
+from django.core.cache import cache
 
-
+# Тесты для представления TripListView
 def test_trip_list_view_requires_login(client):
     """Тест доступа к странице списка поездок (требуется авторизация)"""
     url = reverse('trip_list')
@@ -46,6 +47,7 @@ def test_trip_list_view_has_title(auth_client):
     assert 'Мои поездки' in response.content.decode()  # Проверяем, что заголовок страницы корректен
 
 
+# Тесты для представления ResortDetailView
 @pytest.mark.django_db
 def test_resort_detail_view_returns_200(client, resort):
     """Тест страницы курорта возвращает 200"""
@@ -90,9 +92,25 @@ def test_resort_detail_view_auth_user_sees_correct_trips(
     assert private_trip_another_user_resort not in trips # Пользователь НЕ видит приватную поездку другого пользователя
 
 
+@pytest.mark.django_db
+def test_resort_detail_view_counters(
+        client,
+        resort,
+        trip,
+        public_trip_another_user_resort,
+        private_trip_another_user_resort
+):
+    """Тест корректности счетчиков поездок на странице курорта"""
+    url = reverse('resort_detail', kwargs={'resort_slug': resort.slug})
+    cache.clear()                                # Очищаем кэш перед выполнением запроса
+    response = client.get(url)                          # Выполняем GET-запрос к странице курорта
+    assert response.context['total_trips_count'] == 3   # Общее количество поездок к курорту
+    assert response.context['public_trips_count'] == 1  # Количество публичных поездок к курорту
 
 
 
+
+# Тесты для представления index
 @pytest.mark.django_db
 def test_index_view(client):
     """Тест главной страницы"""
