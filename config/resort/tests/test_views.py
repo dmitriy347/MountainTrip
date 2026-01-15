@@ -242,6 +242,17 @@ def test_trip_create_view_assigns_user(auth_client, user, resort):
     assert trip.user == user                          # Проверяем, что пользователь присвоен корректно
 
 
+# 6. Тесты для представления TripUpdateView
+@pytest.mark.django_db
+def test_trip_update_view_requires_login(client, trip):
+    """Тест доступа к странице редактирования поездки (требуется авторизация)"""
+    url = reverse('trip_edit', kwargs={'trip_id': trip.id})
+    response = client.get(url)              # Выполняем GET-запрос к странице редактирования поездки
+    assert response.status_code == 302      # Ожидаем перенаправление на страницу логина
+    assert '/sign-in/' in response.url      # Проверяем, что перенаправление ведет на страницу логина
+
+
+
 
 
 
