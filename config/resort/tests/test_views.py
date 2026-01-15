@@ -307,6 +307,18 @@ def test_trip_delete_view_not_owner_cannot_access(client, another_user, trip):
     assert response.status_code == 404      # Ожидаем 404, так как пользователь не владелец поездки
 
 
+@pytest.mark.django_db
+def test_trip_delete_view_owner_can_delete(auth_client, trip):
+    """Владелец может успешно удалить свою поездку"""
+    url = reverse('trip_delete', kwargs={'trip_id': trip.id})
+    response = auth_client.post(url)                     # Выполняем POST-запрос к странице удаления поездки
+    assert response.status_code == 302                   # Ожидаем редирект после успешного удаления
+    with pytest.raises(Trip.DoesNotExist):
+        Trip.objects.get(id=trip.id)                     # Проверяем, что поездка была удалена
+    messages = list(get_messages(response.wsgi_request))
+    assert len(messages) == 1                            # Проверяем, что появилось сообщение об успешном удалении
+
+
 
 
 
