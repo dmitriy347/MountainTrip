@@ -288,6 +288,17 @@ def test_trip_update_view_owner_can_save(auth_client, trip):
     assert len(messages) == 1
 
 
+# 7. Тесты для представления TripDeleteView
+@pytest.mark.django_db
+def test_trip_delete_view_requires_login(client, trip):
+    """Тест доступа к странице удаления поездки (требуется авторизация)"""
+    url = reverse('trip_delete', kwargs={'trip_id': trip.id})
+    response = client.get(url)              # Выполняем GET-запрос к странице удаления поездки
+    assert response.status_code == 302      # Ожидаем перенаправление на страницу логина
+    assert '/sign-in/' in response.url      # Проверяем, что перенаправление ведет на страницу логина
+
+
+
 
 
 
