@@ -15,6 +15,8 @@
 
 import pytest
 from django.urls import reverse
+from resort.models import Resort
+
 
 # Тесты для представления TripListView
 def test_trip_list_view_requires_login(client):
@@ -122,6 +124,23 @@ def test_resort_list_view_uses_correct_template(client):
     url = reverse('resort_list')
     response = client.get(url)                                          # Выполняем GET-запрос к странице списка курортов
     assert 'resort/resort_list.html' in [t.name for t in response.templates]  # Проверяем использование правильного шаблона
+
+
+@pytest.mark.django_db
+def test_resort_list_view_pagination(client):
+    """Тест пагинации на странице списка курортов"""
+    # Создаем 8 курортов для проверки пагинации
+    for i in range(8):
+        Resort.objects.create(name=f'Resort {i}', region='Test Region', description='Test description')
+
+    url = reverse('resort_list')
+    response_page_1 = client.get(url)                    # Выполняем GET-запрос к первой странице списка курортов
+    assert response_page_1.status_code == 200
+    assert len(response_page_1.context['resorts']) == 5  # Проверяем, что на первой странице отображается 5 курортов
+
+    response_page_2 = client.get(url + '?page=2')        # Запрашиваем вторую страницу
+    assert response_page_2.status_code == 200
+    assert len(response_page_2.context['resorts']) == 3  # Проверяем, что на второй странице отображается оставшиеся 4 курорта
 
 
 
