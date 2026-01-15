@@ -319,6 +319,15 @@ def test_trip_delete_view_owner_can_delete(auth_client, trip):
     assert len(messages) == 1                            # Проверяем, что появилось сообщение об успешном удалении
 
 
+# 8. Тесты для представления TripMediaAddView
+@pytest.mark.django_db
+def test_trip_media_add_view_requires_login(client, trip):
+    """Тест доступа к странице добавления медиафайла (требуется авторизация)"""
+    url = reverse('trip_media_add', kwargs={'trip_id': trip.id})
+    response = client.get(url)              # Выполняем GET-запрос к странице добавления медиафайла
+    assert response.status_code == 302      # Ожидаем перенаправление на страницу логина
+    assert '/sign-in/' in response.url      # Проверяем, что перенаправление ведет на страницу логина
+
 
 
 
