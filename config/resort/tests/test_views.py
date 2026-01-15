@@ -270,6 +270,24 @@ def test_trip_update_view_owner_can_open(auth_client, trip):
     assert 'form' in response.context
 
 
+@pytest.mark.django_db
+def test_trip_update_view_owner_can_save(auth_client, trip):
+    """Владелец может успешно сохранить изменения поездки"""
+    url = reverse('trip_edit', kwargs={'trip_id': trip.id})
+    form_data = {
+        'resort': trip.resort.id,
+        'start_date': '2023-12-01',
+        'end_date': '2023-12-10',
+        'is_public': True,
+    }
+    response = auth_client.post(url, data=form_data)            # Отправляем POST-запрос с измененными данными
+    trip.refresh_from_db()                                      # Обновляем объект поездки из базы данных
+    assert response.status_code == 302                          # Ожидаем редирект после успешного сохранения
+    assert trip.is_public is True                               # Проверяем, что изменения сохранены
+    messages = list(get_messages(response.wsgi_request))        # Получаем сообщения
+    assert len(messages) == 1
+
+
 
 
 
