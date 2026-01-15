@@ -261,6 +261,17 @@ def test_trip_update_view_not_owner_cannot_access(client, another_user, trip):
     assert response.status_code == 404      # Ожидаем 404, так как пользователь не владелец поездки
 
 
+@pytest.mark.django_db
+def test_trip_update_view_owner_can_open(auth_client, trip):
+    """Владелец может открыть страницу редактирования своей поездки"""
+    url = reverse('trip_edit', kwargs={'trip_id': trip.id})
+    response = auth_client.get(url)         # Выполняем GET-запрос к странице редактирования поездки
+    assert response.status_code == 200
+    assert 'form' in response.context
+
+
+
+
 
 
 
