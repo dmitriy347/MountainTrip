@@ -116,6 +116,14 @@ def test_resort_list_view_returns_resorts(client, resort):
     assert resort in response.context['resorts']  # Проверяем, что курорт присутствует в контексте
 
 
+@pytest.mark.django_db
+def test_resort_list_view_uses_correct_template(client):
+    """Тест использования правильного шаблона для страницы списка курортов"""
+    url = reverse('resort_list')
+    response = client.get(url)                                          # Выполняем GET-запрос к странице списка курортов
+    assert 'resort/resort_list.html' in [t.name for t in response.templates]  # Проверяем использование правильного шаблона
+
+
 
 
 
