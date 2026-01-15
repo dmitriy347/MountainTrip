@@ -14,8 +14,9 @@
 # - page_not_found — 1 (возвращает 404)
 
 import pytest
+from django.contrib.messages import get_messages
 from django.urls import reverse
-from resort.models import Resort
+from resort.models import Resort, Trip
 
 
 # 1. Тесты для представления ResortDetailView
@@ -226,17 +227,20 @@ def test_trip_create_view(auth_client):
 
 
 @pytest.mark.django_db
-def test_trip_create_assigns_user(auth_client, user, resort, trip):
-    """Тест, что при создании поездки присваивается текущий пользователь"""
+def test_trip_create_view_assigns_user(auth_client, user, resort):
+    """Тест успешного редиректа и присвоения пользователя при создании поездки"""
     url = reverse('trip_create')
     form_data = {
         'resort': resort.id,
-        'start_date': trip.start_date,
-        'end_date': trip.end_date,
-        'is_public': trip.is_public,
+        'start_date': '2024-01-01',
+        'end_date': '2024-01-05',
+        'is_public': True,
     }
     response = auth_client.post(url, data=form_data)  # Отправляем POST-запрос с данными формы
+    assert response.status_code == 302                # Ожидаем редирект после успешного создания
+    trip = Trip.objects.get()                         # Получаем созданную поездку
     assert trip.user == user                          # Проверяем, что пользователь присвоен корректно
+
 
 
 
