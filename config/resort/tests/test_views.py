@@ -293,10 +293,18 @@ def test_trip_update_view_owner_can_save(auth_client, trip):
 def test_trip_delete_view_requires_login(client, trip):
     """Тест доступа к странице удаления поездки (требуется авторизация)"""
     url = reverse('trip_delete', kwargs={'trip_id': trip.id})
-    response = client.get(url)              # Выполняем GET-запрос к странице удаления поездки
+    response = client.post(url)             # Выполняем POST-запрос к странице удаления поездки
     assert response.status_code == 302      # Ожидаем перенаправление на страницу логина
     assert '/sign-in/' in response.url      # Проверяем, что перенаправление ведет на страницу логина
 
+
+@pytest.mark.django_db
+def test_trip_delete_view_not_owner_cannot_access(client, another_user, trip):
+    """Пользователь не-владелец не может удалить чужую поездку"""
+    url = reverse('trip_delete', kwargs={'trip_id': trip.id})
+    client.force_login(another_user)        # Логинимся как другой пользователь
+    response = client.post(url)             # Выполняем POST-запрос к странице удаления поездки
+    assert response.status_code == 404      # Ожидаем 404, так как пользователь не владелец поездки
 
 
 
