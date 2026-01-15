@@ -211,19 +211,32 @@ def test_trip_list_view_has_title(auth_client):
 def test_trip_create_requires_login(client):
     """Тест доступа к странице создания поездки (требуется авторизация)"""
     url = reverse('trip_create')
-    response = client.get(url)          # Выполняем GET-запрос к странице создания поездки
-    assert response.status_code == 302  # Ожидаем перенаправление на страницу логина
-    assert '/sign-in/' in response.url  # Проверяем, что перенаправление
+    response = client.get(url)              # Выполняем GET-запрос к странице создания поездки
+    assert response.status_code == 302      # Ожидаем перенаправление на страницу логина
+    assert '/sign-in/' in response.url      # Проверяем, что перенаправление
 
 
 @pytest.mark.django_db
 def test_trip_create_view(auth_client):
     """Тест страницы создания поездки для авторизованного пользователя"""
     url = reverse('trip_create')
-    response = auth_client.get(url)     # Выполняем GET-запрос к странице создания поездки
+    response = auth_client.get(url)         # Выполняем GET-запрос к странице создания поездки
     assert response.status_code == 200
-    assert 'form' in response.context   # Проверяем, что авторизованный пользователь видит форму создания поездки
+    assert 'form' in response.context       # Проверяем, что авторизованный пользователь видит форму создания поездки
 
+
+@pytest.mark.django_db
+def test_trip_create_assigns_user(auth_client, user, resort, trip):
+    """Тест, что при создании поездки присваивается текущий пользователь"""
+    url = reverse('trip_create')
+    form_data = {
+        'resort': resort.id,
+        'start_date': trip.start_date,
+        'end_date': trip.end_date,
+        'is_public': trip.is_public,
+    }
+    response = auth_client.post(url, data=form_data)  # Отправляем POST-запрос с данными формы
+    assert trip.user == user                          # Проверяем, что пользователь присвоен корректно
 
 
 
