@@ -157,6 +157,15 @@ def test_trip_detail_view_media_in_context(auth_client, trip, trip_media):
     assert trip_media in media                  # Проверяем, что медиафайл присутствует в контексте
 
 
+@pytest.mark.django_db
+def test_trip_detail_view_has_title(auth_client, trip):
+    """Тест наличия заголовка на странице детали поездки"""
+    url = reverse('trip_detail', kwargs={'trip_id': trip.id})
+    response = auth_client.get(url)                    # Выполняем GET-запрос к странице детали поездки
+    assert 'title' in response.context
+
+
+
 
 
 # Тесты для представления TripListView
