@@ -18,36 +18,6 @@ from django.urls import reverse
 from resort.models import Resort
 
 
-# Тесты для представления TripListView
-def test_trip_list_view_requires_login(client):
-    """Тест доступа к странице списка поездок (требуется авторизация)"""
-    url = reverse('trip_list')
-    response = client.get(url)  # Выполняем GET-запрос к странице списка поездок
-    assert response.status_code == 302  # Ожидаем перенаправление на страницу логина
-    assert '/sign-in/' in response.url  # Проверяем, что перенаправление ведет на страницу логина
-
-
-@pytest.mark.django_db
-def test_trip_list_view_shows_only_user_trips(auth_client, another_user, trip, public_trip_another_user, private_trip_another_user):
-    """Пользователь должен видеть ТОЛЬКО свои поездки в списке поездок (OwnerQuerySetMixin)"""
-    url = reverse('trip_list')
-    response = auth_client.get(url)  # Выполняем GET-запрос к странице списка поездок
-    content = response.content.decode() # Получаем содержимое ответа в виде строки
-    assert response.status_code == 200
-    assert trip.resort.name in content                          # Проверяем, что видна поездка текущего пользователя
-    assert public_trip_another_user.resort.name not in content  # Проверяем, что НЕ видна публичная поездка другого пользователя
-    assert private_trip_another_user.resort.name not in content # Проверяем, что НЕ видна приватная поездка другого пользователя
-
-
-@pytest.mark.django_db
-def test_trip_list_view_has_title(auth_client):
-    """Тест наличия заголовка на странице списка поездок"""
-    url = reverse('trip_list')
-    response = auth_client.get(url)                    # Выполняем GET-запрос к странице списка поездок
-    assert response.status_code == 200
-    assert 'Мои поездки' in response.content.decode()  # Проверяем, что заголовок страницы корректен
-
-
 # Тесты для представления ResortDetailView
 @pytest.mark.django_db
 def test_resort_detail_view_returns_200(client, resort):
@@ -141,6 +111,61 @@ def test_resort_list_view_pagination(client):
     response_page_2 = client.get(url + '?page=2')        # Запрашиваем вторую страницу
     assert response_page_2.status_code == 200
     assert len(response_page_2.context['resorts']) == 3  # Проверяем, что на второй странице отображается оставшиеся 4 курорта
+
+#
+# # Тесты для представления TripDetailView
+# @pytest.mark.django_db
+# def test_trip_detail_view_requires_login(client, trip):
+#     """Тест доступа к странице детали поездки (требуется авторизация)"""
+#     url = reverse('trip_detail', kwargs={'trip_id': trip.id})
+#     response = client.get(url)                  # Выполняем GET-запрос к странице детали поездки
+#     assert response.status_code == 302          # Ожидаем перенаправление на страницу логина
+#     assert '/sign-in/' in response.url          # Проверяем, что перенаправление ведет на страницу логина
+
+
+
+
+
+# Тесты для представления TripListView
+def test_trip_list_view_requires_login(client):
+    """Тест доступа к странице списка поездок (требуется авторизация)"""
+    url = reverse('trip_list')
+    response = client.get(url)                  # Выполняем GET-запрос к странице списка поездок
+    assert response.status_code == 302          # Ожидаем перенаправление на страницу логина
+    assert '/sign-in/' in response.url          # Проверяем, что перенаправление ведет на страницу логина
+
+
+@pytest.mark.django_db
+def test_trip_list_view_authenticated_user(auth_client):
+    """Тест доступа к странице списка поездок для авторизованного пользователя"""
+    url = reverse('trip_list')
+    response = auth_client.get(url)             # Выполняем GET-запрос к странице списка поездок
+    assert response.status_code == 200
+
+
+@pytest.mark.django_db
+def test_trip_list_view_shows_only_user_trips(
+        auth_client,
+        trip,
+        public_trip_another_user,
+        private_trip_another_user
+):
+    """Пользователь должен видеть ТОЛЬКО свои поездки в списке поездок (OwnerQuerySetMixin)"""
+    url = reverse('trip_list')
+    response = auth_client.get(url)             # Выполняем GET-запрос к странице списка поездок
+    trips = response.context['trips']
+    assert trip in trips                             # Пользователь видит свою поездку
+    assert public_trip_another_user not in trips     # Пользователь НЕ видит публичную поездку другого пользователя
+    assert private_trip_another_user not in trips    # Пользователь НЕ видит приватную поездку другого пользователя
+
+
+@pytest.mark.django_db
+def test_trip_list_view_has_title(auth_client):
+    """Тест наличия заголовка на странице списка поездок"""
+    url = reverse('trip_list')
+    response = auth_client.get(url)                    # Выполняем GET-запрос к странице списка поездок
+    assert response.context['title'] == 'Мои поездки'  # Проверяем, что заголовок страницы корректен
+
 
 
 
