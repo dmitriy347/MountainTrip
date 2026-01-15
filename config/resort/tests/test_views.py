@@ -123,6 +123,14 @@ def test_trip_detail_view_requires_login(client, trip):
     assert '/sign-in/' in response.url          # Проверяем, что перенаправление ведет на страницу логина
 
 
+@pytest.mark.django_db
+def test_trip_detail_view_owner_can_access(auth_client, trip):
+    """Владелец может открыть свою поездку"""
+    url = reverse('trip_detail', kwargs={'trip_id': trip.id})
+    response = auth_client.get(url)             # Выполняем GET-запрос к странице детали поездки
+    assert response.status_code == 200
+
+
 
 
 
