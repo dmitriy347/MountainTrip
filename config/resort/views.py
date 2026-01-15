@@ -1,5 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.views import redirect_to_login
 from django.db.models import Q, Count
 from django.http import HttpResponseNotFound
 from django.shortcuts import render, get_object_or_404
@@ -210,13 +211,18 @@ class TripMediaAddView(LoginRequiredMixin, CreateView):
         'title': 'Добавить фото к поездке',
     }
 
+    def dispatch(self, request, *args, **kwargs):
+        """Проверяем, что поездка принадлежит текущему пользователю"""
+        if not request.user.is_authenticated:
+            return redirect_to_login(request.get_full_path())
+        trip_id = self.kwargs['trip_id']
+        user = request.user
+        self.trip = get_object_or_404(Trip, pk=trip_id, user=user)
+        return super().dispatch(request, *args, **kwargs)
+
     def form_valid(self, form):
         """Дополняем форму данными о текущей поездке перед сохранением"""
-        trip_id = self.kwargs['trip_id']
-        user = self.request.user    # Защита от добавления фото к чужой поездке
-        trip = get_object_or_404(Trip, pk=trip_id, user=user)
-
-        form.instance.trip = trip   # Привязываем медиафайл к поездке ДО сохранения
+        form.instance.trip = self.trip   # Привязываем медиафайл к поездке ДО сохранения
         messages.success(self.request, "Фото успешно добавлено.")
         return super().form_valid(form)
 
