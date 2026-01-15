@@ -18,7 +18,7 @@ from django.urls import reverse
 from resort.models import Resort
 
 
-# Тесты для представления ResortDetailView
+# 1. Тесты для представления ResortDetailView
 @pytest.mark.django_db
 def test_resort_detail_view_returns_200(client, resort):
     """Тест страницы курорта возвращает 200"""
@@ -78,7 +78,7 @@ def test_resort_detail_view_counters(
     assert response.context['public_trips_count'] == 1  # Количество публичных поездок к курорту
 
 
-# Тесты для представления ResortListView
+# 2. Тесты для представления ResortListView
 @pytest.mark.django_db
 def test_resort_list_view_returns_resorts(client, resort):
     """Тест страницы списка курортов возвращает 200 и содержит курорты"""
@@ -113,7 +113,7 @@ def test_resort_list_view_pagination(client):
     assert len(response_page_2.context['resorts']) == 3  # Проверяем, что на второй странице отображается оставшиеся 4 курорта
 
 
-# Тесты для представления TripDetailView
+# 3. Тесты для представления TripDetailView
 @pytest.mark.django_db
 def test_trip_detail_view_requires_login(client, trip):
     """Тест доступа к странице детали поездки (требуется авторизация)"""
@@ -165,10 +165,7 @@ def test_trip_detail_view_has_title(auth_client, trip):
     assert 'title' in response.context
 
 
-
-
-
-# Тесты для представления TripListView
+# 4. Тесты для представления TripListView
 def test_trip_list_view_requires_login(client):
     """Тест доступа к странице списка поездок (требуется авторизация)"""
     url = reverse('trip_list')
@@ -209,6 +206,17 @@ def test_trip_list_view_has_title(auth_client):
     assert response.context['title'] == 'Мои поездки'  # Проверяем, что заголовок страницы корректен
 
 
+# 5. Тесты для представления TripCreateView
+@pytest.mark.django_db
+def test_trip_create_requires_login(client):
+    """Тест доступа к странице создания поездки (требуется авторизация)"""
+    url = reverse('trip_create')
+    response = client.get(url)          # Выполняем GET-запрос к странице создания поездки
+    assert response.status_code == 302  # Ожидаем перенаправление на страницу логина
+    assert '/sign-in/' in response.url  # Проверяем, что перенаправление
+
+
+
 
 
 
@@ -220,14 +228,6 @@ def test_index_view(client):
     url = reverse('home')
     response = client.get(url)  # Выполняем GET-запрос к главной странице
     assert response.status_code == 200
-
-
-@pytest.mark.django_db
-def test_trip_create_requires_login(client):
-    """Тест доступа к странице создания поездки (требуется авторизация)"""
-    url = reverse('trip_create')
-    response = client.get(url)  # Выполняем GET-запрос к странице создания поездки
-    assert response.status_code == 302  # Ожидаем перенаправление на
 
 
 @pytest.mark.django_db
