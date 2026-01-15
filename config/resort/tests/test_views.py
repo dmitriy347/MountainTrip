@@ -102,7 +102,6 @@ def test_resort_detail_view_counters(
 ):
     """Тест корректности счетчиков поездок на странице курорта"""
     url = reverse('resort_detail', kwargs={'resort_slug': resort.slug})
-    cache.clear()                                # Очищаем кэш перед выполнением запроса
     response = client.get(url)                          # Выполняем GET-запрос к странице курорта
     assert response.context['total_trips_count'] == 3   # Общее количество поездок к курорту
     assert response.context['public_trips_count'] == 1  # Количество публичных поездок к курорту

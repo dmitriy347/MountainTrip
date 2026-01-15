@@ -7,9 +7,9 @@ DATABASES = {
     }
 }
 
-# Отключаем Redis для тестов
+# Фейковый кэш для тестов (не сохраняет данные)
 CACHES = {
     "default": {
-        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+        "BACKEND": "django.core.cache.backends.dummy.DummyCache",
     }
 }
