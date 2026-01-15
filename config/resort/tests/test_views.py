@@ -37,6 +37,13 @@ def test_trip_list_view_shows_only_user_trips(auth_client, another_user, trip, p
     assert private_trip_another_user.resort.name not in content # Проверяем, что НЕ видна приватная поездка другого пользователя
 
 
+@pytest.mark.django_db
+def test_trip_list_view_has_title(auth_client):
+    """Тест наличия заголовка на странице списка поездок"""
+    url = reverse('trip_list')
+    response = auth_client.get(url)  # Выполняем GET-запрос к странице списка поездок
+    assert response.status_code == 200
+    assert 'Мои поездки' in response.content.decode()  # Проверяем, что заголовок страницы корректен
 
 
 
