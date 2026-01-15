@@ -324,10 +324,21 @@ def test_trip_delete_view_owner_can_delete(auth_client, trip):
 def test_trip_media_add_view_requires_login(client, trip):
     """Тест доступа к странице добавления медиафайла (требуется авторизация)"""
     url = reverse('trip_media_add', kwargs={'trip_id': trip.id})
-    response = client.get(url)              # Выполняем GET-запрос к странице добавления медиафайла
+    response = client.post(url)             # Выполняем POST-запрос к странице добавления медиафайла
     assert response.status_code == 302      # Ожидаем перенаправление на страницу логина
     assert '/sign-in/' in response.url      # Проверяем, что перенаправление ведет на страницу логина
 
+
+@pytest.mark.django_db
+def test_trip_media_add_view_not_owner_cannot_access(client, another_user, trip, image_file):
+    """Пользователь не-владелец не может добавить медиафайл к чужой поездке"""
+    url = reverse('trip_media_add', kwargs={'trip_id': trip.id})
+    client.force_login(another_user)             # Логинимся как другой пользователь
+    form_data = {
+        'image': image_file,
+    }
+    response = client.post(url, data=form_data)  # Отправляем POST-запрос с медиафайлом
+    assert response.status_code == 404           # Ожидаем 404, так как пользователь не владелец поездки
 
 
 
