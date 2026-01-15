@@ -54,6 +54,21 @@ def test_resort_detail_view_returns_200(client, resort):
     assert response.status_code == 200
 
 
+@pytest.mark.django_db
+def test_resort_detail_view_guest_sees_only_counters(
+        client,
+        resort,
+        public_trip_another_user,
+        private_trip_another_user
+):
+    """Гость не видит список поездок на странице курорта, но видит счетчики поездок"""
+    url = reverse('resort_detail', kwargs={'resort_slug': resort.slug})
+    response = client.get(url)                      # Выполняем GET-запрос к странице курорта
+    assert response.context['trips'] is None        # Гость не видит список поездок
+    assert 'total_trips_count' in response.context  # Гость видит счетчики
+    assert 'public_trips_count' in response.context
+
+
 
 
 @pytest.mark.django_db
