@@ -41,10 +41,17 @@ def test_trip_list_view_shows_only_user_trips(auth_client, another_user, trip, p
 def test_trip_list_view_has_title(auth_client):
     """Тест наличия заголовка на странице списка поездок"""
     url = reverse('trip_list')
-    response = auth_client.get(url)  # Выполняем GET-запрос к странице списка поездок
+    response = auth_client.get(url)                    # Выполняем GET-запрос к странице списка поездок
     assert response.status_code == 200
     assert 'Мои поездки' in response.content.decode()  # Проверяем, что заголовок страницы корректен
 
+
+@pytest.mark.django_db
+def test_resort_detail_view_returns_200(client, resort):
+    """Тест страницы курорта возвращает 200"""
+    url = reverse('resort_detail', kwargs={'resort_slug': resort.slug})
+    response = client.get(url)          # Выполняем GET-запрос к странице курорта
+    assert response.status_code == 200
 
 
 
