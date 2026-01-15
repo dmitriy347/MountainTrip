@@ -15,7 +15,6 @@
 
 import pytest
 from django.urls import reverse
-from django.core.cache import cache
 
 # Тесты для представления TripListView
 def test_trip_list_view_requires_login(client):
@@ -105,6 +104,17 @@ def test_resort_detail_view_counters(
     response = client.get(url)                          # Выполняем GET-запрос к странице курорта
     assert response.context['total_trips_count'] == 3   # Общее количество поездок к курорту
     assert response.context['public_trips_count'] == 1  # Количество публичных поездок к курорту
+
+
+# Тесты для представления ResortListView
+@pytest.mark.django_db
+def test_resort_list_view_returns_resorts(client, resort):
+    """Тест страницы списка курортов возвращает 200 и содержит курорты"""
+    url = reverse('resort_list')
+    response = client.get(url)                    # Выполняем GET-запрос к странице списка курортов
+    assert response.status_code == 200
+    assert resort in response.context['resorts']  # Проверяем, что курорт присутствует в контексте
+
 
 
 
