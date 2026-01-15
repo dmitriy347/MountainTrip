@@ -69,6 +69,28 @@ def test_resort_detail_view_guest_sees_only_counters(
     assert 'public_trips_count' in response.context
 
 
+@pytest.mark.django_db
+def test_resort_detail_view_auth_user_sees_correct_trips(
+        auth_client,
+        resort,
+        trip,
+        public_trip_another_user_resort,
+        private_trip_another_user_resort
+):
+    """
+    Авторизованный пользователь видит на странице курорта свои поездки,
+    публичные поездки других пользователей и счетчики поездок. Не видит приватные поездки других пользователей.
+    """
+    url = reverse('resort_detail', kwargs={'resort_slug': resort.slug})
+    response = auth_client.get(url)                      # Выполняем GET-запрос к странице курорта
+    trips = response.context['trips']
+    assert trips is not None                             # Пользователь видит список поездок
+    assert trip in trips                                 # Пользователь видит свою поездку
+    assert public_trip_another_user_resort in trips      # Пользователь видит публичную поездку другого пользователя
+    assert private_trip_another_user_resort not in trips # Пользователь НЕ видит приватную поездку другого пользователя
+
+
+
 
 
 @pytest.mark.django_db
@@ -77,15 +99,6 @@ def test_index_view(client):
     url = reverse('home')
     response = client.get(url)  # Выполняем GET-запрос к главной странице
     assert response.status_code == 200
-
-
-@pytest.mark.django_db
-def test_resort_detail_view(client, resort):
-    """Тест страницы курорта"""
-    url = reverse('resort_detail', args=[resort.slug])
-    response = client.get(url)  # Выполняем GET-запрос к странице курорта
-    assert response.status_code == 200
-    assert resort.name in response.content.decode()  # Проверяем, что имя курорта отображается на странице
 
 
 @pytest.mark.django_db

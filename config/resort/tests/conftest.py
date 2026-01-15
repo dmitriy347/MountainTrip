@@ -33,7 +33,7 @@ def another_user(db):
 
 @pytest.fixture
 def resort(db):
-    """Курорт с дефолтными значениями"""
+    """Тестовый курорт с дефолтными значениями"""
     return Resort.objects.create(
         name="Test Resort",
         region="Test Region",
@@ -53,7 +53,7 @@ def another_resort(db):
 
 @pytest.fixture
 def trip(db, user, resort):
-    """Поездка пользователя на курорт"""
+    """Поездка пользователя на тестовый курорт"""
     return Trip.objects.create(
         user=user,
         resort=resort,
@@ -77,7 +77,7 @@ def trip_invalid(db, user, resort):
 
 @pytest.fixture
 def public_trip_another_user(another_user, another_resort):
-    """Публичная поездка другого пользователя"""
+    """Публичная поездка другого пользователя на другой курорт"""
     return Trip.objects.create(
         user=another_user,
         resort=another_resort,
@@ -88,12 +88,36 @@ def public_trip_another_user(another_user, another_resort):
 
 @pytest.fixture
 def private_trip_another_user(another_user, another_resort):
-    """Приватная поездка другого пользователя"""
+    """Приватная поездка другого пользователя на другой курорт"""
     return Trip.objects.create(
         user=another_user,
         resort=another_resort,
         start_date="2023-10-01",
         end_date="2023-10-05",
+        is_public=False
+    )
+
+
+@pytest.fixture
+def public_trip_another_user_resort(resort, another_user):
+    """Публичная поездка другого пользователя на тестовый курорт"""
+    return Trip.objects.create(
+        user=another_user,
+        resort=resort,
+        start_date="2023-09-01",
+        end_date="2023-09-05",
+        is_public=True
+    )
+
+
+@pytest.fixture
+def private_trip_another_user_resort(resort, another_user):
+    """Приватная поездка другого пользователя на тестовый курорт"""
+    return Trip.objects.create(
+        user=another_user,
+        resort=resort,
+        start_date="2023-08-01",
+        end_date="2023-08-05",
         is_public=False
     )
 
