@@ -148,7 +148,13 @@ def test_trip_detail_view_private_trip_visible(auth_client, private_trip_another
     assert response.status_code == 404          # Ожидаем 404, так как поездка приватная и не принадлежит пользователю
 
 
-
+@pytest.mark.django_db
+def test_trip_detail_view_media_in_context(auth_client, trip, trip_media):
+    """Тест наличия медиафайлов в контексте страницы детали поездки"""
+    url = reverse('trip_detail', kwargs={'trip_id': trip.id})
+    response = auth_client.get(url)             # Выполняем GET-запрос к странице детали поездки
+    media = response.context['media_list']
+    assert trip_media in media                  # Проверяем, что медиафайл присутствует в контексте
 
 
 
