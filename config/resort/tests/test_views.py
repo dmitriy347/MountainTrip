@@ -112,15 +112,15 @@ def test_resort_list_view_pagination(client):
     assert response_page_2.status_code == 200
     assert len(response_page_2.context['resorts']) == 3  # Проверяем, что на второй странице отображается оставшиеся 4 курорта
 
-#
-# # Тесты для представления TripDetailView
-# @pytest.mark.django_db
-# def test_trip_detail_view_requires_login(client, trip):
-#     """Тест доступа к странице детали поездки (требуется авторизация)"""
-#     url = reverse('trip_detail', kwargs={'trip_id': trip.id})
-#     response = client.get(url)                  # Выполняем GET-запрос к странице детали поездки
-#     assert response.status_code == 302          # Ожидаем перенаправление на страницу логина
-#     assert '/sign-in/' in response.url          # Проверяем, что перенаправление ведет на страницу логина
+
+# Тесты для представления TripDetailView
+@pytest.mark.django_db
+def test_trip_detail_view_requires_login(client, trip):
+    """Тест доступа к странице детали поездки (требуется авторизация)"""
+    url = reverse('trip_detail', kwargs={'trip_id': trip.id})
+    response = client.get(url)                  # Выполняем GET-запрос к странице детали поездки
+    assert response.status_code == 302          # Ожидаем перенаправление на страницу логина
+    assert '/sign-in/' in response.url          # Проверяем, что перенаправление ведет на страницу логина
 
 
 
