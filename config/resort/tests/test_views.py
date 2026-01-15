@@ -131,6 +131,15 @@ def test_trip_detail_view_owner_can_access(auth_client, trip):
     assert response.status_code == 200
 
 
+@pytest.mark.django_db
+def test_trip_detail_view_public_trip_visible(auth_client, public_trip_another_user):
+    """Авторизованный пользователь может видеть публичную поездку другого пользователя"""
+    url = reverse('trip_detail', kwargs={'trip_id': public_trip_another_user.id})
+    response = auth_client.get(url)             # Выполняем GET-запрос к странице детали поездки
+    assert response.status_code == 200
+    assert response.context['trip'] == public_trip_another_user
+
+
 
 
 
