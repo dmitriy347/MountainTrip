@@ -1,4 +1,6 @@
 import pytest
+from io import BytesIO
+from PIL import Image
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.contrib.auth import get_user_model
 
@@ -124,12 +126,12 @@ def private_trip_another_user_resort(resort, another_user):
 
 @pytest.fixture
 def image_file():
-    """Фикстура для создания тестового изображения"""
-    return SimpleUploadedFile(
-        name='test.jpg',
-        content=b'filecontent',
-        content_type='image/jpeg'
-    )
+    """Создание тестового минимально-валидного изображения в памяти"""
+    image = Image.new('RGB', (10, 10), color = 'white')
+    buffer = BytesIO()
+    image.save(buffer, format='JPEG')
+    buffer.seek(0)
+    return SimpleUploadedFile(name="test_image.jpg", content=buffer.read(), content_type="image/jpeg")
 
 
 @pytest.fixture
