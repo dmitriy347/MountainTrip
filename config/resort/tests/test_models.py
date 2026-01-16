@@ -1,5 +1,3 @@
-# Тесты для моделей Resort, Trip, TripMedia.
-
 import pytest
 from django.core.exceptions import ValidationError
 from slugify import slugify as py_slugify
