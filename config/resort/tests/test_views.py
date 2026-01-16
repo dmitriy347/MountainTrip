@@ -314,8 +314,7 @@ def test_trip_delete_view_owner_can_delete(auth_client, trip):
     url = reverse('trip_delete', kwargs={'trip_id': trip.id})
     response = auth_client.post(url)                     # Выполняем POST-запрос к странице удаления поездки
     assert response.status_code == 302                   # Ожидаем редирект после успешного удаления
-    with pytest.raises(Trip.DoesNotExist):
-        Trip.objects.get(id=trip.id)                     # Проверяем, что поездка была удалена
+    assert not Trip.objects.filter(id=trip.id).exists()                   # Проверяем, что поездка была удалена
     messages = list(get_messages(response.wsgi_request))
     assert len(messages) == 1                            # Проверяем, что появилось сообщение об успешном удалении
 
