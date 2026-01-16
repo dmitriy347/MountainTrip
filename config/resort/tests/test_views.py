@@ -296,6 +296,7 @@ def test_trip_delete_view_requires_login(client, trip):
     response = client.post(url)             # Выполняем POST-запрос к странице удаления поездки
     assert response.status_code == 302      # Ожидаем перенаправление на страницу логина
     assert '/sign-in/' in response.url      # Проверяем, что перенаправление ведет на страницу логина
+    assert Trip.objects.filter(id=trip.id).exists()     # Проверяем, что поездка не была удалена
 
 
 @pytest.mark.django_db
