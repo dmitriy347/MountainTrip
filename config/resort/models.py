@@ -2,8 +2,7 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.urls import reverse
-from slugify import slugify
-
+from slugify import slugify as py_slugify
 
 class Resort(models.Model):
     """Модель справочник, к которому привязаны поездки."""
@@ -23,7 +22,7 @@ class Resort(models.Model):
     def save(self, *args, **kwargs):
         """Автоматическое создание slug из названия курорта при сохранении."""
         if not self.slug:
-            self.slug = slugify(self.name)
+            self.slug = py_slugify(self.name)
         super().save(*args, **kwargs)
 
     class Meta:

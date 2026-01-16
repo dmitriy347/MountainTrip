@@ -2,7 +2,8 @@
 
 import pytest
 from django.core.exceptions import ValidationError
-from django.utils.text import slugify
+from slugify import slugify as py_slugify
+
 
 # Тесты для модели Resort
 @pytest.mark.django_db
@@ -14,7 +15,7 @@ def test_resort_str(resort):
 @pytest.mark.django_db
 def test_resort_slug_created(resort):
     """Slug должен автоматически создаваться при сохранении курорта."""
-    assert resort.slug == slugify(resort.name)
+    assert resort.slug == py_slugify(resort.name)
 
 
 @pytest.mark.django_db
@@ -64,5 +65,5 @@ def test_tripmedia_str(trip_media):
 @pytest.mark.django_db
 def test_tripmedia_get_absolute_url(trip_media):
     """get_absolute_url должен возвращать корректный URL для медиа поездки."""
-    url = trip_media.trip.get_absolute_url()
+    url = trip_media.get_absolute_url()
     assert str(trip_media.trip.id) in url
