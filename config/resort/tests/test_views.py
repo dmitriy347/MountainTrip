@@ -16,7 +16,7 @@
 import pytest
 from django.contrib.messages import get_messages
 from django.urls import reverse
-from resort.models import Resort, Trip
+from resort.models import Resort, Trip, TripMedia
 
 
 # 1. Тесты для представления ResortDetailView
@@ -341,6 +341,20 @@ def test_trip_media_add_view_not_owner_cannot_access(client, another_user, trip,
     assert response.status_code == 404           # Ожидаем 404, так как пользователь не владелец поездки
 
 
+@pytest.mark.django_db
+def test_trip_media_add_view_owner_can_save(auth_client, trip, image_file):
+    """Владелец может успешно добавить медиафайл к своей поездке"""
+    url = reverse('trip_media_add', kwargs={'trip_id': trip.id})
+    form_data = {
+        'image': image_file,
+    }
+    response = auth_client.post(url, data=form_data)        # Отправляем POST-запрос с медиафайлом
+    assert response.status_code == 302                      # Ожидаем редирект после успешного добавления на страницу детали поездки
+    media = TripMedia.objects.get(trip=trip)                # Получаем добавленный медиафайл
+    assert media.image.name                                 # Проверяем, что медиафайл был сохранен
+    messages = list(get_messages(response.wsgi_request))    # Получаем сообщения
+    assert len(messages) == 1
+    assert messages[0].message == "Фото успешно добавлено." # Проверяем, что появилось сообщение об успешном добавлении
 
 
 
