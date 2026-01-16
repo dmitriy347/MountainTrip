@@ -8,6 +8,7 @@ from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.core.cache import cache
 
+from .cache_keys import CacheKeys, CacheTimeouts
 from .forms import TripForm, TripMediaForm
 from .mixins import OwnerQuerySetMixin
 from .models import Resort, Trip, TripMedia
@@ -76,18 +77,18 @@ class ResortListView(ListView):
     template_name = 'resort/resort_list.html'
     context_object_name = 'resorts'
     paginate_by = 5
-    CACHE_KEY = 'resort_list'           # ключ кэша для списка курортов
-    CACHE_TIMEOUT = 60 * 10  # 10 минут
 
     def get_queryset(self):
         """
         Попытка получить список курортов из кэша,
         если отсутствует - получить из базы и записать в кэш
         """
-        resorts = cache.get(self.CACHE_KEY)
+        resorts = cache.get(CacheKeys.RESORT_LIST)
+
         if resorts is None:
             resorts = list(Resort.objects.all())    # list() для кэширования QuerySet как списка
-            cache.set(self.CACHE_KEY, resorts, self.CACHE_TIMEOUT)
+            cache.set(CacheKeys.RESORT_LIST, resorts, CacheTimeouts.RESORT_LIST)
+
         return resorts
 
 
