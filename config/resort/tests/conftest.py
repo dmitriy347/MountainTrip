@@ -3,6 +3,8 @@ from io import BytesIO
 from PIL import Image
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.contrib.auth import get_user_model
+from datetime import date
+
 
 from resort.models import Resort, Trip, TripMedia
 
@@ -59,8 +61,8 @@ def trip(db, user, resort):
     return Trip.objects.create(
         user=user,
         resort=resort,
-        start_date="2023-12-01",
-        end_date="2023-12-10",
+        start_date=date(2023, 12, 1),
+        end_date=date(2023, 12, 10),
         is_public=False
     )
 
@@ -71,8 +73,8 @@ def trip_invalid(db, user, resort):
     return Trip(
         user=user,
         resort=resort,
-        start_date="2023-12-10",
-        end_date="2023-12-01",
+        start_date=date(2023, 12, 10),
+        end_date=date(2023, 12, 1),
         is_public=False
     )
 
@@ -83,8 +85,8 @@ def public_trip_another_user(another_user, another_resort):
     return Trip.objects.create(
         user=another_user,
         resort=another_resort,
-        start_date="2023-11-01",
-        end_date="2023-11-05",
+        start_date=date(2023, 11, 1),
+        end_date=date(2023, 11, 5),
         is_public=True
     )
 
@@ -94,8 +96,8 @@ def private_trip_another_user(another_user, another_resort):
     return Trip.objects.create(
         user=another_user,
         resort=another_resort,
-        start_date="2023-10-01",
-        end_date="2023-10-05",
+        start_date=date(2023, 10, 1),
+        end_date=date(2023, 10, 5),
         is_public=False
     )
 
@@ -106,8 +108,8 @@ def public_trip_another_user_resort(resort, another_user):
     return Trip.objects.create(
         user=another_user,
         resort=resort,
-        start_date="2023-09-01",
-        end_date="2023-09-05",
+        start_date=date(2023, 9, 1),
+        end_date=date(2023, 9, 5),
         is_public=True
     )
 
@@ -118,8 +120,8 @@ def private_trip_another_user_resort(resort, another_user):
     return Trip.objects.create(
         user=another_user,
         resort=resort,
-        start_date="2023-08-01",
-        end_date="2023-08-05",
+        start_date=date(2023, 8, 1),
+        end_date=date(2023, 8, 5),
         is_public=False
     )
 
