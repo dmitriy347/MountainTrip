@@ -19,6 +19,17 @@ from django.urls import reverse
 from resort.models import Resort, Trip, TripMedia
 
 
+# 0. Тесты для представления index
+@pytest.mark.django_db
+def test_index_view(client):
+    """Тест главной страницы: статус, шаблон, контекст"""
+    url = reverse('home')
+    response = client.get(url)                                          # Выполняем GET-запрос к главной странице
+    assert response.status_code == 200                                  # Проверяем, что статус ответа 200
+    assert 'resort/index.html' in [t.name for t in response.templates]  # Проверяем использование правильного шаблона
+    assert response.context['title'] == 'Горнолыжные курорты России'    # Проверяем, что заголовок в контексте корректен
+
+
 # 1. Тесты для представления ResortDetailView
 @pytest.mark.django_db
 def test_resort_detail_view_returns_200(client, resort):
@@ -388,19 +399,3 @@ def test_trip_media_delete_view_owner_can_delete(auth_client, trip_media):
     messages = list(get_messages(response.wsgi_request))
     assert len(messages) == 1                            # Проверяем, что появилось сообщение об успешном удалении
     assert messages[0].message == "Фото удалено."
-
-
-
-
-
-
-
-# Тесты для представления index
-@pytest.mark.django_db
-def test_index_view(client):
-    """Тест главной страницы"""
-    url = reverse('home')
-    response = client.get(url)  # Выполняем GET-запрос к главной странице
-    assert response.status_code == 200
-
-
