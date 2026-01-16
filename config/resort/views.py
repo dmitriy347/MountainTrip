@@ -34,8 +34,6 @@ class ResortDetailView(DetailView):
     slug_field = 'slug'
     slug_url_kwarg = 'resort_slug'
 
-    CACHE_TIMEOUT = 60 * 10  # 10 минут
-
     def get_context_data(self, **kwargs):
         """
         Добавляем в контекст заголовок страницы и фильтрацию поездки по текущему пользователю и публичности
@@ -46,25 +44,26 @@ class ResortDetailView(DetailView):
         trips_qs = self.object.trips.all()      # Все поездки, связанные с курортом
 
         # Кешируем счетчики поездок
-        counts_cache_key = f'resort:{self.object.id}:trip_counts'       # ключ кэша для количества поездок
+        counts_cache_key = CacheKeys.resort_trips_counts(self.object.id)       # ключ кэша для количества поездок
         counts = cache.get(counts_cache_key)
+
         if counts is None:
             counts = trips_qs.aggregate(    # словарь counts с общим количеством поездок и количеством публичных поездок
                 total=Count('id'),
                 public=Count('id', filter=Q(is_public=True))
             )
-            cache.set(counts_cache_key, counts, self.CACHE_TIMEOUT)
+            cache.set(counts_cache_key, counts, CacheTimeouts.RESORT_TRIPS_COUNTS)
 
         # Количество поездок к курорту (видят все)
         context['total_trips_count'] = counts['total']
         context['public_trips_count'] = counts['public']
 
-        # 1. Гость - НЕ видит список поездок
+        # Гость - НЕ видит список поездок
         if not user.is_authenticated:
             context['trips'] = None
             return context
 
-        # 2. Авторизованный пользователь - видит свои поездки и публичные поездки других пользователей
+        # Авторизованный пользователь - видит свои поездки и публичные поездки других пользователей
         context['trips'] = trips_qs.filter(
             Q(is_public=True) | Q(user=user)
         ).select_related('user')                # Оптимизация: сразу подтягиваем связанные объекты User
