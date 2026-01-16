@@ -211,18 +211,12 @@ class TripMediaAddView(LoginRequiredMixin, CreateView):
         'title': 'Добавить фото к поездке',
     }
 
-    def dispatch(self, request, *args, **kwargs):
-        """Проверяем, что поездка принадлежит текущему пользователю"""
-        if not request.user.is_authenticated:
-            return redirect_to_login(request.get_full_path())
-        trip_id = self.kwargs['trip_id']
-        user = request.user
-        self.trip = get_object_or_404(Trip, pk=trip_id, user=user)
-        return super().dispatch(request, *args, **kwargs)
-
     def form_valid(self, form):
         """Дополняем форму данными о текущей поездке перед сохранением"""
-        form.instance.trip = self.trip   # Привязываем медиафайл к поездке ДО сохранения
+        trip_id = self.kwargs['trip_id']
+        user = self.request.user
+        trip = get_object_or_404(Trip, pk=trip_id, user=user)
+        form.instance.trip = trip   # Альтернативный способ присвоения поездки через form.instance (это объект модели TripMedia, который будет сохранен)
         messages.success(self.request, "Фото успешно добавлено.")
         return super().form_valid(form)
 
