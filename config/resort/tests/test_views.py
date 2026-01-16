@@ -357,6 +357,43 @@ def test_trip_media_add_view_owner_can_save(auth_client, trip, image_file):
     assert messages[0].message == "Фото успешно добавлено." # Проверяем, что появилось сообщение об успешном добавлении
 
 
+# 9. Тесты для представления TripMediaDeleteView
+@pytest.mark.django_db
+def test_trip_media_delete_view_requires_login(client, trip_media):
+    """Тест доступа к странице удаления медиафайла (требуется авторизация)"""
+    url = reverse('trip_media_delete', kwargs={'media_id': trip_media.id})
+    response = client.post(url)             # Выполняем POST-запрос к странице удаления медиафайла
+    assert response.status_code == 302      # Ожидаем перенаправление на страницу логина
+    assert '/sign-in/' in response.url      # Проверяем, что перенаправление ведет на страницу логина
+    assert TripMedia.objects.filter(id=trip_media.id).exists()  # Проверяем, что медиафайл не был удален
+
+
+@pytest.mark.django_db
+def test_trip_media_delete_view_not_owner_cannot_access(client, another_user, trip_media):
+    """Пользователь не-владелец не может удалить чужой медиафайл"""
+    url = reverse('trip_media_delete', kwargs={'media_id': trip_media.id})
+    client.force_login(another_user)        # Логинимся как другой пользователь
+    response = client.post(url)             # Выполняем POST-запрос к странице удаления медиафайла
+    assert response.status_code == 404      # Ожидаем 404, так как пользователь не владелец медиафайла
+    assert TripMedia.objects.filter(id=trip_media.id).exists()  # Проверяем, что медиафайл не был удален
+
+
+@pytest.mark.django_db
+def test_trip_media_delete_view_owner_can_delete(auth_client, trip_media):
+    """Владелец может успешно удалить свой медиафайл"""
+    url = reverse('trip_media_delete', kwargs={'media_id': trip_media.id})
+    response = auth_client.post(url)                     # Выполняем POST-запрос к странице удаления медиафайла
+    assert response.status_code == 302                   # Ожидаем редирект после успешного удаления
+    assert not TripMedia.objects.filter(id=trip_media.id).exists()        # Проверяем, что медиафайл был удален
+    messages = list(get_messages(response.wsgi_request))
+    assert len(messages) == 1                            # Проверяем, что появилось сообщение об успешном удалении
+    assert messages[0].message == "Фото удалено."
+
+
+
+
+
+
 
 # Тесты для представления index
 @pytest.mark.django_db
