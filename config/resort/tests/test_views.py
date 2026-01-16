@@ -122,7 +122,7 @@ def test_resort_list_view_pagination(client):
 
     response_page_2 = client.get(url + '?page=2')        # Запрашиваем вторую страницу
     assert response_page_2.status_code == 200
-    assert len(response_page_2.context['resorts']) == 3  # Проверяем, что на второй странице отображается оставшиеся 4 курорта
+    assert len(response_page_2.context['resorts']) == 3  # Проверяем, что на второй странице отображается оставшиеся 3 курорта
 
 
 # 3. Тесты для представления TripDetailView
