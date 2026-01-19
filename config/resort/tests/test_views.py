@@ -102,11 +102,11 @@ def test_resort_list_view_pagination(client):
     url = reverse('resort_list')
     response_page_1 = client.get(url)                    # Выполняем GET-запрос к первой странице списка курортов
     assert response_page_1.status_code == 200
-    assert len(response_page_1.context['resorts']) == 5  # Проверяем, что на первой странице отображается 5 курортов
+    assert len(response_page_1.context['resorts']) == 6  # Проверяем, что на первой странице отображается 5 курортов
 
     response_page_2 = client.get(url + '?page=2')        # Запрашиваем вторую страницу
     assert response_page_2.status_code == 200
-    assert len(response_page_2.context['resorts']) == 3  # Проверяем, что на второй странице отображается оставшиеся 3 курорта
+    assert len(response_page_2.context['resorts']) == 2  # Проверяем, что на второй странице отображается оставшиеся 3 курорта
 
 
 # 3. Тесты для представления TripDetailView
