@@ -1,0 +1,9 @@
+# Testing
+pytest==9.0.2
+pytest-cov==7.0.0
+pytest-django==4.11.1
+
+# Development tools
+django-debug-toolbar==6.1.0
+django-extensions==4.1
+ipython==9.8.0
