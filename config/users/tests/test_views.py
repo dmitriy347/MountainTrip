@@ -60,8 +60,25 @@ def test_user_login_view_wrong_username(client, user, social_app):
 
 
 # 1. Тесты для представления UserLogoutView
+def test_user_logout_view_successful_logout(auth_client):
+    """Авторизованный пользователь может успешно выйти из системы."""
+    url = reverse('users:logout')
+    response = auth_client.post(url)
+    assert response.status_code == 302          # Перенаправление после выхода
+    assert response.url == reverse('home')      # Перенаправление на главную страницу (LOGOUT_REDIRECT_URL)
+
+    # Проверка наличия сообщения об успешном выходе
+    messages = list(get_messages(response.wsgi_request))
+    assert len(messages) == 1
+    assert str(messages[0]) == 'Вы вышли из системы'
 
 
+def test_user_logout_view_guest_redirect(client):
+    """Гость может выйти (будет редирект, но без эффекта)."""
+    url = reverse('users:logout')
+    response = client.post(url)
+    assert response.status_code == 302
+    assert response.url == reverse('home')
 
 
 # 2. Тесты для представления UserRegisterView
