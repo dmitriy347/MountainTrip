@@ -15,7 +15,7 @@ def test_user_login_view_test_page_accessible(client, social_app):
 
 
 @pytest.mark.django_db
-def test_user_login_view_successful_login(client, user):
+def test_user_login_view_successful_login(client, user, social_app):
     """Пользователь может успешно войти в систему с правильными учетными данными."""
     url = reverse('users:login')
     data = {
@@ -129,3 +129,19 @@ def test_user_register_view_duplicate_email(client, user):
 
 
 # 3. Тесты для представления ProfileView
+@pytest.mark.django_db
+def test_profile_view_requires_login(client):
+    """Страница профиля требует авторизации."""
+    url = reverse('users:profile')
+    response = client.get(url)
+    assert response.status_code == 302                  # Перенаправление на страницу логина
+    assert '/sign-in/' in response.url                  # URL страницы логина содержит путь /sign-in/ (LOGIN_URL)
+
+
+@pytest.mark.django_db
+def test_profile_view_authenticated_user(auth_client):
+    """Авторизованный пользователь может получить доступ к странице профиля."""
+    url = reverse('users:profile')
+    response = auth_client.get(url)
+    assert response.status_code == 200                                  # Страница доступна
+    assert 'users/profile.html' in [t.name for t in response.templates] # Используется правильный шаблон
