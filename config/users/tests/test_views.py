@@ -46,6 +46,7 @@ def test_user_login_view_wrong_password(client, user, social_app):
     assert response.context['form'].errors      # Форма содержит ошибки
 
 
+@pytest.mark.django_db
 def test_user_login_view_wrong_username(client, user, social_app):
     """Пользователь не может войти с неправильным именем пользователя."""
     url = reverse('users:login')
@@ -60,6 +61,7 @@ def test_user_login_view_wrong_username(client, user, social_app):
 
 
 # 1. Тесты для представления UserLogoutView
+@pytest.mark.django_db
 def test_user_logout_view_successful_logout(auth_client):
     """Авторизованный пользователь может успешно выйти из системы."""
     url = reverse('users:logout')
@@ -82,8 +84,48 @@ def test_user_logout_view_guest_redirect(client):
 
 
 # 2. Тесты для представления UserRegisterView
+@pytest.mark.django_db
+def test_user_register_view_page_accessible(client):
+    """Страница регистрации доступна для анонимного пользователя."""
+    url = reverse('users:register')
+    response = client.get(url)
+    assert response.status_code == 200                                      # Страница доступна
+    assert 'users/register.html' in [t.name for t in response.templates]    # Используется правильный шаблон
 
 
+@pytest.mark.django_db
+def test_user_register_view_successful_registration(client):
+    """Пользователь может успешно зарегистрироваться с правильными данными."""
+    url = reverse('users:register')
+    data = {
+        'username': 'newuser',
+        'email': 'newuser@example.com',
+        'password1': 'newpass123',
+        'password2': 'newpass123',
+    }
+    response = client.post(url, data)
+    assert response.status_code == 302                  # Перенаправление после успешной регистрации
+    assert response.url == reverse('users:login')       # Перенаправление на страницу логина
+
+    # Проверка, что пользователь создан
+    User = get_user_model()
+    assert User.objects.filter(username='newuser').exists()
+
+
+@pytest.mark.django_db
+def test_user_register_view_duplicate_email(client, user):
+    """Регистрация с уже существующим email должна выдавать ошибку."""
+    url = reverse('users:register')
+    data = {
+        'username': 'anotheruser',
+        'email': 'test@example.com',    # email уже существует у user
+        'password1': 'anotherpass123',
+        'password2': 'anotherpass123',
+    }
+    response = client.post(url, data)
+    assert response.status_code == 200                  # Страница перезагружается с ошибой
+    assert response.context['form'].errors              # Форма содержит ошибки
+    assert 'email' in response.context['form'].errors   # Ошибка связана с полем email
 
 
 # 3. Тесты для представления ProfileView
