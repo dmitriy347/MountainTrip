@@ -1,0 +1,48 @@
+version: '3.9'
+
+services:
+  # PostgreSQL
+  db:
+    image: postgres:16-alpine
+    container_name: skitrip_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    networks:
+      - skitrip_network
+    # Без проброса портов
+
+  # Redis
+  redis:
+    image: redis:7-alpine
+    container_name: skitrip_redis
+    networks:
+      - skitrip_network
+  # Без проброса портов
+
+  # Django приложение
+  web:
+    build: .
+    container_name: skitrip_web
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    depends_on:
+      - db
+      - redis
+    networks:
+      - skitrip_network
+
+networks:
+  skitrip_network:
+    driver: bridge
+
+volumes:
+  postgres_data:
