@@ -19,6 +19,14 @@ echo -e "${YELLOW}Applying database migrations...${NC}"
 python manage.py migrate --noinput
 echo -e "${GREEN}✓ Migrations applied${NC}"
 
+if [ "$DEBUG" = "True" ]; then
+  # Заполняем тестовыми данными (для отладки)
+  echo -e "${YELLOW}Loading fixtures...${NC}"
+  python manage.py loaddata fixtures.json || true
+  echo -e "${GREEN}✓ Test data loaded${NC}"
+fi
+
+
 # Собираем статику (для продакшена)
 # echo -e "${YELLOW}Collecting static files...${NC}"
 # python manage.py collectstatic --noinput
