@@ -43,7 +43,7 @@ docker-compose.yml
 .dockerignore
 
 # Documentation
-README.md
+../README.md
 docs/
 
 # CI/CD

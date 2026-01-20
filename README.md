@@ -2,12 +2,13 @@
 
 > Веб-приложение для ведения журнала поездок на горнолыжные курорты России
 
-![Python](https://img.shields.io/badge/Python-3.11-blue?logo=python&logoColor=white)
-![Django](https://img.shields.io/badge/Django-4.2-green?logo=django&logoColor=white)
-![PostgreSQL](https://img.shields.io/badge/PostgreSQL-17-blue?logo=postgresql&logoColor=white)
-![Redis](https://img.shields.io/badge/Redis-7-red?logo=redis&logoColor=white)
-![Tests](https://img.shields.io/badge/Tests-Passing-success)
-![Coverage](https://img.shields.io/badge/Coverage-99%25-brightgreen)
+[![Python](https://img.shields.io/badge/Python-3.11-3776AB?logo=python&logoColor=white)](https://www.python.org/)
+[![Django](https://img.shields.io/badge/Django-5.1-092E20?logo=django&logoColor=white)](https://www.djangoproject.com/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-4169E1?logo=postgresql&logoColor=white)](https://www.postgresql.org/)
+[![Redis](https://img.shields.io/badge/Redis-7-DC382D?logo=redis&logoColor=white)](https://redis.io/)
+[![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?logo=docker&logoColor=white)](https://www.docker.com/)
+[![Tests](https://img.shields.io/badge/Tests-Passing-success)](https://github.com/dmitriy347/MountainTrip)
+[![Coverage](https://img.shields.io/badge/Coverage-99%25-brightgreen)](https://github.com/dmitriy347/MountainTrip)
 
 ---
 
@@ -22,8 +23,6 @@
 - 👥 Просматривать публичные поездки других пользователей
 - 🔐 Авторизация через GitHub (OAuth)
 
-**Pet-проект для демонстрации навыков Django-разработки.**
-
 ---
 
 ## 🛠️ Технологии
@@ -33,87 +32,73 @@
 - **Django 5.1** — веб-фреймворк
 - **PostgreSQL 17** — основная база данных
 - **Redis 7** — кэширование данных
-- **Docker & Docker Compose** — контейнеризация
-- **Pytest** — тестирование
 - **Django AllAuth** — авторизация (включая GitHub OAuth)
+- **Docker & Docker Compose** — контейнеризация
 
 ### Frontend
 - **Bootstrap 5** — UI фреймворк
 - **HTML/CSS** — разметка и стили
 
 ### Testing & Quality
-- **pytest** — фреймворк для тестирования
-- **pytest-django** — интеграция pytest с Django
+- **pytest + pytest-django**
 - **pytest-cov** — проверка покрытия кода тестами (99%)
-
-### Other
-- **Pillow** — обработка изображений
-- **python-slugify** — генерация slug для URL
-- **django-debug-toolbar** — отладка (только в DEBUG режиме)
 
 ---
 
-## 📦 Установка и запуск
+## 🚀 Быстрый старт с Docker
 
 ### Требования
 
-- Python 3.11+
-- PostgreSQL 15+
-- Redis
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/) (Mac/Windows/Linux)
+- [Git](https://git-scm.com/)
 
-## Быстрый старт с Docker
+---
 
-1. **Клонируйте репозиторий**
+### 1. Клонируй репозиторий
 ```bash
 git clone https://github.com/dmitriy347/MountainTrip.git
 cd MountainTrip/config
 ```
+---
 
-2. **Создайте .env файл**
+### 2. Настрой переменные окружения
 ```bash
 cp .env.example .env
 ```
-Отредактируйте `.env` (укажите свои SECRET_KEY и пароли).
+Отредактируй `.env` (установи SECRET_KEY и пароли).
 
+---
 
-3. **Запустите Docker**
+3. **Запусти Docker**
 ```bash
 docker-compose up --build
 ```
-Миграции применяются автоматически!
 
-4. **Создайте суперпользователя**
+---
+
+4. **Создай суперпользователя**
 
 ```bash
 docker-compose exec web python manage.py createsuperuser
 ```
 
-
-Приложение будет доступно по адресу: **http://127.0.0.1:8000**
-
-Панель администратора: **http://127.0.0.1:8000/admin**
-
 ---
 
-## 🧪 Тестирование
+5. **Загрузи тестовые данные**
 ```bash
-# Запуск всех тестов
-docker-compose exec web pytest
-
-# С покрытием
-docker-compose exec web pytest --cov=resort --cov=users
-
-# Конкретный файл
-docker-compose exec web pytest resort/tests/test_views.py
+docker-compose exec web python manage.py loaddata fixtures/resorts.json
 ```
-**Текущее покрытие тестами: 99%** 🎉
+
+
+
+Приложение доступно по адресу: **http://localhost:8000**
 
 ---
 
 ## 🗂️ Структура проекта
 ```
 MountainTrip/
-├── config/                  # Главная директория Django проекта
+├── config/                  
 │   ├── config/              # Настройки проекта
 │   │   ├── settings.py      # Основные настройки
 │   │   ├── settings_test.py # Настройки для тестов
@@ -131,7 +116,7 @@ MountainTrip/
 │   │   ├── mixins.py        # OwnerQuerySetMixin
 │   │   ├── templates/       # Шаблоны приложения
 │   │   └── tests/           # Тесты
-│   │       ├── conftest.py
+│   │       ├── conftest.py  # Общие фикстуры
 │   │       ├── test_models.py
 │   │       ├── test_views.py
 │   │       └── test_urls.py
@@ -154,15 +139,16 @@ MountainTrip/
 ├── media/                   # Загруженные пользователями файлы
 │   └── trip_photos/         # Фотографии поездок
 │
+├── Dockerfile               # Конфигурация сборки образа
+├── docker-compose.yml       # Оркестрация сервисов
+├── entrypoint.sh            # Скрипт инициализации контейнера
 ├── requirements.txt         # Зависимости проекта
-├── .env                     # Переменные окружения (не в git)
-├── .gitignore
-└── README.md                # Этот файл
+└── requirements-dev.txt     # Development/testing зависимости
 ```
 
 ---
 
-## 🔑 Ключевые особенности
+## Ключевые особенности
 
 ### Модели данных
 
@@ -170,10 +156,12 @@ MountainTrip/
   - `name`, `region`, `description`, `slug`
   - Автогенерация slug из названия
 
+
 - **Trip** — Поездки пользователей
   - Связь с `User` и `Resort`
   - `is_public` — флаг публичности
   - Валидация дат (начало < окончания)
+
 
 - **TripMedia** — Фотографии поездок
   - Связь с `Trip`
@@ -181,22 +169,22 @@ MountainTrip/
 
 ### Архитектурные решения
 
-✅ **Кэширование с Redis**
+ **Кэширование с Redis**
 - Список курортов кэшируется на 10 минут
 - Счётчики поездок кэшируются
 - Автоматическая инвалидация кэша через signals
 
-✅ **Оптимизация запросов**
+ **Оптимизация запросов**
 - `select_related()` для связанных объектов
 - `prefetch_related()` для обратных связей
 - Индексы на часто используемые поля
 
-✅ **Права доступа**
+ **Права доступа**
 - `LoginRequiredMixin` — для авторизованных пользователей
 - `OwnerQuerySetMixin` — владелец видит только свои записи
 - Публичные поездки видны всем авторизованным
 
-✅ **Безопасность**
+ **Безопасность**
 - CSRF защита
 - Валидация форм
 - Санитизация пользовательского ввода
@@ -215,7 +203,6 @@ MountainTrip/
 ## 🚀 Планы по развитию
 
 - [ ] REST API (Django REST Framework)
-- [ ] Docker + docker-compose для удобного развёртывания
 - [ ] CI/CD (GitHub Actions)
 - [ ] Деплой на Railway/Render
 - [ ] Экспорт поездок в PDF/Excel
