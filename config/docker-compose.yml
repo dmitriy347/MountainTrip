@@ -57,3 +57,4 @@ networks:
 
 volumes:
   postgres_data:
+  media_data:
