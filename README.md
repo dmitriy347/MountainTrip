@@ -4,7 +4,7 @@
 
 [![Python](https://img.shields.io/badge/Python-3.11-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 [![Django](https://img.shields.io/badge/Django-5.1-092E20?logo=django&logoColor=white)](https://www.djangoproject.com/)
-[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-4169E1?logo=postgresql&logoColor=white)](https://www.postgresql.org/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-17-4169E1?logo=postgresql&logoColor=white)](https://www.postgresql.org/)
 [![Redis](https://img.shields.io/badge/Redis-7-DC382D?logo=redis&logoColor=white)](https://redis.io/)
 [![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?logo=docker&logoColor=white)](https://www.docker.com/)
 [![Tests](https://img.shields.io/badge/Tests-Passing-success)](https://github.com/dmitriy347/MountainTrip)
@@ -59,7 +59,6 @@
 git clone https://github.com/dmitriy347/MountainTrip.git
 cd MountainTrip/config
 ```
----
 
 ### 2. Настрой переменные окружения
 ```bash
@@ -67,28 +66,22 @@ cp .env.example .env
 ```
 Отредактируй `.env` (установи SECRET_KEY и пароли).
 
----
 
-3. **Запусти Docker**
+### 3. **Запусти Docker**
 ```bash
 docker-compose up --build
 ```
 
----
-
-4. **Создай суперпользователя**
+### 4. **Создай суперпользователя**
 
 ```bash
 docker-compose exec web python manage.py createsuperuser
 ```
 
----
-
-5. **Загрузи тестовые данные**
+### 5. **Загрузи тестовые данные**
 ```bash
 docker-compose exec web python manage.py loaddata fixtures/resorts.json
 ```
-
 
 
 Приложение доступно по адресу: **http://localhost:8000**
