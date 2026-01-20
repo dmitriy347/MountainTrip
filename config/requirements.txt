@@ -3,10 +3,11 @@ Django==5.1.4
 python-dotenv==1.2.1
 
 # Database
-psycopg-binary==3.3.2
+psycopg[binary]==3.3.2
 
 # Authentication
 django-allauth==65.13.1
+requests==2.32.3
 
 # Caching
 django-redis==6.0.0
