@@ -102,15 +102,15 @@ DATABASES = {
         'NAME': os.getenv('DB_NAME'),
         'USER': os.getenv('DB_USER'),
         'PASSWORD': os.getenv('DB_PASSWORD'),
-        'HOST': 'localhost',
-        'PORT': '5432',
+        'HOST': os.getenv('DB_HOST'),   # имя сервиса базы данных в docker-compose.yml
+        'PORT': os.getenv('DB_PORT'),
     }
 }
 
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://127.0.0.1:6379/1",     # Локальный Redis сервер
+        "LOCATION": os.getenv('REDIS_URL'),     # имя сервиса Redis в docker-compose.yml
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         }
