@@ -22,6 +22,8 @@ services:
   redis:
     image: redis:7-alpine
     container_name: skitrip_redis
+    volumes:
+      - redis_data:/data
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 5s
@@ -57,4 +59,5 @@ networks:
 
 volumes:
   postgres_data:
+  redis_data:
   media_data:
