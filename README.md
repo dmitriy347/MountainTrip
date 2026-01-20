@@ -4,7 +4,7 @@
 
 ![Python](https://img.shields.io/badge/Python-3.11-blue?logo=python&logoColor=white)
 ![Django](https://img.shields.io/badge/Django-4.2-green?logo=django&logoColor=white)
-![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-blue?logo=postgresql&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-17-blue?logo=postgresql&logoColor=white)
 ![Redis](https://img.shields.io/badge/Redis-7-red?logo=redis&logoColor=white)
 ![Tests](https://img.shields.io/badge/Tests-Passing-success)
 ![Coverage](https://img.shields.io/badge/Coverage-99%25-brightgreen)
@@ -30,9 +30,11 @@
 
 ### Backend
 - **Python 3.11** — язык программирования
-- **Django 4.2** — веб-фреймворк
-- **PostgreSQL 15** — основная база данных
-- **Redis** — кэширование данных
+- **Django 5.1** — веб-фреймворк
+- **PostgreSQL 17** — основная база данных
+- **Redis 7** — кэширование данных
+- **Docker & Docker Compose** — контейнеризация
+- **Pytest** — тестирование
 - **Django AllAuth** — авторизация (включая GitHub OAuth)
 
 ### Frontend
@@ -59,87 +61,33 @@
 - PostgreSQL 15+
 - Redis
 
-### Шаги установки
+## Быстрый старт с Docker
 
 1. **Клонируйте репозиторий**
 ```bash
 git clone https://github.com/dmitriy347/MountainTrip.git
-cd MountainTrip
+cd MountainTrip/config
 ```
 
-2. **Создайте виртуальное окружение**
+2. **Создайте .env файл**
 ```bash
-python -m venv venv
-
-# Активация (Linux/Mac)
-source venv/bin/activate
-
-# Активация (Windows)
-venv\Scripts\activate
+cp .env.example .env
 ```
+Отредактируйте `.env` (укажите свои SECRET_KEY и пароли).
 
-3. **Установите зависимости**
+
+3. **Запустите Docker**
 ```bash
-pip install -r requirements.txt
+docker-compose up --build
 ```
+Миграции применяются автоматически!
 
-4. **Настройте переменные окружения**
+4. **Создайте суперпользователя**
 
-Создайте файл `.env` в корне проекта:
-```env
-SECRET_KEY=your-secret-key-here
-DEBUG=True
-
-DB_NAME=mountaintrip_db
-DB_USER=postgres
-DB_PASSWORD=your-password
-
-EMAIL_HOST=smtp.gmail.com
-EMAIL_PORT=465
-EMAIL_USE_SSL=True
-EMAIL_HOST_USER=your-email@gmail.com
-EMAIL_HOST_PASSWORD=your-app-password
-DEFAULT_FROM_EMAIL=your-email@gmail.com
-```
-
-5. **Создайте базу данных PostgreSQL**
 ```bash
-# Подключитесь к PostgreSQL
-psql -U postgres
-
-# Создайте базу данных
-CREATE DATABASE mountaintrip_db;
+docker-compose exec web python manage.py createsuperuser
 ```
 
-6. **Примените миграции**
-```bash
-cd config
-python manage.py migrate
-```
-
-7. **Создайте суперпользователя**
-```bash
-python manage.py createsuperuser
-```
-
-8. **Загрузите тестовые данные к**
-```bash
-python manage.py loaddata resort/fixtures/resorts.json
-```
-
-9. **Запустите Redis**
-```bash
-# Linux/Mac
-redis-server
-
-# Windows (если установлен через WSL)
-sudo service redis-server start
-```
-
-10. **Запустите сервер разработки**
-```bash
-python manage.py runserver
-```
 
 Приложение будет доступно по адресу: **http://127.0.0.1:8000**
 
@@ -150,19 +98,14 @@ python manage.py runserver
 ## 🧪 Тестирование
 ```bash
 # Запуск всех тестов
-pytest
+docker-compose exec web pytest
 
-# С подробным выводом
-pytest -v
+# С покрытием
+docker-compose exec web pytest --cov=resort --cov=users
 
-# С покрытием кода
-pytest --cov=resort --cov=users --cov-report=term-missing
-
-# HTML отчёт о покрытии
-pytest --cov=resort --cov=users --cov-report=html
-# Откройте htmlcov/index.html в браузере
+# Конкретный файл
+docker-compose exec web pytest resort/tests/test_views.py
 ```
-
 **Текущее покрытие тестами: 99%** 🎉
 
 ---
