@@ -25,10 +25,12 @@
                     или
                 </div>
 
-                <a href="{% provider_login_url 'github' %}"
-                   class="btn btn-dark w-100 mb-3">
-                    Войти через GitHub
-                </a>
+                {% if GITHUB_LOGIN_ENABLED %}
+                  <a href="{% provider_login_url 'github' %}"
+                     class="btn btn-dark w-100 mb-3">
+                      Войти через GitHub
+                  </a>
+                {% endif %}
 
                 <div class="text-center">
                     <a href="{% url 'password_reset' %}" class="text-decoration-none">
