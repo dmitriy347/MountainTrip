@@ -25,7 +25,6 @@ if [ "$DEBUG" = "True" ]; then
   python manage.py loaddata resorts.json
   python manage.py loaddata users.json
   python manage.py loaddata trips.json
-  python manage.py loaddata socialapp.json
   echo -e "${GREEN}✓ Test data loaded${NC}"
 fi
 
