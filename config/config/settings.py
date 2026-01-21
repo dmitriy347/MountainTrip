@@ -198,3 +198,22 @@ DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL')
 FIXTURE_DIRS = [
     BASE_DIR / "fixtures",
 ]
+
+# GitHub OAuth (опциональная фича)
+GITHUB_CLIENT_ID = os.getenv('GITHUB_CLIENT_ID')
+GITHUB_CLIENT_SECRET = os.getenv('GITHUB_CLIENT_SECRET')
+
+# Включаем кнопку OAuth только если оба ключа установлены
+GITHUB_LOGIN_ENABLED = bool(GITHUB_CLIENT_ID and GITHUB_CLIENT_SECRET)
+
+# Настройки django-allauth
+SOCIALACCOUNT_PROVIDERS = {
+    'github': {
+        'APP': {
+            'client_id': GITHUB_CLIENT_ID,
+            'secret': GITHUB_CLIENT_SECRET,
+            'key': ''
+        },
+    }
+}
+
