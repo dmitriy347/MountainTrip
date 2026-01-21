@@ -1,0 +1,47 @@
+[
+  {
+    "model": "auth.user",
+    "pk": 1,
+    "fields": {
+      "username": "testuser",
+      "email": "test@example.com",
+      "first_name": "Тестовый",
+      "last_name": "Пользователь",
+      "is_staff": false,
+      "is_superuser": false,
+      "is_active": true,
+      "date_joined": "2024-01-01T10:00:00Z",
+      "password": "pbkdf2_sha256$870000$vQ8xKZY8pQ9jHxJ4eLKvZX$kV3xHy9w0pQ7sR2tU6vW8xY0zA1bC3dE5fG7hI9jK0="
+    }
+  },
+  {
+    "model": "auth.user",
+    "pk": 2,
+    "fields": {
+      "username": "anotheruser",
+      "email": "another@example.com",
+      "first_name": "Другой",
+      "last_name": "Пользователь",
+      "is_staff": false,
+      "is_superuser": false,
+      "is_active": true,
+      "date_joined": "2024-01-15T12:00:00Z",
+      "password": "pbkdf2_sha256$870000$vQ8xKZY8pQ9jHxJ4eLKvZX$kV3xHy9w0pQ7sR2tU6vW8xY0zA1bC3dE5fG7hI9jK0="
+    }
+  },
+  {
+    "model": "auth.user",
+    "pk": 3,
+    "fields": {
+      "username": "admin",
+      "email": "admin@example.com",
+      "first_name": "Админ",
+      "last_name": "Пользователь",
+      "is_staff": true,
+      "is_superuser": true,
+      "is_active": true,
+      "date_joined": "2024-01-15T12:00:00Z",
+      "password": "pbkdf2_sha256$870000$vQ8xKZY8pQ9jHxJ4eLKvZX$kV3xHy9w0pQ7sR2tU6vW8xY0zA1bC3dE5fG7hI9jK0="
+    }
+  }
+]
