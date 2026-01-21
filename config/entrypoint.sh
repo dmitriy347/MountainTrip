@@ -26,6 +26,22 @@ if [ "$DEBUG" = "True" ]; then
   python manage.py loaddata users.json
   python manage.py loaddata trips.json
   echo -e "${GREEN}✓ Test data loaded${NC}"
+
+# Обрабатываем медиафайлы
+  # Если директория с медиафайлами существует, копируем их в новую директорию media, игнорируя ошибки
+  if [ -d "fixtures/media/trip_photos" ]; then
+    echo -e "${YELLOW}Copying media files...${NC}"
+    mkdir -p media/trip_photos
+    cp -r fixtures/media/trip_photos/* media/trip_photos/ 2>/dev/null || true
+    echo -e "${GREEN}✓ Media files copied${NC}"
+
+    # Загружаем fixture с медиа
+    echo -e "${YELLOW}Loading media fixtures...${NC}"
+    python manage.py loaddata trip_media.json
+    echo -e "${GREEN}✓ Media fixtures loaded${NC}"
+  else
+    echo -e "${YELLOW}⚠️  fixtures/media/trip_photos not found, skipping media${NC}"
+  fi
 fi
 
 
