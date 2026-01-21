@@ -22,7 +22,9 @@ echo -e "${GREEN}✓ Migrations applied${NC}"
 if [ "$DEBUG" = "True" ]; then
   # Заполняем тестовыми данными (для отладки)
   echo -e "${YELLOW}Loading fixtures...${NC}"
-  python manage.py loaddata fixtures.json || true
+  python manage.py loaddata resorts.json
+  python manage.py loaddata users.json
+  python manage.py loaddata trips.json
   echo -e "${GREEN}✓ Test data loaded${NC}"
 fi
 
