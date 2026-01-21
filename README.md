@@ -90,6 +90,18 @@ docker-compose up --build
 
 ---
 
+## 📸 Скриншоты
+
+![Главная страница](screenshots/home.png )
+
+![Список курортов](screenshots/resorts.png)
+
+![Список поездок](screenshots/trip_list.png)
+
+![Детали поездки](screenshots/trip_detail.png)
+
+---
+
 ## 🗂️ Структура проекта
 ```
 MountainTrip/
@@ -184,24 +196,6 @@ MountainTrip/
 - Валидация форм
 - Санитизация пользовательского ввода
 
----
-
-## 📸 Скриншоты
-
-![Главная страница](screenshots/home.png )
-
-![Список курортов](screenshots/resorts.png)
-
-![Список поездок](screenshots/trip_list.png)
-
-![Детали поездки](screenshots/trip_detail.png)
-
-<p align="center">
-  <img src="screenshots/home.png" width="32%"/>
-  <img src="screenshots/resorts.png" width="32%" />
-  <img src="screenshots/trip_list.png" width="32%" />
-  <img src="screenshots/trip_detail.png" width="32%" />
-</p>
 ---
 
 ## 🚀 Планы по развитию
