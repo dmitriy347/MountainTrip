@@ -71,10 +71,10 @@ cp .env.example .env
 ```bash
 docker-compose up --build
 ```
-Приложение доступно по адресу: **http://localhost:8000**
+Приложение доступно по адресу: http://localhost:8000
 
 **Демо-аккаунты:**
-- Админ: `admin` / `admin123` (http://localhost:8000/admin)`
+- Админ: `admin` / `admin123` (http://localhost:8000/admin)
 - Пользователь: `testuser` / `testuser`
 
 ### 4. GitHub OAuth (опционально)
@@ -85,7 +85,7 @@ docker-compose up --build
 Использование GitHub OAuth необязательно и включается через переменные окружения: `GITHUB_CLIENT_ID` и `GITHUB_CLIENT_SECRET`.
 
 ### Примечание:
-- Демо-данные загружаются автоматически
+- Демо-данные загружаются автоматически.
 - По умолчанию проект работает без каких-либо внешних учетных данных.
 
 ---
@@ -188,14 +188,20 @@ MountainTrip/
 
 ## 📸 Скриншоты
 
-[Главная страница](screenshots/home.png)
+![Главная страница](screenshots/home.png )
 
-[Список курортов](screenshots/resorts.png)
+![Список курортов](screenshots/resorts.png)
 
-[Список поездок](screenshots/trip_list.png)
+![Список поездок](screenshots/trip_list.png)
 
-[Детали поездки](screenshots/trip_detail.png)
+![Детали поездки](screenshots/trip_detail.png)
 
+<p align="center">
+  <img src="screenshots/home.png" width="32%"/>
+  <img src="screenshots/resorts.png" width="32%" />
+  <img src="screenshots/trip_list.png" width="32%" />
+  <img src="screenshots/trip_detail.png" width="32%" />
+</p>
 ---
 
 ## 🚀 Планы по развитию
