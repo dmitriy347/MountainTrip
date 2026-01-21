@@ -11,7 +11,7 @@
       "is_superuser": false,
       "is_active": true,
       "date_joined": "2024-01-01T10:00:00Z",
-      "password": "pbkdf2_sha256$870000$vQ8xKZY8pQ9jHxJ4eLKvZX$kV3xHy9w0pQ7sR2tU6vW8xY0zA1bC3dE5fG7hI9jK0="
+      "password": "pbkdf2_sha256$870000$E7k9ursNzpKEpRdL8KAwPn$qbrY68vU/TACKrzbsgdEkZskqjvobu4Sf13IK80NBHA="
     }
   },
   {
@@ -26,7 +26,7 @@
       "is_superuser": false,
       "is_active": true,
       "date_joined": "2024-01-15T12:00:00Z",
-      "password": "pbkdf2_sha256$870000$vQ8xKZY8pQ9jHxJ4eLKvZX$kV3xHy9w0pQ7sR2tU6vW8xY0zA1bC3dE5fG7hI9jK0="
+      "password": "pbkdf2_sha256$870000$Y5QCagv869FZ7stUl1YgBf$blhsJwgMyUF5ACqppIhX38qil1bVocn3VNt7O/Kfpi0="
     }
   },
   {
@@ -41,7 +41,7 @@
       "is_superuser": true,
       "is_active": true,
       "date_joined": "2024-01-15T12:00:00Z",
-      "password": "pbkdf2_sha256$870000$vQ8xKZY8pQ9jHxJ4eLKvZX$kV3xHy9w0pQ7sR2tU6vW8xY0zA1bC3dE5fG7hI9jK0="
+      "password": "pbkdf2_sha256$870000$WCIwBVGqS4dCQWuvzY8uEF$encdOU5eTt2+++EqXCajAzRxBxKxK8CxdUjPWepF0yU="
     }
   }
 ]
