@@ -6,7 +6,7 @@ from django.contrib.messages import get_messages
 
 # 0. Тесты для представления UserLoginView
 @pytest.mark.django_db
-def test_user_login_view_test_page_accessible(client, social_app):
+def test_user_login_view_test_page_accessible(client):
     """Страница логина доступна для анонимного пользователя."""
     url = reverse('users:login')
     response = client.get(url)
@@ -15,7 +15,7 @@ def test_user_login_view_test_page_accessible(client, social_app):
 
 
 @pytest.mark.django_db
-def test_user_login_view_successful_login(client, user, social_app):
+def test_user_login_view_successful_login(client, user):
     """Пользователь может успешно войти в систему с правильными учетными данными."""
     url = reverse('users:login')
     data = {
@@ -33,7 +33,7 @@ def test_user_login_view_successful_login(client, user, social_app):
 
 
 @pytest.mark.django_db
-def test_user_login_view_wrong_password(client, user, social_app):
+def test_user_login_view_wrong_password(client, user):
     """Пользователь не может войти с неправильным паролем."""
     url = reverse('users:login')
     data = {
@@ -47,7 +47,7 @@ def test_user_login_view_wrong_password(client, user, social_app):
 
 
 @pytest.mark.django_db
-def test_user_login_view_wrong_username(client, user, social_app):
+def test_user_login_view_wrong_username(client, user):
     """Пользователь не может войти с неправильным именем пользователя."""
     url = reverse('users:login')
     data = {
