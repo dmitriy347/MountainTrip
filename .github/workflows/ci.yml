@@ -3,13 +3,9 @@ name: CI
 # Когда запускать
 on:
   push:
-    branches:
-      - main
-      - master
+    branches: [ main, master ]
   pull_request:
-    branches:
-      - main
-      - master
+    branches: [ main, master ]
 
 # Задачи
 jobs:
@@ -17,6 +13,7 @@ jobs:
   lint:
     name: 🔍 Lint & Format Check
     runs-on: ubuntu-latest
+
     steps:
       # Шаг 1: Получить код из репозитория
       - name: Checkout code
@@ -34,12 +31,12 @@ jobs:
           pip install black flake8
 
       # Шаг 4: Проверить форматирование (Black)
-      - name: Check code formatting with Black
+      - name: Check formatting with Black
         run: |
           black --check config/
 
       # Шаг 5: Проверить качество кода (Flake8)
-      - name: Lint code with Flake8
+      - name: Lint with Flake8
         run: |
           cd config && flake8 .
 
@@ -48,7 +45,7 @@ jobs:
     name: 🧪 Run Tests
     runs-on: ubuntu-latest
 
-    # Сервисы (Postgres и Redis)
+    # Сервисы (PostgreSQL и Redis)
     services:
       postgres:
         image: postgres:16-alpine
@@ -63,17 +60,19 @@ jobs:
           --health-retries 5
         ports:
           - 5432:5432
+
       redis:
         image: redis:7-alpine
         options: >-
-            --health-cmd "redis-cli ping"
-            --health-interval 10s
-            --health-timeout 5s
-            --health-retries 5
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
         ports:
           - 6379:6379
+
     steps:
-      # Шаг 1: Получить код из репозитория
+      # Шаг 1: Получить код
       - name: Checkout code
         uses: actions/checkout@v4
 
@@ -81,7 +80,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-            python-version: '3.11'
+          python-version: '3.11'
 
       # Шаг 3: Установить зависимости
       - name: Install dependencies
