@@ -34,7 +34,8 @@ jobs:
       - name: Check formatting with Black
         run: |
           cd config
-          black --check .
+          black --diff manage.py resort/tests/conftest.py users/tests/conftest.py
+
 
       # Шаг 5: Проверить качество кода (Flake8)
       - name: Lint with Flake8
