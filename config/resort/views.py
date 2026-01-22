@@ -1,6 +1,5 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.views import redirect_to_login
 from django.db.models import Q, Count
 from django.http import HttpResponseNotFound
 from django.shortcuts import render, get_object_or_404
