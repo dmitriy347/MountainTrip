@@ -247,7 +247,7 @@ def test_trip_create_requires_login(client):
     assert response.status_code == 302  # Ожидаем перенаправление на страницу логина
 
     # Проверяем, что перенаправление ведет на страницу логина
-    assert ("/sign-in/" in response.url)
+    assert "/sign-in/" in response.url
 
 
 @pytest.mark.django_db
@@ -258,7 +258,7 @@ def test_trip_create_view(auth_client):
     assert response.status_code == 200
 
     # Проверяем, что авторизованный пользователь видит форму создания поездки
-    assert ("form" in response.context)
+    assert "form" in response.context
 
 
 @pytest.mark.django_db
