@@ -135,9 +135,7 @@ def test_profile_view_requires_login(client):
     assert response.status_code == 302
 
     # URL страницы логина содержит путь /sign-in/ (LOGIN_URL)
-    assert (
-        "/sign-in/" in response.url
-    )
+    assert "/sign-in/" in response.url
 
 
 @pytest.mark.django_db

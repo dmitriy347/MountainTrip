@@ -16,14 +16,10 @@ def test_index_view(client):
     assert response.status_code == 200
 
     # Проверяем использование правильного шаблона
-    assert "resort/index.html" in [
-        t.name for t in response.templates
-    ]
+    assert "resort/index.html" in [t.name for t in response.templates]
 
     # Проверяем, что заголовок в контексте корректен
-    assert (
-        response.context["title"] == "Горнолыжные курорты России"
-    )
+    assert response.context["title"] == "Горнолыжные курорты России"
 
 
 # 1. Тесты для представления ResortDetailView
@@ -66,14 +62,10 @@ def test_resort_detail_view_auth_user_sees_correct_trips(
     assert trip in trips  # Пользователь видит свою поездку
 
     # Пользователь видит публичную поездку другого пользователя
-    assert (
-        public_trip_another_user_resort in trips
-    )
+    assert public_trip_another_user_resort in trips
 
     # Пользователь НЕ видит приватную поездку другого пользователя
-    assert (
-        private_trip_another_user_resort not in trips
-    )
+    assert private_trip_another_user_resort not in trips
 
 
 @pytest.mark.django_db
@@ -89,14 +81,10 @@ def test_resort_detail_view_counters(
     response = client.get(url)
 
     # Общее количество поездок к курорту
-    assert (
-        response.context["total_trips_count"] == 3
-    )
+    assert response.context["total_trips_count"] == 3
 
     # Количество публичных поездок к курорту
-    assert (
-        response.context["public_trips_count"] == 1
-    )
+    assert response.context["public_trips_count"] == 1
 
 
 # 2. Тесты для представления ResortListView
@@ -108,9 +96,7 @@ def test_resort_list_view_returns_resorts(client, resort):
     assert response.status_code == 200
 
     # Проверяем, что курорт присутствует в контексте
-    assert (
-        resort in response.context["resorts"]
-    )
+    assert resort in response.context["resorts"]
 
 
 @pytest.mark.django_db
@@ -120,9 +106,7 @@ def test_resort_list_view_uses_correct_template(client):
     response = client.get(url)
 
     # Проверяем использование правильного шаблона
-    assert "resort/resort_list.html" in [
-        t.name for t in response.templates
-    ]
+    assert "resort/resort_list.html" in [t.name for t in response.templates]
 
 
 @pytest.mark.django_db
@@ -137,24 +121,18 @@ def test_resort_list_view_pagination(client):
     url = reverse("resort_list")
 
     # Запрашиваем первую страницу
-    response_page_1 = client.get(
-        url
-    )
+    response_page_1 = client.get(url)
     assert response_page_1.status_code == 200
 
     # Проверяем, что на первой странице отображается 5 курортов
-    assert (
-        len(response_page_1.context["resorts"]) == 6
-    )
+    assert len(response_page_1.context["resorts"]) == 6
 
     # Запрашиваем вторую страницу
     response_page_2 = client.get(url + "?page=2")
     assert response_page_2.status_code == 200
 
     # Проверяем, что на второй странице отображается оставшиеся 3 курорта
-    assert (
-        len(response_page_2.context["resorts"]) == 2
-    )
+    assert len(response_page_2.context["resorts"]) == 2
 
 
 # 3. Тесты для представления TripDetailView
@@ -166,9 +144,7 @@ def test_trip_detail_view_requires_login(client, trip):
     assert response.status_code == 302  # Ожидаем перенаправление на страницу логина
 
     # Проверяем, что перенаправление ведет на страницу логина
-    assert (
-        "/sign-in/" in response.url
-    )
+    assert "/sign-in/" in response.url
 
 
 @pytest.mark.django_db
@@ -195,9 +171,7 @@ def test_trip_detail_view_private_trip_visible(auth_client, private_trip_another
     response = auth_client.get(url)
 
     # Ожидаем 404, т.к. поездка приватная и не принадлежит пользователю
-    assert (
-        response.status_code == 404
-    )
+    assert response.status_code == 404
 
 
 @pytest.mark.django_db
@@ -227,9 +201,7 @@ def test_trip_list_view_requires_login(client):
     assert response.status_code == 302  # Ожидаем перенаправление на страницу логина
 
     # Проверяем, что перенаправление ведет на страницу логина
-    assert (
-        "/sign-in/" in response.url
-    )
+    assert "/sign-in/" in response.url
 
 
 @pytest.mark.django_db
@@ -251,14 +223,10 @@ def test_trip_list_view_shows_only_user_trips(
     assert trip in trips  # Пользователь видит свою поездку
 
     # Пользователь НЕ видит публичную поездку другого пользователя
-    assert (
-        public_trip_another_user not in trips
-    )
+    assert public_trip_another_user not in trips
 
     # Пользователь НЕ видит приватную поездку другого пользователя
-    assert (
-        private_trip_another_user not in trips
-    )
+    assert private_trip_another_user not in trips
 
 
 @pytest.mark.django_db
@@ -268,9 +236,7 @@ def test_trip_list_view_has_title(auth_client):
     response = auth_client.get(url)
 
     # Проверяем, что заголовок страницы корректен
-    assert (
-        response.context["title"] == "Мои поездки"
-    )
+    assert response.context["title"] == "Мои поездки"
 
 
 # 5. Тесты для представления TripCreateView
@@ -279,7 +245,9 @@ def test_trip_create_requires_login(client):
     url = reverse("trip_create")
     response = client.get(url)
     assert response.status_code == 302  # Ожидаем перенаправление на страницу логина
-    assert "/sign-in/" in response.url  # Проверяем, что перенаправление ведет на страницу логина
+
+    # Проверяем, что перенаправление ведет на страницу логина
+    assert ("/sign-in/" in response.url)
 
 
 @pytest.mark.django_db
@@ -288,9 +256,9 @@ def test_trip_create_view(auth_client):
     url = reverse("trip_create")
     response = auth_client.get(url)  # Выполняем GET-запрос к странице создания поездки
     assert response.status_code == 200
-    assert (
-        "form" in response.context
-    )  # Проверяем, что авторизованный пользователь видит форму создания поездки
+
+    # Проверяем, что авторизованный пользователь видит форму создания поездки
+    assert ("form" in response.context)
 
 
 @pytest.mark.django_db
@@ -303,9 +271,9 @@ def test_trip_create_view_assigns_user(auth_client, user, resort):
         "end_date": "2024-01-05",
         "is_public": True,
     }
-    response = auth_client.post(
-        url, data=form_data
-    )  # Отправляем POST-запрос с данными формы
+
+    # Отправляем POST-запрос с данными формы
+    response = auth_client.post(url, data=form_data)
     assert response.status_code == 302  # Ожидаем редирект после успешного создания
     trip = Trip.objects.get()  # Получаем созданную поездку
     assert trip.user == user  # Проверяем, что пользователь присвоен корректно
@@ -320,9 +288,7 @@ def test_trip_update_view_requires_login(client, trip):
     assert response.status_code == 302  # Ожидаем перенаправление на страницу логина
 
     # Проверяем, что перенаправление ведет на страницу логина
-    assert (
-        "/sign-in/" in response.url
-    )
+    assert "/sign-in/" in response.url
 
 
 @pytest.mark.django_db
@@ -333,18 +299,14 @@ def test_trip_update_view_not_owner_cannot_access(client, another_user, trip):
     response = client.get(url)
 
     # Ожидаем 404, так как пользователь не владелец поездки
-    assert (
-        response.status_code == 404
-    )
+    assert response.status_code == 404
 
 
 @pytest.mark.django_db
 def test_trip_update_view_owner_can_open(auth_client, trip):
     """Владелец может открыть страницу редактирования своей поездки"""
     url = reverse("trip_edit", kwargs={"trip_id": trip.id})
-    response = auth_client.get(
-        url
-    )
+    response = auth_client.get(url)
     assert response.status_code == 200
     assert "form" in response.context
 
@@ -361,9 +323,7 @@ def test_trip_update_view_owner_can_save(auth_client, trip):
     }
 
     # Отправляем POST-запрос с измененными данными
-    response = auth_client.post(
-        url, data=form_data
-    )
+    response = auth_client.post(url, data=form_data)
     trip.refresh_from_db()  # Обновляем объект поездки из базы данных
     assert response.status_code == 302  # Ожидаем редирект после успешного сохранения
     assert trip.is_public is True  # Проверяем, что изменения сохранены
@@ -378,14 +338,10 @@ def test_trip_delete_view_requires_login(client, trip):
     url = reverse("trip_delete", kwargs={"trip_id": trip.id})
     response = client.post(url)
     assert response.status_code == 302
-    assert (
-        "/sign-in/" in response.url
-    )
+    assert "/sign-in/" in response.url
 
     # Проверяем, что поездка не была удалена
-    assert Trip.objects.filter(
-        id=trip.id
-    ).exists()
+    assert Trip.objects.filter(id=trip.id).exists()
 
 
 @pytest.mark.django_db
@@ -396,24 +352,18 @@ def test_trip_delete_view_not_owner_cannot_access(client, another_user, trip):
     response = client.post(url)  # Выполняем POST-запрос к странице удаления поездки
 
     # Ожидаем 404, так как пользователь не владелец поездки
-    assert (
-        response.status_code == 404
-    )
+    assert response.status_code == 404
 
 
 @pytest.mark.django_db
 def test_trip_delete_view_owner_can_delete(auth_client, trip):
     """Владелец может успешно удалить свою поездку"""
     url = reverse("trip_delete", kwargs={"trip_id": trip.id})
-    response = auth_client.post(
-        url
-    )
+    response = auth_client.post(url)
     assert response.status_code == 302
 
     # Проверяем, что поездка была удалена
-    assert not Trip.objects.filter(
-        id=trip.id
-    ).exists()
+    assert not Trip.objects.filter(id=trip.id).exists()
     messages = list(get_messages(response.wsgi_request))
 
     # Проверяем, что появилось сообщение об успешном удалении
@@ -425,13 +375,9 @@ def test_trip_delete_view_owner_can_delete(auth_client, trip):
 def test_trip_media_add_view_requires_login(client, trip):
     """Тест доступа к странице добавления медиафайла (требуется авторизация)"""
     url = reverse("trip_media_add", kwargs={"trip_id": trip.id})
-    response = client.post(
-        url
-    )
+    response = client.post(url)
     assert response.status_code == 302
-    assert (
-        "/sign-in/" in response.url
-    )
+    assert "/sign-in/" in response.url
 
 
 @pytest.mark.django_db
@@ -447,9 +393,7 @@ def test_trip_media_add_view_not_owner_cannot_access(
     response = client.post(url, data=form_data)  # Отправляем POST-запрос с медиафайлом
 
     # Ожидаем 404, так как пользователь не владелец поездки
-    assert (
-        response.status_code == 404
-    )
+    assert response.status_code == 404
 
 
 @pytest.mark.django_db
@@ -459,21 +403,15 @@ def test_trip_media_add_view_owner_can_save(auth_client, trip, image_file):
     form_data = {
         "image": image_file,
     }
-    response = auth_client.post(
-        url, data=form_data
-    )
-    assert (
-        response.status_code == 302
-    )
+    response = auth_client.post(url, data=form_data)
+    assert response.status_code == 302
     media = TripMedia.objects.get(trip=trip)  # Получаем добавленный медиафайл
     assert media.image.name  # Проверяем, что медиафайл был сохранен
     messages = list(get_messages(response.wsgi_request))  # Получаем сообщения
     assert len(messages) == 1
 
     # Проверяем, что появилось сообщение об успешном добавлении
-    assert (
-        messages[0].message == "Фото успешно добавлено."
-    )
+    assert messages[0].message == "Фото успешно добавлено."
 
 
 # 9. Тесты для представления TripMediaDeleteView
@@ -483,14 +421,10 @@ def test_trip_media_delete_view_requires_login(client, trip_media):
     url = reverse("trip_media_delete", kwargs={"media_id": trip_media.id})
     response = client.post(url)
     assert response.status_code == 302
-    assert (
-        "/sign-in/" in response.url
-    )
+    assert "/sign-in/" in response.url
 
     # Проверяем, что медиафайл не был удален
-    assert TripMedia.objects.filter(
-        id=trip_media.id
-    ).exists()
+    assert TripMedia.objects.filter(id=trip_media.id).exists()
 
 
 @pytest.mark.django_db
@@ -503,29 +437,21 @@ def test_trip_media_delete_view_not_owner_cannot_access(
     response = client.post(url)
 
     # Ожидаем 404, так как пользователь не владелец медиафайла
-    assert (
-        response.status_code == 404
-    )
+    assert response.status_code == 404
 
     # Проверяем, что медиафайл не был удален
-    assert TripMedia.objects.filter(
-        id=trip_media.id
-    ).exists()
+    assert TripMedia.objects.filter(id=trip_media.id).exists()
 
 
 @pytest.mark.django_db
 def test_trip_media_delete_view_owner_can_delete(auth_client, trip_media):
     """Владелец может успешно удалить свой медиафайл"""
     url = reverse("trip_media_delete", kwargs={"media_id": trip_media.id})
-    response = auth_client.post(
-        url
-    )
+    response = auth_client.post(url)
     assert response.status_code == 302
 
     # Проверяем, что медиафайл был удален
-    assert not TripMedia.objects.filter(
-        id=trip_media.id
-    ).exists()
+    assert not TripMedia.objects.filter(id=trip_media.id).exists()
     messages = list(get_messages(response.wsgi_request))
     assert len(messages) == 1
     assert messages[0].message == "Фото удалено."

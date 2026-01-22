@@ -10,9 +10,7 @@ def test_home_url_resolves():
     match = resolve(url)
 
     # Проверяем, что URL разрешается в правильное представление
-    assert (
-        match.func is views.index
-    )
+    assert match.func is views.index
 
 
 @pytest.mark.django_db
