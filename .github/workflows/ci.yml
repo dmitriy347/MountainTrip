@@ -33,12 +33,14 @@ jobs:
       # Шаг 4: Проверить форматирование (Black)
       - name: Check formatting with Black
         run: |
-          black --check config/
+          cd config
+          black --check .
 
       # Шаг 5: Проверить качество кода (Flake8)
       - name: Lint with Flake8
         run: |
-          cd config && flake8 .
+          cd config
+          flake8 .
 
   # Задача 2: Запуск тестов
   test:
