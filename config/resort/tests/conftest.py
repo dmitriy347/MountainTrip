@@ -5,9 +5,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.contrib.auth import get_user_model
 from datetime import date
 
-
 from resort.models import Resort, Trip, TripMedia
-
 
 User = get_user_model()
 
