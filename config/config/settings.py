@@ -217,4 +217,3 @@ SOCIALACCOUNT_PROVIDERS = {
         },
     }
 }
-
