@@ -1,4 +1,3 @@
-from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django import forms
@@ -29,7 +28,7 @@ class CustomUserCreationForm(UserCreationForm):
         }
 
     def __init__(self, *args, **kwargs):
-        """Инициализация формы с применением Bootstrap классов и русификацией лейблов."""
+        """Инициализация формы с применением Bootstrap классов."""
         super().__init__(*args, **kwargs)
         # Применяем Bootstrap классы к полям паролей
         self.fields["password1"].widget.attrs.update(

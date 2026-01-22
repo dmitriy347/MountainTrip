@@ -41,7 +41,8 @@ class ResortDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         """
-        Добавляем в контекст заголовок страницы и фильтрацию поездки по текущему пользователю и публичности
+        Добавляем в контекст заголовок страницы и фильтрацию поездки
+        по текущему пользователю и публичности
         """
         context = super().get_context_data(**kwargs)
         context["title"] = self.object.name
@@ -70,7 +71,9 @@ class ResortDetailView(DetailView):
             context["trips"] = None
             return context
 
-        # Авторизованный пользователь - видит свои поездки и публичные поездки других пользователей
+        # Авторизованный пользователь:
+        # - видит свои поездки
+        # - и публичные поездки других пользователей
         context["trips"] = trips_qs.filter(
             Q(is_public=True) | Q(user=user)
         ).select_related(
@@ -126,7 +129,7 @@ class TripDetailView(LoginRequiredMixin, DetailView):
             .select_related("user", "resort")
             .prefetch_related(
                 "media"
-            )  # Оптимизация: сразу подтягиваем связанные объекты User, Resort и медиафайлы
+            )  # Оптимизация: сразу подтягиваем связанные объекты User, Resort и media
         )
 
 
@@ -170,7 +173,8 @@ class TripCreateView(LoginRequiredMixin, CreateView):
         Дополняем форму данными о текущем пользователе перед сохранением.
         Добавляем сообщение об успешном создании.
         """
-        # Альтернативный способ присвоения пользователя через form.instance (это объект модели Trip, который будет сохранен)
+        # Альтернативный способ присвоения пользователя
+        # через form.instance (это объект модели Trip, который будет сохранен)
         form.instance.user = self.request.user
         messages.success(self.request, "Поездка успешно создана.")
         return super().form_valid(form)
@@ -239,7 +243,8 @@ class TripMediaAddView(LoginRequiredMixin, CreateView):
         user = self.request.user
         trip = get_object_or_404(Trip, pk=trip_id, user=user)
 
-        # Альтернативный способ присвоения поездки через form.instance (это объект модели TripMedia, который будет сохранен)
+        # Альтернативный способ присвоения поездки
+        # через form.instance (это объект модели TripMedia, который будет сохранен)
         form.instance.trip = trip
         messages.success(self.request, "Фото успешно добавлено.")
         return super().form_valid(form)
@@ -248,7 +253,7 @@ class TripMediaAddView(LoginRequiredMixin, CreateView):
 class TripMediaDeleteView(LoginRequiredMixin, OwnerQuerySetMixin, DeleteView):
     """
     Класс-представление для удаления медиафайлов из поездки
-    Удаление медиафайла из файловой системы происходит автоматически с помощью сигнала post_delete
+    Файл удаляется автоматически через сигнал post_delete в модели
     Доступ к удалению ограничен владельцем медиафайлов через миксин OwnerQuerySetMixin
     """
 

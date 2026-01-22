@@ -53,7 +53,8 @@ def test_resort_detail_view_auth_user_sees_correct_trips(
 ):
     """
     Авторизованный пользователь видит на странице курорта свои поездки,
-    публичные поездки других пользователей и счетчики поездок. Не видит приватные поездки других пользователей.
+    публичные поездки других пользователей и счетчики поездок.
+    Не видит приватные поездки других пользователей.
     """
     url = reverse("resort_detail", kwargs={"resort_slug": resort.slug})
     response = auth_client.get(url)
@@ -157,7 +158,7 @@ def test_trip_detail_view_owner_can_access(auth_client, trip):
 
 @pytest.mark.django_db
 def test_trip_detail_view_public_trip_visible(auth_client, public_trip_another_user):
-    """Авторизованный пользователь может видеть публичную поездку другого пользователя"""
+    """Авторизованный пользователь видит публичную поездку другого пользователя"""
     url = reverse("trip_detail", kwargs={"trip_id": public_trip_another_user.id})
     response = auth_client.get(url)
     assert response.status_code == 200
@@ -166,7 +167,7 @@ def test_trip_detail_view_public_trip_visible(auth_client, public_trip_another_u
 
 @pytest.mark.django_db
 def test_trip_detail_view_private_trip_visible(auth_client, private_trip_another_user):
-    """Авторизованный пользователь НЕ может видеть приватную поездку другого пользователя"""
+    """Авторизованный пользователь НЕ видит приватную поездку другого пользователя"""
     url = reverse("trip_detail", kwargs={"trip_id": private_trip_another_user.id})
     response = auth_client.get(url)
 
@@ -216,7 +217,10 @@ def test_trip_list_view_authenticated_user(auth_client):
 def test_trip_list_view_shows_only_user_trips(
     auth_client, trip, public_trip_another_user, private_trip_another_user
 ):
-    """Пользователь должен видеть ТОЛЬКО свои поездки в списке поездок (OwnerQuerySetMixin)"""
+    """
+    Пользователь должен видеть ТОЛЬКО свои поездки в списке поездок
+    (OwnerQuerySetMixin)
+    """
     url = reverse("trip_list")
     response = auth_client.get(url)
     trips = response.context["trips"]

@@ -7,4 +7,4 @@ class ResortConfig(AppConfig):
 
     def ready(self):
         """Импорт сигналов при готовности приложения."""
-        import resort.signals
+        import resort.signals  # noqa: F401
