@@ -1,8 +1,7 @@
-
-
 class OwnerQuerySetMixin:
     """Ограничивает видимость объектов только владельцем."""
-    owner_field = 'user'
+
+    owner_field = "user"
 
     def get_queryset(self):
         """Фильтрация queryset по текущему пользователю."""

@@ -171,9 +171,7 @@ class TripCreateView(LoginRequiredMixin, CreateView):
         Добавляем сообщение об успешном создании.
         """
         # Альтернативный способ присвоения пользователя через form.instance (это объект модели Trip, который будет сохранен)
-        form.instance.user = (
-            self.request.user
-        )
+        form.instance.user = self.request.user
         messages.success(self.request, "Поездка успешно создана.")
         return super().form_valid(form)
 

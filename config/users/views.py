@@ -10,39 +10,39 @@ from users.forms import CustomUserCreationForm, UserLoginForm
 
 class UserLoginView(LoginView):
     """Класс-представление для авторизации пользователя."""
+
     form_class = UserLoginForm
-    template_name = 'users/login.html'
+    template_name = "users/login.html"
     extra_context = {
-        'title': 'Авторизация',
+        "title": "Авторизация",
     }
 
     def form_valid(self, form):
         """Вывод сообщения об успешной авторизации."""
-        messages.success(self.request, 'Вы успешно вошли в систему')
+        messages.success(self.request, "Вы успешно вошли в систему")
         return super().form_valid(form)
 
 
 class UserLogoutView(LogoutView):
     """Класс-представление для выхода пользователя из системы."""
+
     def dispatch(self, request, *args, **kwargs):
         """Вывод сообщения об успешном выходе из системы."""
-        messages.success(request, 'Вы вышли из системы')
+        messages.success(request, "Вы вышли из системы")
         return super().dispatch(request, *args, **kwargs)
 
 
 class UserRegisterView(CreateView):
     """Класс-представление для регистрации нового пользователя."""
+
     form_class = CustomUserCreationForm
-    template_name = 'users/register.html'
-    success_url = reverse_lazy('users:login')
-    extra_context = {
-        'title': 'Регистрация'
-    }
+    template_name = "users/register.html"
+    success_url = reverse_lazy("users:login")
+    extra_context = {"title": "Регистрация"}
 
 
 class ProfileView(LoginRequiredMixin, TemplateView):
     """Класс-представление для профиля пользователя."""
-    template_name = 'users/profile.html'
-    extra_context = {
-        'title': 'Профиль'
-    }
+
+    template_name = "users/profile.html"
+    extra_context = {"title": "Профиль"}

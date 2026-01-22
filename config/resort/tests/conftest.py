@@ -19,9 +19,7 @@ User = get_user_model()
 def user(db):
     """Обычный авторизованный пользователь"""
     return User.objects.create_user(
-        username="testuser",
-        email="testuser@example.com",
-        password="password123"
+        username="testuser", email="testuser@example.com", password="password123"
     )
 
 
@@ -29,9 +27,7 @@ def user(db):
 def another_user(db):
     """Другой пользователь (для проверки прав доступа)"""
     return User.objects.create_user(
-        username="anotheruser",
-        email="another@example.com",
-        password="password123"
+        username="anotheruser", email="another@example.com", password="password123"
     )
 
 
@@ -63,7 +59,7 @@ def trip(db, user, resort):
         resort=resort,
         start_date=date(2023, 12, 1),
         end_date=date(2023, 12, 10),
-        is_public=False
+        is_public=False,
     )
 
 
@@ -75,7 +71,7 @@ def trip_invalid(db, user, resort):
         resort=resort,
         start_date=date(2023, 12, 10),
         end_date=date(2023, 12, 1),
-        is_public=False
+        is_public=False,
     )
 
 
@@ -87,8 +83,9 @@ def public_trip_another_user(another_user, another_resort):
         resort=another_resort,
         start_date=date(2023, 11, 1),
         end_date=date(2023, 11, 5),
-        is_public=True
+        is_public=True,
     )
+
 
 @pytest.fixture
 def private_trip_another_user(another_user, another_resort):
@@ -98,7 +95,7 @@ def private_trip_another_user(another_user, another_resort):
         resort=another_resort,
         start_date=date(2023, 10, 1),
         end_date=date(2023, 10, 5),
-        is_public=False
+        is_public=False,
     )
 
 
@@ -110,7 +107,7 @@ def public_trip_another_user_resort(resort, another_user):
         resort=resort,
         start_date=date(2023, 9, 1),
         end_date=date(2023, 9, 5),
-        is_public=True
+        is_public=True,
     )
 
 
@@ -122,27 +119,26 @@ def private_trip_another_user_resort(resort, another_user):
         resort=resort,
         start_date=date(2023, 8, 1),
         end_date=date(2023, 8, 5),
-        is_public=False
+        is_public=False,
     )
 
 
 @pytest.fixture
 def image_file():
     """Создание тестового минимально-валидного изображения в памяти"""
-    image = Image.new('RGB', (10, 10), color = 'white')
+    image = Image.new("RGB", (10, 10), color="white")
     buffer = BytesIO()
-    image.save(buffer, format='JPEG')
+    image.save(buffer, format="JPEG")
     buffer.seek(0)
-    return SimpleUploadedFile(name="test_image.jpg", content=buffer.read(), content_type="image/jpeg")
+    return SimpleUploadedFile(
+        name="test_image.jpg", content=buffer.read(), content_type="image/jpeg"
+    )
 
 
 @pytest.fixture
 def trip_media(db, trip, image_file):
     """Медиафайл, связанный с поездкой"""
-    return TripMedia.objects.create(
-        trip=trip,
-        image=image_file
-    )
+    return TripMedia.objects.create(trip=trip, image=image_file)
 
 
 @pytest.fixture

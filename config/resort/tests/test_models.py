@@ -57,7 +57,7 @@ def test_trip_get_absolute_url(trip):
 @pytest.mark.django_db
 def test_tripmedia_str(trip_media):
     """__str__ должен возвращать строку с ID поездки."""
-    assert str(trip_media) == f'Media for trip {trip_media.trip.id}'
+    assert str(trip_media) == f"Media for trip {trip_media.trip.id}"
 
 
 @pytest.mark.django_db
