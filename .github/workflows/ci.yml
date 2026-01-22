@@ -1,0 +1,115 @@
+name: CI
+
+# Когда запускать
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+    branches:
+      - main
+      - master
+
+# Задачи
+jobs:
+  # Задача 1: Проверка качества кода
+  lint:
+    name: 🔍 Lint & Format Check
+    runs-on: ubuntu-latest
+    steps:
+      # Шаг 1: Получить код из репозитория
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Шаг 2: Установить Python
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      # Шаг 3: Установить инструменты
+      - name: Install linting tools
+        run: |
+          pip install black flake8
+
+      # Шаг 4: Проверить форматирование (Black)
+      - name: Check code formatting with Black
+        run: |
+          black --check config/
+
+      # Шаг 5: Проверить качество кода (Flake8)
+      - name: Lint code with Flake8
+        run: |
+          cd config && flake8 .
+
+  # Задача 2: Запуск тестов
+  test:
+    name: 🧪 Run Tests
+    runs-on: ubuntu-latest
+
+    # Сервисы (Postgres и Redis)
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: test_db
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+      redis:
+        image: redis:7-alpine
+        options: >-
+            --health-cmd "redis-cli ping"
+            --health-interval 10s
+            --health-timeout 5s
+            --health-retries 5
+        ports:
+          - 6379:6379
+    steps:
+      # Шаг 1: Получить код из репозитория
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Шаг 2: Установить Python
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+            python-version: '3.11'
+
+      # Шаг 3: Установить зависимости
+      - name: Install dependencies
+        run: |
+          pip install -r config/requirements.txt
+          pip install -r config/requirements-dev.txt
+
+      # Шаг 4: Настроить переменные окружения
+      - name: Set up environment
+        run: |
+          cd config
+          echo "DEBUG=True" > .env
+          echo "SECRET_KEY=test-secret-key-for-ci" >> .env
+          echo "DB_NAME=test_db" >> .env
+          echo "DB_USER=postgres" >> .env
+          echo "DB_PASSWORD=postgres" >> .env
+          echo "DB_HOST=localhost" >> .env
+          echo "DB_PORT=5432" >> .env
+          echo "REDIS_URL=redis://localhost:6379/1" >> .env
+
+      # Шаг 5: Запустить миграции
+      - name: Run migrations
+        run: |
+          cd config
+          python manage.py migrate --noinput
+
+      # Шаг 6: Запустить тесты
+      - name: Run tests
+        run: |
+          cd config
+          pytest -v
