@@ -1,7 +1,5 @@
 import pytest
 from django.contrib.auth import get_user_model
-from django.contrib.sites.models import Site
-from allauth.socialaccount.models import SocialApp
 
 
 User = get_user_model()
