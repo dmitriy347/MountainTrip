@@ -62,14 +62,15 @@ jobs:
           --health-retries 5
 
     steps:
-      # Шаг 0: Диагностика
-      - name: Debug services
-        run: |
-          docker ps -a
 
       # Шаг 1: Получить код
       - name: Checkout code
         uses: actions/checkout@v4
+
+      # Шаг 2.0: Диагностика
+      - name: Debug services
+        run: |
+          docker ps -a
 
       # Шаг 2: Установить Python
       - name: Set up Python
