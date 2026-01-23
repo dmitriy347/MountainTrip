@@ -28,7 +28,7 @@ jobs:
       # Шаг 3: Установить инструменты
       - name: Install linting tools
         run: |
-          pip install black flake8
+          pip install -r config/requirements-dev.txt
 
       # Шаг 4: Проверить форматирование (Black)
       - name: Check formatting with Black
