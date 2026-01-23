@@ -103,14 +103,18 @@ jobs:
           echo "DB_PORT=5432" >> .env
           echo "REDIS_URL=redis://localhost:6379/1" >> .env
 
-      # Шаг 5: Запустить миграции
-      - name: Run migrations
+      # Шаг 5: Установить клиент PostgreSQL и дождаться готовности базы данных
+      - name: Wait for PostgreSQL
         run: |
-          cd config
-          python manage.py migrate --noinput
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client
+          until pg_isready -h localhost -U postgres; do
+            echo "Waiting for PostgreSQL..."
+            sleep 2
+          done
 
       # Шаг 6: Запустить тесты
       - name: Run tests
         run: |
           cd config
-          pytest -v
+          pytest -v --create-db
