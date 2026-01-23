@@ -103,13 +103,7 @@ jobs:
           echo "DB_PORT=5432" >> .env
           echo "REDIS_URL=redis://localhost:6379/1" >> .env
 
-      # Шаг 5: Применить миграции
-      - name: Run migrations
-        run: |
-          cd config
-          python manage.py migrate --noinput
-
-      # Шаг 6: Дождаться готовности PostgreSQL
+      # Шаг 5: Дождаться готовности PostgreSQL
       - name: Wait for PostgreSQL
         run: |
           sudo apt-get update
@@ -119,8 +113,14 @@ jobs:
             sleep 2
           done
 
-      # Шаг 6: Запустить тесты
+      # Шаг 6: Применить миграции
+      - name: Run migrations
+        run: |
+          cd config
+          python manage.py migrate --noinput
+
+      # Шаг 7: Запустить тесты, используя уже созданную БД из (--reuse-db)
       - name: Run tests
         run: |
           cd config
-          pytest -v
+          pytest -v --reuse-db
