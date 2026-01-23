@@ -63,16 +63,6 @@ jobs:
         ports:
           - 5432:5432
 
-      redis:
-        image: redis:7-alpine
-        options: >-
-          --health-cmd "redis-cli ping"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-        ports:
-          - 6379:6379
-
     steps:
       # Шаг 1: Получить код
       - name: Checkout code
@@ -99,9 +89,16 @@ jobs:
           echo "DB_NAME=test_db" >> .env
           echo "DB_USER=postgres" >> .env
           echo "DB_PASSWORD=postgres" >> .env
-          echo "DB_HOST=localhost" >> .env
+          echo "DB_HOST=postgres" >> .env
           echo "DB_PORT=5432" >> .env
-          echo "REDIS_URL=redis://localhost:6379/1" >> .env
+
+      # Шаг 5.0: Подождать, пока база данных станет доступной
+      - name: Wait for Postgres to be ready
+        run: |
+          until pg_isready -h postgres -p 5432; do
+            echo "Waiting for Postgres..."
+            sleep 2
+          done
 
       # Шаг 5: Запустить миграции
       - name: Run migrations
