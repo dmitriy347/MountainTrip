@@ -60,10 +60,13 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-        ports:
-          - 5432:5432
 
     steps:
+      # Шаг 0: Диагностика
+      - name: Debug services
+        run: |
+          docker ps -a
+
       # Шаг 1: Получить код
       - name: Checkout code
         uses: actions/checkout@v4
@@ -100,10 +103,13 @@ jobs:
       # Шаг 5.01: Подождать, пока база данных станет доступной
       - name: Wait for Postgres to be ready
         run: |
-          until pg_isready -h postgres -p 5432; do
+          for i in {1..30}; do
+            pg_isready -h postgres -p 5432 && echo "Postgres is ready" && exit 0
             echo "Waiting for Postgres..."
             sleep 2
           done
+          echo "Postgres did not become ready"
+          exit 1
 
       # Шаг 5: Запустить миграции
       - name: Run migrations
