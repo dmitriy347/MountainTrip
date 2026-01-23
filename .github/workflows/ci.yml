@@ -117,4 +117,4 @@ jobs:
       - name: Run tests
         run: |
           cd config
-          pytest -v --create-db
+          pytest -v
