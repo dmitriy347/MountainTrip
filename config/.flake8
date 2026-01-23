@@ -24,8 +24,6 @@ ignore =
 # Файлы с особыми правилами
 per-file-ignores =
     settings.py:E402,E501
-    settings_test.py:F403,F401
-
 
 # Максимальная сложность функций
 max-complexity = 10
