@@ -60,17 +60,23 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
+        ports:
+          - 5432:5432
+
+      redis:
+        image: redis:7-alpine
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 6379:6379
 
     steps:
-
       # Шаг 1: Получить код
       - name: Checkout code
         uses: actions/checkout@v4
-
-      # Шаг 2.0: Диагностика
-      - name: Debug services
-        run: |
-          docker ps -a
 
       # Шаг 2: Установить Python
       - name: Set up Python
@@ -95,22 +101,7 @@ jobs:
           echo "DB_PASSWORD=postgres" >> .env
           echo "DB_HOST=postgres" >> .env
           echo "DB_PORT=5432" >> .env
-
-      # Шаг 5.0: Установить клиент Postgres
-      - name: Install Postgres client
-        run: |
-          sudo apt-get update && sudo apt-get install -y postgresql-client
-
-      # Шаг 5.01: Подождать, пока база данных станет доступной
-      - name: Wait for Postgres to be ready
-        run: |
-          for i in {1..30}; do
-            pg_isready -h postgres -p 5432 && echo "Postgres is ready" && exit 0
-            echo "Waiting for Postgres..."
-            sleep 2
-          done
-          echo "Postgres did not become ready"
-          exit 1
+          echo "REDIS_URL=redis://localhost:6379/1" >> .env
 
       # Шаг 5: Запустить миграции
       - name: Run migrations
