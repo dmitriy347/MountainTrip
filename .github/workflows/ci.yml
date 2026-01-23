@@ -92,7 +92,12 @@ jobs:
           echo "DB_HOST=postgres" >> .env
           echo "DB_PORT=5432" >> .env
 
-      # Шаг 5.0: Подождать, пока база данных станет доступной
+      # Шаг 5.0: Установить клиент Postgres
+      - name: Install Postgres client
+        run: |
+          sudo apt-get update && sudo apt-get install -y postgresql-client
+
+      # Шаг 5.01: Подождать, пока база данных станет доступной
       - name: Wait for Postgres to be ready
         run: |
           until pg_isready -h postgres -p 5432; do
