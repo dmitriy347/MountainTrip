@@ -91,6 +91,7 @@ jobs:
       # Шаг 4: Настроить переменные окружения
       - name: Set up environment
         run: |
+          cd config
           echo "DEBUG=True" > .env
           echo "SECRET_KEY=test-secret-key-for-ci" >> .env
           echo "DB_NAME=test_db" >> .env
@@ -118,4 +119,4 @@ jobs:
       # Шаг 7: Запустить тесты, используя уже созданную БД из (--reuse-db)
       - name: Run tests
         run: |
-          pytest -v
+          pytest -v --reuse-db
