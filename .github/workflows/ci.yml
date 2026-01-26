@@ -24,6 +24,7 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+          cache: 'pip'
 
       # Шаг 3: Установить инструменты
       - name: Install linting tools
@@ -33,12 +34,12 @@ jobs:
       # Шаг 4: Проверить форматирование (Black)
       - name: Check formatting with Black
         run: |
-          black --check .
+          black --check config/
 
       # Шаг 5: Проверить качество кода (Flake8)
       - name: Lint with Flake8
         run: |
-          flake8 .
+          flake8 config/
 
   # Задача 2: Запуск тестов
   test:
@@ -81,6 +82,7 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+          cache: 'pip'
 
       # Шаг 3: Установить зависимости
       - name: Install dependencies
@@ -89,17 +91,21 @@ jobs:
           pip install -r requirements-dev.txt
 
       # Шаг 4: Настроить переменные окружения
-      - name: Set up environment
+      - name: Set up environment variables
         run: |
-          cd config
-          echo "DEBUG=True" > .env
-          echo "SECRET_KEY=test-secret-key-for-ci" >> .env
-          echo "DB_NAME=test_db" >> .env
-          echo "DB_USER=postgres" >> .env
-          echo "DB_PASSWORD=postgres" >> .env
-          echo "DB_HOST=localhost" >> .env
-          echo "DB_PORT=5432" >> .env
-          echo "REDIS_URL=redis://localhost:6379/1" >> .env
+          cat > .env << 'EOF'
+          DEBUG=True
+          SECRET_KEY=${{ secrets.CI_SECRET_KEY || 'test-secret-key-for-ci-fallback' }}
+          
+          DB_NAME=test_db
+          DB_USER=postgres
+          DB_PASSWORD=postgres
+          DB_HOST=localhost
+          DB_PORT=5432
+          
+          REDIS_URL=redis://localhost:6379/1
+          ALLOWED_HOSTS=localhost,127.0.0.1
+          EOF
 
       # Шаг 5: Дождаться готовности PostgreSQL
       - name: Wait for PostgreSQL
@@ -114,9 +120,11 @@ jobs:
       # Шаг 6: Применить миграции
       - name: Run migrations
         run: |
-          python config/manage.py migrate --noinput
+          cd config
+          python manage.py migrate --noinput
 
-      # Шаг 7: Запустить тесты, используя уже созданную БД из (--reuse-db)
+      # Шаг 7: Запустить тесты
       - name: Run tests
         run: |
+          cd config
           pytest -v --reuse-db
