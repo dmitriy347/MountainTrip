@@ -9,6 +9,7 @@ exclude =
     */migrations/*,
     .venv,
     venv,
+    venv_old,
     env,
     build,
     dist,
