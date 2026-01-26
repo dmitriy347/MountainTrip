@@ -57,7 +57,7 @@
 ### 1. Клонируй репозиторий
 ```bash
 git clone https://github.com/dmitriy347/MountainTrip.git
-cd MountainTrip/config
+cd MountainTrip
 ```
 
 ### 2. Настрой переменные окружения
@@ -110,9 +110,16 @@ MountainTrip/
 ├── config/                  
 │   ├── config/              # Настройки проекта
 │   │   ├── settings.py      # Основные настройки
-│   │   ├── settings_test.py # Настройки для тестов
 │   │   ├── urls.py          # Главный URL-роутинг
 │   │   └── wsgi.py
+│   │
+│   ├── fixtures/            # Демонстрационные данные
+│   │   ├── resorts.json     # Курорты
+│   │   ├── trip_media.json  # Медиа курортов
+│   │   ├── trips.json       # Поездки
+│   │   ├── users.json       # Пользователи
+│   │   └── media            # Медиа-файлы для загрузки
+│   │       └── trip_photos/ # Фотографии поездок
 │   │
 │   ├── resort/              # Приложение курортов и поездок
 │   │   ├── models.py        # Модели: Resort, Trip, TripMedia
@@ -142,17 +149,17 @@ MountainTrip/
 │   │   ├── base.html        # Базовый шаблон
 │   │   └── registration/    # Шаблоны смены пароля
 │   │
-│   ├── manage.py            # Утилита управления Django
-│   └── pytest.ini           # Конфигурация pytest
-│
-├── media/                   # Загруженные пользователями файлы
-│   └── trip_photos/         # Фотографии поездок
+│   └─── manage.py            # Утилита управления Django
 │
 ├── Dockerfile               # Конфигурация сборки образа
 ├── docker-compose.yml       # Оркестрация сервисов
 ├── entrypoint.sh            # Скрипт инициализации контейнера
 ├── requirements.txt         # Зависимости проекта
-└── requirements-dev.txt     # Development/testing зависимости
+├── requirements-dev.txt     # Development/testing зависимости
+├── .flake8                  # Конфигурация Flake8
+├── pytest.ini               # Конфигурация pytest
+├── pyproject.toml           # Конфигурация проекта
+└── .env.example             # Пример файла переменных окружения
 ```
 
 ---
