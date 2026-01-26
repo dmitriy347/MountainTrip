@@ -28,18 +28,16 @@ jobs:
       # Шаг 3: Установить инструменты
       - name: Install linting tools
         run: |
-          pip install -r config/requirements-dev.txt
+          pip install -r requirements-dev.txt
 
       # Шаг 4: Проверить форматирование (Black)
       - name: Check formatting with Black
         run: |
-          cd config
           black --check .
 
       # Шаг 5: Проверить качество кода (Flake8)
       - name: Lint with Flake8
         run: |
-          cd config
           flake8 .
 
   # Задача 2: Запуск тестов
@@ -87,13 +85,12 @@ jobs:
       # Шаг 3: Установить зависимости
       - name: Install dependencies
         run: |
-          pip install -r config/requirements.txt
-          pip install -r config/requirements-dev.txt
+          pip install -r requirements.txt
+          pip install -r requirements-dev.txt
 
       # Шаг 4: Настроить переменные окружения
       - name: Set up environment
         run: |
-          cd config
           echo "DEBUG=True" > .env
           echo "SECRET_KEY=test-secret-key-for-ci" >> .env
           echo "DB_NAME=test_db" >> .env
@@ -122,5 +119,4 @@ jobs:
       # Шаг 7: Запустить тесты, используя уже созданную БД из (--reuse-db)
       - name: Run tests
         run: |
-          cd config
           pytest -v --reuse-db
