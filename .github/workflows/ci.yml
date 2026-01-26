@@ -113,7 +113,6 @@ jobs:
       # Шаг 6: Применить миграции
       - name: Run migrations
         run: |
-          cd config
           python manage.py migrate --noinput
 
       # Шаг 7: Запустить тесты, используя уже созданную БД из (--reuse-db)
