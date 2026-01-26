@@ -1,0 +1,47 @@
+[
+  {
+    "model": "auth.user",
+    "pk": 1,
+    "fields": {
+      "username": "testuser",
+      "email": "test@example.com",
+      "first_name": "Тестовый",
+      "last_name": "Пользователь",
+      "is_staff": false,
+      "is_superuser": false,
+      "is_active": true,
+      "date_joined": "2024-01-01T10:00:00Z",
+      "password": "pbkdf2_sha256$870000$E7k9ursNzpKEpRdL8KAwPn$qbrY68vU/TACKrzbsgdEkZskqjvobu4Sf13IK80NBHA="
+    }
+  },
+  {
+    "model": "auth.user",
+    "pk": 2,
+    "fields": {
+      "username": "anotheruser",
+      "email": "another@example.com",
+      "first_name": "Другой",
+      "last_name": "Пользователь",
+      "is_staff": false,
+      "is_superuser": false,
+      "is_active": true,
+      "date_joined": "2024-01-15T12:00:00Z",
+      "password": "pbkdf2_sha256$870000$Y5QCagv869FZ7stUl1YgBf$blhsJwgMyUF5ACqppIhX38qil1bVocn3VNt7O/Kfpi0="
+    }
+  },
+  {
+    "model": "auth.user",
+    "pk": 3,
+    "fields": {
+      "username": "admin",
+      "email": "admin@example.com",
+      "first_name": "Админ",
+      "last_name": "Пользователь",
+      "is_staff": true,
+      "is_superuser": true,
+      "is_active": true,
+      "date_joined": "2024-01-15T12:00:00Z",
+      "password": "pbkdf2_sha256$870000$WCIwBVGqS4dCQWuvzY8uEF$encdOU5eTt2+++EqXCajAzRxBxKxK8CxdUjPWepF0yU="
+    }
+  }
+]
