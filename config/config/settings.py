@@ -153,7 +153,7 @@ USE_TZ = True
 STATIC_URL = "/static/"
 
 # Путь, куда collectstatic соберет все статические файлы
-STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
 # Если бы статические файлы хранились в нестандартном месте, нужно было бы указать путь к ним здесь.
 # STATICFILES_DIRS = [BASE_DIR / 'config/static']
