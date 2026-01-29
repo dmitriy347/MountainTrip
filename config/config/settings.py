@@ -32,7 +32,7 @@ DEBUG = os.getenv("DEBUG", "False") == "True"
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "").split(",")
 
 # CSRF настройки для HTTPS
-CSRF_TRUSTED_ORIGINS = os.getenv("CSRF_TRUSTED_ORIGINS", "").split(",")
+CSRF_TRUSTED_ORIGINS = list(filter(None, os.getenv("CSRF_TRUSTED_ORIGINS", "").split(",")))
 
 # Определение HTTPS за прокси (Nginx)
 SECURE_PROXY_SSL_HEADER_VALUE = os.getenv("SECURE_PROXY_SSL_HEADER", "").split(",")
