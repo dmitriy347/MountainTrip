@@ -18,3 +18,5 @@ Pillow==12.0.0
 
 # Utils
 python-slugify==8.0.4
+
+gunicorn==21.2.0

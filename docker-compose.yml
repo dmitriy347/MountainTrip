@@ -3,6 +3,7 @@ services:
   db:
     image: postgres:16-alpine
     container_name: skitrip_db
+    restart: unless-stopped
     volumes:
       - postgres_data:/var/lib/postgresql/data
     environment:
@@ -22,6 +23,7 @@ services:
   redis:
     image: redis:7-alpine
     container_name: skitrip_redis
+    restart: unless-stopped
     volumes:
       - redis_data:/data
     healthcheck:
@@ -38,9 +40,10 @@ services:
   web:
     build: .
     container_name: skitrip_web
+    restart: unless-stopped
     volumes:
       - .:/app
-      - media_data:/app/config/media
+      - ./config/media:/app/config/media
     environment:
       GITHUB_CLIENT_ID: ${GITHUB_CLIENT_ID}
       GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET}
@@ -63,4 +66,3 @@ networks:
 volumes:
   postgres_data:
   redis_data:
-  media_data:

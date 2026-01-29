@@ -46,9 +46,9 @@ if [ "$DEBUG" = "True" ]; then
 fi
 
 # Собираем статику (для продакшена)
-# echo -e "${YELLOW}Collecting static files...${NC}"
-# python config/manage.py collectstatic --noinput
-# echo -e "${GREEN}✓ Static files collected${NC}"
+ echo -e "${YELLOW}Collecting static files...${NC}"
+ python config/manage.py collectstatic --noinput
+ echo -e "${GREEN}✓ Static files collected${NC}"
 
 # Запускаем сервер
 echo -e "${GREEN}=== Starting Django server ===${NC}"

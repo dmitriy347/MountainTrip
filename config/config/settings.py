@@ -31,6 +31,14 @@ DEBUG = os.getenv("DEBUG", "False") == "True"
 
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "").split(",")
 
+# CSRF настройки для HTTPS
+CSRF_TRUSTED_ORIGINS = os.getenv("CSRF_TRUSTED_ORIGINS", "").split(",")
+
+# Определение HTTPS за прокси (Nginx)
+SECURE_PROXY_SSL_HEADER_VALUE = os.getenv("SECURE_PROXY_SSL_HEADER", "").split(",")
+if len(SECURE_PROXY_SSL_HEADER_VALUE) == 2:
+    SECURE_PROXY_SSL_HEADER = tuple(SECURE_PROXY_SSL_HEADER_VALUE)
+
 INTERNAL_IPS = [
     "127.0.0.1",
 ]
@@ -152,7 +160,6 @@ USE_TZ = True
 # Это префикс для всех статических файлов, которые используются в шаблонах HTML.
 STATIC_URL = "/static/"
 
-# Путь, куда collectstatic соберет все статические файлы
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
 # Если бы статические файлы хранились в нестандартном месте, нужно было бы указать путь к ним здесь.
