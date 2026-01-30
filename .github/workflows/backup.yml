@@ -28,7 +28,7 @@ jobs:
           BACKUP_FILE="db_backup_$(date +%Y-%m-%d_%H-%M-%S).sql.gz"
           
           ssh -i ~/.ssh/github_actions ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} \
-            "cd MountainTrip && docker exec skitrip_db pg_dump -U postgres skitrip_db | gzip" > $BACKUP_FILE
+            "cd /opt/skitrip && docker exec skitrip_db pg_dump -U postgres skitrip_db | gzip" > $BACKUP_FILE
           
           echo "BACKUP_FILE=$BACKUP_FILE" >> $GITHUB_ENV
           ls -lh $BACKUP_FILE
