@@ -33,38 +33,37 @@ jobs:
           echo "BACKUP_FILE=$BACKUP_FILE" >> $GITHUB_ENV
           ls -lh $BACKUP_FILE
 
-      - name: ☁️ Upload to S3
+      - name: ☁️ Upload to Yandex Object Storage
         env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: eu-central-1
+          AWS_ACCESS_KEY_ID: ${{ secrets.YC_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.YC_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ru-central1
         run: |
-          # Устанавливаем AWS CLI
-          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-          unzip -q awscliv2.zip
-          sudo ./aws/install
+          # AWS CLI уже установлен в GitHub Actions, просто используем его
+          aws s3 cp $BACKUP_FILE s3://skitrip-backups/database/ \
+            --endpoint-url=https://storage.yandexcloud.net
           
-          # Загружаем бэкап в S3
-          aws s3 cp $BACKUP_FILE s3://skitrip-backups-2025/database/
-          
-          echo "✅ Backup uploaded to S3!"
+          echo "✅ Backup uploaded to Yandex Cloud!"
 
       - name: 🧹 Cleanup old backups (keep last 7 days)
         env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: eu-central-1
+          AWS_ACCESS_KEY_ID: ${{ secrets.YC_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.YC_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ru-central1
         run: |
-          # Получаем список файлов старше 7 дней
+          # Получаем список файлов
           CUTOFF_DATE=$(date -d '7 days ago' +%Y-%m-%d)
           
-          aws s3 ls s3://skitrip-backups-2025/database/ | while read -r line; do
+          aws s3 ls s3://skitrip-backups/database/ \
+            --endpoint-url=https://storage.yandexcloud.net | while read -r line; do
+            
             FILE_DATE=$(echo $line | awk '{print $1}')
             FILE_NAME=$(echo $line | awk '{print $4}')
             
-            if [[ "$FILE_DATE" < "$CUTOFF_DATE" ]]; then
+            if [[ "$FILE_DATE" < "$CUTOFF_DATE" ]] && [[ -n "$FILE_NAME" ]]; then
               echo "Deleting old backup: $FILE_NAME"
-              aws s3 rm s3://skitrip-backups-2025/database/$FILE_NAME
+              aws s3 rm s3://skitrip-backups/database/$FILE_NAME \
+                --endpoint-url=https://storage.yandexcloud.net
             fi
           done
           
@@ -76,4 +75,5 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**File:** \`$BACKUP_FILE\`" >> $GITHUB_STEP_SUMMARY
           echo "**Size:** $(ls -lh $BACKUP_FILE | awk '{print $5}')" >> $GITHUB_STEP_SUMMARY
-          echo "**Location:** \`s3://skitrip-backups-2025/database/\`" >> $GITHUB_STEP_SUMMARY
+          echo "**Location:** \`s3://skitrip-backups/database/\`" >> $GITHUB_STEP_SUMMARY
+          echo "**Storage:** Yandex Object Storage" >> $GITHUB_STEP_SUMMARY
