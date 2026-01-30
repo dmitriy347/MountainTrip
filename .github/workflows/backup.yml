@@ -20,7 +20,8 @@ jobs:
           mkdir -p ~/.ssh
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/github_actions
           chmod 600 ~/.ssh/github_actions
-          ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+          # Добавляем -t rsa для IP-адресов
+          ssh-keyscan -t rsa -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
 
       - name: 🗄️ Create database backup
         run: |
