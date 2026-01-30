@@ -19,6 +19,7 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
 from django.contrib.auth import views as auth_views
+from django.views.static import serve
 
 from config import settings
 from resort.views import page_not_found
@@ -66,6 +67,16 @@ if settings.DEBUG:
     ]
 
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+# Отдача robots.txt
+urlpatterns += [
+    path(
+        "robots.txt",
+        serve,
+        {"path": "robots.txt", "document_root": settings.STATIC_ROOT},
+        name="robots_txt",
+    ),
+]
 
 handler404 = page_not_found
 

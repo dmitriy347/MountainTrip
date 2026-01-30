@@ -164,8 +164,7 @@ STATIC_URL = "/static/"
 
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
-# Если бы статические файлы хранились в нестандартном месте, нужно было бы указать путь к ним здесь.
-# STATICFILES_DIRS = [BASE_DIR / 'config/static']
+STATICFILES_DIRS = [BASE_DIR / "static"]
 
 # По какому URL будут доступны загруженные медиафайлы.
 MEDIA_URL = "/media/"

@@ -1,0 +1,14 @@
+User-agent: *
+Disallow: /admin/
+Disallow: /media/trip_photos/
+Disallow: /accounts/
+Disallow: /users/
+Disallow: /password-reset/
+Disallow: /reset/
+
+Allow: /
+Allow: /static/
+Allow: /resorts/
+Allow: /trips/
+
+Sitemap: https://snowlog.ru/sitemap.xml
