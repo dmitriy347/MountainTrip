@@ -1,17 +1,10 @@
 [run]
-# Где искать код для покрытия
 
 source = config
 
 # Исключить из покрытия
 omit =
     */migrations/*
-    */tests/*
-    */__init__.py
-    */apps.py
-    */admin.py
-    config/manage.py
-    config/config/wsgi.py
-    config/config/asgi.py
-    config/*/tests.py
-    */conftest.py
+    */asgi.py
+    */wsgi.py
+    manage.py
