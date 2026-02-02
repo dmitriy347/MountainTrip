@@ -134,7 +134,7 @@ jobs:
             type=sha,prefix={{branch}}-
             type=raw,value=latest,enable={{is_default_branch}}
 
-      - name: 🏗️ Build and push Docker image
+      - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
           context: .
@@ -161,19 +161,19 @@ jobs:
           ssh -i ~/.ssh/github_actions ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
             cd /opt/skitrip
             
-            # Login to ghcr.io on server
+            # Сервер авторизуется в GHCR и получает право на скачивание образа
             echo ${{ secrets.GHCR_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
             
-            # Pull latest image
+            # Скачивание нового образа
             docker compose -f docker-compose.prod.yml pull web
             
-            # Restart containers
+            # Обновление контейнеров
             docker compose -f docker-compose.prod.yml up -d --no-build
             
-            # Clean up old images
+            # Очистка неиспользуемых образов
             docker image prune -af
             
-            # Show status
+            # Показать статус контейнеров
             docker compose -f docker-compose.prod.yml ps
           EOF
 

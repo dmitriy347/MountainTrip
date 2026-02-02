@@ -162,8 +162,10 @@ USE_TZ = True
 # Это префикс для всех статических файлов, которые используются в шаблонах HTML.
 STATIC_URL = "/static/"
 
+# Сюда собираются файлы при collectstatic
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
+# Здесь Django ищет доп. статику
 STATICFILES_DIRS = [BASE_DIR / "static"]
 
 # По какому URL будут доступны загруженные медиафайлы.
