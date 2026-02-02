@@ -9,6 +9,7 @@
 [![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?logo=docker&logoColor=white)](https://www.docker.com/)
 [![Tests](https://img.shields.io/badge/Tests-Passing-success)](https://github.com/dmitriy347/MountainTrip)
 [![Deployment](https://img.shields.io/badge/Deployment-Production-success)](https://snowlog.ru)
+[![CD Status](https://github.com/dmitriy347/MountainTrip/actions/workflows/cd.yml/badge.svg)](https://github.com/dmitriy347/MountainTrip/actions/workflows/cd.yml)
 
 
 ---
@@ -42,9 +43,10 @@
 
 ### DevOps:
 - **Docker & Docker Compose** - контейнеризация
+- **GitHub Container Registry (ghcr.io)** - хранение Docker образов
 - **Nginx** - веб-сервер и reverse proxy
 - **Gunicorn** - WSGI HTTP Server
-- **GitHub Actions** - CI/CD пайплайн
+- **GitHub Actions** - CI/CD pipeline (автоматический деплой)
 - **Let's Encrypt** - SSL сертификаты
 
 ### Тестирование:
@@ -153,7 +155,7 @@ MountainTrip/
 │   └── manage.py            # Django CLI
 │
 ├── .github/workflows/       # GitHub Actions
-│   ├── ci.yml               # CI пайплайн (тесты, линтеры)
+│   ├── cd.yml               # CI/CD pipeline (lint, test, build, deploy)
 │   └── backup.yml           # Автоматические бэкапы БД│
 │
 ├── Dockerfile               # Docker образ приложения
