@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django.contrib.sites",
+    "rest_framework",
     "allauth",
     "allauth.account",
     "allauth.socialaccount",
@@ -233,4 +234,27 @@ SOCIALACCOUNT_PROVIDERS = {
             "key": "",
         },
     }
+}
+
+# Django REST Framework settings
+REST_FRAMEWORK = {
+    # Форматы ответов по умолчанию
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+        'rest_framework.renderers.BrowsableAPIRenderer',  # Для удобного просмотра в браузере
+    ],
+
+    # Пагинация по умолчанию
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10,
+
+    # Аутентификация (пока оставим базовую)
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',  # Для browsable API
+    ],
+
+    # Права доступа по умолчанию
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.AllowAny',  # Пока разрешаем всем (потом ограничим)
+    ],
 }
