@@ -7,5 +7,5 @@ class ResortSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Resort
-        fields = ['id', 'name', 'slug', 'region', 'description', 'created_at']
-        read_only_fields = ['id', 'slug', 'created_at']
+        fields = ["id", "name", "slug", "region", "description", "created_at"]
+        read_only_fields = ["id", "slug", "created_at"]
