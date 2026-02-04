@@ -1,5 +1,7 @@
 from django.db.models import Q
+from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.response import Response
 
 from resort.models import Resort, Trip, TripMedia
 from rest_framework.viewsets import ReadOnlyModelViewSet
@@ -23,6 +25,35 @@ class ResortViewSet(ReadOnlyModelViewSet):
         if region:
             queryset = queryset.filter(region__icontains=region)
         return queryset
+
+    @action(detail=True, methods=["get"])
+    def trips(self, request, slug=None):
+        """
+        Вложенный эндпоинт: GET /api/resorts/{slug}/trips/
+        Возвращает поездки на конкретный курорт.
+
+        Права доступа:
+        - Неавторизованные: только чтение (GET) публичных поездок
+        - Авторизованные: чтение публичных + в будущем CRUD своих поездок
+        """
+        # Получаем текущий курорт по slug из URL
+        resort = self.get_object()
+
+        # Получаем все поездки, связанные с курортом
+        trips = resort.trips.all()
+
+        user = self.request.user
+        if user.is_authenticated:
+            # Авторизованный: показываем публичные + свои приватные поездки
+            trips = trips.filter(Q(is_public=True) | Q(user=user)).select_related(
+                "user"
+            )
+        else:
+            # Гость: показываем только публичные поездки
+            trips = trips.filter(is_public=True).select_related("user")
+
+        serializer = TripSerializer(trips, many=True)
+        return Response(serializer.data)
 
 
 class TripViewSet(ReadOnlyModelViewSet):
