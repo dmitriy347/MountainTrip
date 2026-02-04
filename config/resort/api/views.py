@@ -93,6 +93,19 @@ class TripViewSet(ReadOnlyModelViewSet):
             )
 
 
+    @action(detail=True, methods=["get"])
+    def media(self, request, pk=None):
+        """
+        Вложенный эндпоинт: GET /api/trips/{id}/media/
+        Возвращает медиафайлы, связанные с конкретной поездкой.
+        """
+        trip = self.get_object()
+        media_files = trip.media.all()
+        serializer = TripMediaSerializer(media_files, many=True)
+        return Response(serializer.data)
+
+
+
 class TripMediaViewSet(ReadOnlyModelViewSet):
     """
     ViewSet для модели TripMedia.
