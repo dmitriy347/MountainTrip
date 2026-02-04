@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from resort.models import Resort, Trip
+from resort.models import Resort, Trip, TripMedia
 
 
 class ResortSerializer(serializers.ModelSerializer):
@@ -31,3 +31,15 @@ class TripSerializer(serializers.ModelSerializer):
             "created_at",
         ]
         read_only_fields = ["id", "created_at"]
+
+
+class TripMediaSerializer(serializers.ModelSerializer):
+    """Serializer для модели TripMedia."""
+
+    # Показать только trip_id, а не весь объект
+    trip = serializers.PrimaryKeyRelatedField(read_only=True)
+
+    class Meta:
+        model = TripMedia
+        fields = ["id", "trip", "image", "uploaded_at"]
+        read_only_fields = ["id", "uploaded_at"]
