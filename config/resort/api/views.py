@@ -52,7 +52,7 @@ class ResortViewSet(ReadOnlyModelViewSet):
             # Гость: показываем только публичные поездки
             trips = trips.filter(is_public=True).select_related("user")
 
-        serializer = TripSerializer(trips, many=True)
+        serializer = TripSerializer(trips, many=True, context={"request": request})
         return Response(serializer.data)
 
 
@@ -92,7 +92,6 @@ class TripViewSet(ReadOnlyModelViewSet):
                 .prefetch_related("media")
             )
 
-
     @action(detail=True, methods=["get"])
     def media(self, request, pk=None):
         """
@@ -101,9 +100,12 @@ class TripViewSet(ReadOnlyModelViewSet):
         """
         trip = self.get_object()
         media_files = trip.media.all()
-        serializer = TripMediaSerializer(media_files, many=True)
-        return Response(serializer.data)
 
+        # context нужен для правильного формирования абсолютных URL изображений
+        serializer = TripMediaSerializer(
+            media_files, many=True, context={"request": request}
+        )
+        return Response(serializer.data)
 
 
 class TripMediaViewSet(ReadOnlyModelViewSet):
