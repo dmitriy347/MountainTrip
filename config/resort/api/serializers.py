@@ -56,6 +56,6 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ["id", "username", "date_joined", "trips_count"]
         read_only_fields = ["id", "username", "date_joined"]
 
-        def get_trips_count(self, obj):
-            """Возвращает количество поездок пользователя."""
-            return obj.trips.filter(is_public=True).count()
+    def get_trips_count(self, obj):
+        """Возвращает количество поездок пользователя."""
+        return obj.trips.filter(is_public=True).count()
