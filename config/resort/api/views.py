@@ -79,17 +79,9 @@ class TripMediaViewSet(ReadOnlyModelViewSet):
         user = self.request.user
         if user.is_authenticated:
             # Авторизованный: медиа публичных поездок + своих приватных поездок
-            return (
-                TripMedia.objects.filter(
-                Q(trip__is_public=True) | Q(trip__user=user))
-                .select_related("trip")
-
-            )
+            return TripMedia.objects.filter(
+                Q(trip__is_public=True) | Q(trip__user=user)
+            ).select_related("trip")
         else:
             # Гость: только медиа публичных поездок
-            return (
-                TripMedia.objects.filter(trip__is_public=True)
-                .select_related("trip")
-            )
-
-
+            return TripMedia.objects.filter(trip__is_public=True).select_related("trip")
