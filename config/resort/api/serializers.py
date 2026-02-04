@@ -14,6 +14,7 @@ class ResortSerializer(serializers.ModelSerializer):
 class TripSerializer(serializers.ModelSerializer):
     """Serializer для модели Trip."""
 
+    # Отображение пользователя по его строковому представлению
     user = serializers.StringRelatedField()
     resort = ResortSerializer(read_only=True)
 

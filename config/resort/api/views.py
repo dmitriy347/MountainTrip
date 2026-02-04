@@ -35,7 +35,9 @@ class TripViewSet(ReadOnlyModelViewSet):
     """
 
     serializer_class = TripSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]  # Гости - только GET, авторизованные - CRUD
+
+    # Гости - только GET, авторизованные - CRUD
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
     filter_backends = [OrderingFilter]
     ordering_fields = ["start_date", "end_date"]  # Разрешенные поля для сортировки
@@ -46,11 +48,15 @@ class TripViewSet(ReadOnlyModelViewSet):
         user = self.request.user
         if user.is_authenticated:
             # Авторизованный: публичные + свои приватные
-            return Trip.objects.filter(
-                Q(is_public=True) | Q(user=user)
-            ).select_related("user", "resort").prefetch_related("media")
+            return (
+                Trip.objects.filter(Q(is_public=True) | Q(user=user))
+                .select_related("user", "resort")
+                .prefetch_related("media")
+            )
         else:
             # Гость: только публичные
-            return Trip.objects.filter(is_public=True).select_related(
-                "user", "resort"
-            ).prefetch_related("media")
+            return (
+                Trip.objects.filter(is_public=True)
+                .select_related("user", "resort")
+                .prefetch_related("media")
+            )

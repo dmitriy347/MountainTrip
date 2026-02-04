@@ -1,7 +1,5 @@
 import pytest
-from django.urls import reverse
-from rest_framework.test import APIClient
-from resort.models import Trip
+
 
 @pytest.mark.django_db
 def test_guest_sees_only_public_trips(api_client):
