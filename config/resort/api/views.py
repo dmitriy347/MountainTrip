@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from django.db.models import Q
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
@@ -5,7 +6,12 @@ from rest_framework.response import Response
 
 from resort.models import Resort, Trip, TripMedia
 from rest_framework.viewsets import ReadOnlyModelViewSet
-from .serializers import ResortSerializer, TripSerializer, TripMediaSerializer
+from .serializers import (
+    ResortSerializer,
+    TripSerializer,
+    TripMediaSerializer,
+    UserSerializer,
+)
 from rest_framework.filters import OrderingFilter
 
 
@@ -131,3 +137,22 @@ class TripMediaViewSet(ReadOnlyModelViewSet):
         else:
             # Гость: только медиа публичных поездок
             return TripMedia.objects.filter(trip__is_public=True).select_related("trip")
+
+
+class UserViewSet(ReadOnlyModelViewSet):
+    """ViewSet для профиля пользователя."""
+
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+    @action(detail=True, methods=["get"])
+    def trips(self, request, pk=None):
+        """
+        Вложенный эндпоинт: GET /api/users/{id}/trips/
+        Возвращает публичные поездки пользователя.
+        """
+        user = self.get_object()
+        trips = user.trips.filter(is_public=True).select_related("resort")
+
+        serializer = TripSerializer(trips, many=True, context={"request": request})
+        return Response(serializer.data)
