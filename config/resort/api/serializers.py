@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from rest_framework import serializers
 from resort.models import Resort, Trip, TripMedia
 
@@ -43,3 +44,18 @@ class TripMediaSerializer(serializers.ModelSerializer):
         model = TripMedia
         fields = ["id", "trip", "image", "uploaded_at"]
         read_only_fields = ["id", "uploaded_at"]
+
+
+class UserSerializer(serializers.ModelSerializer):
+    """Serializer для профиля пользователя."""
+
+    trips_count = serializers.SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = ["id", "username", "date_joined", "trips_count"]
+        read_only_fields = ["id", "username", "date_joined"]
+
+        def get_trips_count(self, obj):
+            """Возвращает количество поездок пользователя."""
+            return obj.trips.filter(is_public=True).count()
