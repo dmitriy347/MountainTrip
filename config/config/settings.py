@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 import os
+from datetime import timedelta
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -56,6 +57,8 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "django.contrib.sites",
     "rest_framework",
+    "rest_framework_simplejwt",
+    "rest_framework_simplejwt.token_blacklist",
     "allauth",
     "allauth.account",
     "allauth.socialaccount",
@@ -249,6 +252,7 @@ REST_FRAMEWORK = {
     "PAGE_SIZE": 10,
     # Аутентификация (пока оставим базовую)
     "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework_simplejwt.authentication.JWTAuthentication",  # JWT аутентификация
         "rest_framework.authentication.SessionAuthentication",  # Для browsable API
     ],
     # Права доступа по умолчанию
@@ -261,4 +265,16 @@ REST_FRAMEWORK = {
         "rest_framework.filters.OrderingFilter",  # Сортировка
         "rest_framework.filters.SearchFilter",  # Поиск
     ],
+}
+
+# Настройки для Simple JWT
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=15),  # Access токен живёт 15 минут
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),  # Refresh токен живёт 7 дней
+    "ROTATE_REFRESH_TOKENS": True,  # Обновлять refresh при каждом использовании
+    "BLACKLIST_AFTER_ROTATION": True,  # Старые токены в чёрный список
+    "ALGORITHM": "HS256",
+    "SIGNING_KEY": SECRET_KEY,
+    "AUTH_HEADER_TYPES": ("Bearer",),  # Формат: Authorization: Bearer <token>
+    "AUTH_HEADER_NAME": "HTTP_AUTHORIZATION",
 }
