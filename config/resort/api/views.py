@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from resort.models import Resort, Trip, TripMedia
 from rest_framework.viewsets import ReadOnlyModelViewSet
 
-from .filters import ResortFilter
+from .filters import ResortFilter, TripFilter
 from .serializers import (
     ResortSerializer,
     TripSerializer,
@@ -76,7 +76,7 @@ class TripViewSet(ReadOnlyModelViewSet):
     permission_classes = [IsAuthenticatedOrReadOnly]
 
     filter_backends = [DjangoFilterBackend, OrderingFilter, SearchFilter]
-    filterset_fields = ["is_public", "resort"]  # Разрешенные поля для фильтрации
+    filterset_class = TripFilter  # Кастомный фильтр для поездок
     ordering_fields = ["start_date", "end_date"]  # Разрешенные поля для сортировки
     ordering = ["-start_date"]  # Сортировка по умолчанию
     search_fields = ["resort__name", "resort__region", "comment"]  # Поля для поиска
