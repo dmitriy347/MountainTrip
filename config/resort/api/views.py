@@ -73,10 +73,11 @@ class TripViewSet(ReadOnlyModelViewSet):
     # Не авторизованные - только GET, авторизованные - CRUD
     permission_classes = [IsAuthenticatedOrReadOnly]
 
-    filter_backends = [DjangoFilterBackend, OrderingFilter]
+    filter_backends = [DjangoFilterBackend, OrderingFilter, SearchFilter]
     filterset_fields = ["is_public", "resort"]  # Разрешенные поля для фильтрации
     ordering_fields = ["start_date", "end_date"]  # Разрешенные поля для сортировки
     ordering = ["-start_date"]  # Сортировка по умолчанию
+    search_fields = ["resort__name", "resort__region", "comment"]  # Поля для поиска
 
     def get_queryset(self):
         """Фильтрация поездок в зависимости от авторизации пользователя."""
