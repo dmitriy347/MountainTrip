@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from django.db.models import Q
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
@@ -21,16 +22,11 @@ class ResortViewSet(ReadOnlyModelViewSet):
     queryset = Resort.objects.all()
     serializer_class = ResortSerializer
     lookup_field = "slug"
-    filter_backends = [OrderingFilter]
+
+    filter_backends = [DjangoFilterBackend, OrderingFilter]
+    filterset_fields = ["region"]  # Разрешенные поля для фильтрации
     ordering_fields = ["name", "region"]  # Разрешенные поля для сортировки
     ordering = ["name"]  # Сортировка по умолчанию
-
-    def get_queryset(self):
-        queryset = Resort.objects.all()
-        region = self.request.query_params.get("region")
-        if region:
-            queryset = queryset.filter(region__icontains=region)
-        return queryset
 
     @action(detail=True, methods=["get"])
     def trips(self, request, slug=None):
