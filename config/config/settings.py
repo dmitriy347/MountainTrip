@@ -255,7 +255,7 @@ REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.AllowAny",  # Пока разрешаем всем (потом ограничим)
     ],
-    # Фильтрация и сортировка по умолчанию
+    # Фильтрация и сортировка и поиск по умолчанию
     "DEFAULT_FILTER_BACKENDS": [
         "django_filters.rest_framework.DjangoFilterBackend",  # Фильтрация
         "rest_framework.filters.OrderingFilter",  # Сортировка

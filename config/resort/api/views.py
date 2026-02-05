@@ -13,7 +13,7 @@ from .serializers import (
     TripMediaSerializer,
     UserSerializer,
 )
-from rest_framework.filters import OrderingFilter
+from rest_framework.filters import OrderingFilter, SearchFilter
 
 
 class ResortViewSet(ReadOnlyModelViewSet):
@@ -23,10 +23,11 @@ class ResortViewSet(ReadOnlyModelViewSet):
     serializer_class = ResortSerializer
     lookup_field = "slug"
 
-    filter_backends = [DjangoFilterBackend, OrderingFilter]
+    filter_backends = [DjangoFilterBackend, OrderingFilter, SearchFilter]
     filterset_fields = ["region"]  # Разрешенные поля для фильтрации
     ordering_fields = ["name", "region"]  # Разрешенные поля для сортировки
     ordering = ["name"]  # Сортировка по умолчанию
+    search_fields = ["name", "region", "description"]  # Поля для поиска
 
     @action(detail=True, methods=["get"])
     def trips(self, request, slug=None):
