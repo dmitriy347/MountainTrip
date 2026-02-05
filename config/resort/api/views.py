@@ -69,10 +69,11 @@ class TripViewSet(ReadOnlyModelViewSet):
 
     serializer_class = TripSerializer
 
-    # Гости - только GET, авторизованные - CRUD
+    # Не авторизованные - только GET, авторизованные - CRUD
     permission_classes = [IsAuthenticatedOrReadOnly]
 
-    filter_backends = [OrderingFilter]
+    filter_backends = [DjangoFilterBackend, OrderingFilter]
+    filterset_fields = ["is_public", "resort"]  # Разрешенные поля для фильтрации
     ordering_fields = ["start_date", "end_date"]  # Разрешенные поля для сортировки
     ordering = ["-start_date"]  # Сортировка по умолчанию
 
@@ -87,7 +88,7 @@ class TripViewSet(ReadOnlyModelViewSet):
                 .prefetch_related("media")
             )
         else:
-            # Гость: только публичные
+            # Не авторизованный: только публичные
             return (
                 Trip.objects.filter(is_public=True)
                 .select_related("user", "resort")
