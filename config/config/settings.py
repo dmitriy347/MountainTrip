@@ -259,5 +259,6 @@ REST_FRAMEWORK = {
     "DEFAULT_FILTER_BACKENDS": [
         "django_filters.rest_framework.DjangoFilterBackend",  # Фильтрация
         "rest_framework.filters.OrderingFilter",  # Сортировка
+        "rest_framework.filters.SearchFilter",  # Поиск
     ],
 }
