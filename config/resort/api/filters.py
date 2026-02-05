@@ -64,7 +64,7 @@ class TripFilter(django_filters.FilterSet):
         model = Trip
         fields = [
             "is_public",
-            "resort",
+            "resort_id",
             "resort_region",
             "start_date_from",
             "start_date_to",
