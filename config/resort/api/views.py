@@ -7,6 +7,8 @@ from rest_framework.response import Response
 
 from resort.models import Resort, Trip, TripMedia
 from rest_framework.viewsets import ReadOnlyModelViewSet
+
+from .filters import ResortFilter
 from .serializers import (
     ResortSerializer,
     TripSerializer,
@@ -24,7 +26,7 @@ class ResortViewSet(ReadOnlyModelViewSet):
     lookup_field = "slug"
 
     filter_backends = [DjangoFilterBackend, OrderingFilter, SearchFilter]
-    filterset_fields = ["region"]  # Разрешенные поля для фильтрации
+    filterset_class = ResortFilter  # Кастомный фильтр для курортов
     ordering_fields = ["name", "region"]  # Разрешенные поля для сортировки
     ordering = ["name"]  # Сортировка по умолчанию
     search_fields = ["name", "region", "description"]  # Поля для поиска
