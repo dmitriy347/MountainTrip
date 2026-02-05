@@ -64,6 +64,7 @@ INSTALLED_APPS = [
     "resort.apps.ResortConfig",
     "users.apps.UsersConfig",
     "debug_toolbar",
+    "django_filters",
 ]
 
 MIDDLEWARE = [
@@ -256,6 +257,7 @@ REST_FRAMEWORK = {
     ],
     # Фильтрация и сортировка по умолчанию
     "DEFAULT_FILTER_BACKENDS": [
-        "rest_framework.filters.OrderingFilter",
+        "django_filters.rest_framework.DjangoFilterBackend",  # Фильтрация
+        "rest_framework.filters.OrderingFilter",  # Сортировка
     ],
 }
