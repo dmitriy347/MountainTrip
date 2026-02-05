@@ -257,4 +257,9 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.AllowAny',  # Пока разрешаем всем (потом ограничим)
     ],
+
+    # Фильтрация и сортировка по умолчанию
+    'DEFAULT_FILTER_BACKENDS': [
+        'rest_framework.filters.OrderingFilter',
+    ],
 }
