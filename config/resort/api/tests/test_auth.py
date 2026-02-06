@@ -14,7 +14,9 @@ class TestAuthentication:
             "username": user.username,
             "password": "testpass123",
         }
+
         response = api_client.post(url, data)
+
         assert response.status_code == status.HTTP_200_OK
         assert "access" in response.data
         assert "refresh" in response.data
@@ -27,7 +29,9 @@ class TestAuthentication:
             "username": user.username,
             "password": "wrongpassword",
         }
+
         response = api_client.post(url, data)
+
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
         assert "access" not in response.data
         assert "refresh" not in response.data
@@ -38,7 +42,9 @@ class TestAuthentication:
         data = {
             "refresh": user_token["refresh"],
         }
+
         response = api_client.post(url, data)
+
         assert response.status_code == status.HTTP_200_OK
         assert "access" in response.data
 
@@ -51,6 +57,8 @@ class TestAuthentication:
         data = {
             "refresh": "invalidtoken",
         }
+
         response = api_client.post(url, data)
+
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
         assert "access" not in response.data
