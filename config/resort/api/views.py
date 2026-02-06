@@ -1,17 +1,20 @@
 from django.contrib.auth.models import User
 from django.db.models import Q
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 
 from resort.models import Resort, Trip, TripMedia
-from rest_framework.viewsets import ReadOnlyModelViewSet
+from rest_framework.viewsets import ReadOnlyModelViewSet, ModelViewSet
 
 from .filters import ResortFilter, TripFilter
+from .permissions import IsOwnerReadOnly
 from .serializers import (
     ResortSerializer,
-    TripSerializer,
+    TripReadSerializer,
+    TripWriteSerializer,
     TripMediaSerializer,
     UserSerializer,
 )
@@ -57,23 +60,23 @@ class ResortViewSet(ReadOnlyModelViewSet):
             # Гость: показываем только публичные поездки
             trips = trips.filter(is_public=True).select_related("user")
 
-        serializer = TripSerializer(trips, many=True, context={"request": request})
+        serializer = TripReadSerializer(trips, many=True, context={"request": request})
         return Response(serializer.data)
 
 
-class TripViewSet(ReadOnlyModelViewSet):
+class TripViewSet(ModelViewSet):
     """
-    ViewSet для модели Trip.
+    ViewSet для поездок из модели Trip с полным CRUD.
 
     Права доступа:
-    - Неавторизованные: только чтение (GET) публичных поездок
-    - Авторизованные: чтение публичных + в будущем CRUD своих поездок
+    - GET: все пользователи (публичные поездки + свои)
+    - POST: только авторизованные
+    - PUT/PATCH: только владелец поездки
+    - DELETE: только владелец поездки
     """
 
-    serializer_class = TripSerializer
-
     # Не авторизованные - только GET, авторизованные - CRUD
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticatedOrReadOnly, IsOwnerReadOnly]
 
     filter_backends = [DjangoFilterBackend, OrderingFilter, SearchFilter]
     filterset_class = TripFilter  # Кастомный фильтр для поездок
@@ -98,6 +101,64 @@ class TripViewSet(ReadOnlyModelViewSet):
                 .select_related("user", "resort")
                 .prefetch_related("media")
             )
+
+    def get_serializer_class(self):
+        """Используем разные serializers для чтения (GET) и записи (POST/PUT/PATCH)."""
+        if self.action in ["create", "update", "partial_update"]:
+            return TripWriteSerializer
+        return TripReadSerializer
+
+    def perform_create(self, serializer):
+        """При создании поездки автоматически привязываем текущего пользователя."""
+        serializer.save(user=self.request.user)
+
+    def create(self, request, *args, **kwargs):
+        """Переопределяем create для использования TripReadSerializer в ответе."""
+        # Используем TripWriteSerializer для валидации
+        write_serializer = self.get_serializer(data=request.data)
+        write_serializer.is_valid(raise_exception=True)
+
+        # Сохраняем поездку с текущим пользователем
+        self.perform_create(write_serializer)
+
+        # Получаем созданный объект поездки
+        instance = write_serializer.instance
+
+        # Сериализуем его через TripReadSerializer для ответа
+        read_serializer = TripReadSerializer(instance, context={"request": request})
+
+        # Возвращаем ответ с полными данными новой поездки
+        headers = self.get_success_headers(read_serializer.data)
+        return Response(
+            read_serializer.data, status=status.HTTP_201_CREATED, headers=headers
+        )
+
+    def update(self, request, *args, **kwargs):
+        """Переопределяем update для использования TripReadSerializer в ответе."""
+        partical = kwargs.pop("partial", False)  # PUT или PATCH
+
+        # Получаем текущий объект поездки
+        instance = self.get_object()
+
+        # Валидация через TripWriteSerializer
+        write_selializer = self.get_serializer(
+            instance, data=request.data, partial=partical
+        )
+        write_selializer.is_valid(raise_exception=True)
+        self.perform_update(write_selializer)
+
+        # Проверка на устаревшие данные
+        if getattr(instance, "_prefetched_objects_cache", None):
+            instance._prefetched_objects_cache = {}
+
+        # Сериализуем обновленный объект через TripReadSerializer для ответа
+        read_serializer = TripReadSerializer(instance, context={"request": request})
+        return Response(read_serializer.data)
+
+    def partial_update(self, request, *args, **kwargs):
+        """Переопределяем partial_update для использования TripReadSerializer"""
+        kwargs["partial"] = True  # PATCH
+        return self.update(request, *args, **kwargs)
 
     @action(detail=True, methods=["get"])
     def media(self, request, pk=None):
@@ -155,5 +216,5 @@ class UserViewSet(ReadOnlyModelViewSet):
         user = self.get_object()
         trips = user.trips.filter(is_public=True).select_related("resort")
 
-        serializer = TripSerializer(trips, many=True, context={"request": request})
+        serializer = TripReadSerializer(trips, many=True, context={"request": request})
         return Response(serializer.data)
