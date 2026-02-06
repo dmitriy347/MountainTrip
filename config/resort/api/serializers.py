@@ -4,7 +4,7 @@ from resort.models import Resort, Trip, TripMedia
 
 
 class ResortSerializer(serializers.ModelSerializer):
-    """Serializer для модели Resort."""
+    """Serializer для отображения курортов из модели Resort."""
 
     class Meta:
         model = Resort
@@ -12,8 +12,30 @@ class ResortSerializer(serializers.ModelSerializer):
         read_only_fields = ["id", "slug", "created_at"]
 
 
-class TripSerializer(serializers.ModelSerializer):
-    """Serializer для модели Trip."""
+class TripWriteSerializer(serializers.ModelSerializer):
+    """Serializer для создания и обновления поездок из модели Trip."""
+
+    class Meta:
+        model = Trip
+        fields = [
+            "resort",  # Ожидаем ID курорта
+            "start_date",
+            "end_date",
+            "comment",
+            "is_public",
+        ]
+
+    def validate(self, data):
+        """Валидация: дата начала не может быть позже даты окончания."""
+        if data["start_date"] > data["end_date"]:
+            raise serializers.ValidationError(
+                "Дата начала не может быть позже даты окончания."
+            )
+        return data
+
+
+class TripReadSerializer(serializers.ModelSerializer):
+    """Serializer для отображения поездок из модели Trip."""
 
     # Отображение пользователя по его строковому представлению
     user = serializers.StringRelatedField()
@@ -24,7 +46,7 @@ class TripSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "user",
-            "resort",
+            "resort",  # Ожидаем вложенный объект курорта
             "start_date",
             "end_date",
             "comment",
@@ -35,7 +57,7 @@ class TripSerializer(serializers.ModelSerializer):
 
 
 class TripMediaSerializer(serializers.ModelSerializer):
-    """Serializer для модели TripMedia."""
+    """Serializer для отображения медиа из модели TripMedia."""
 
     # Показать только trip_id, а не весь объект
     trip = serializers.PrimaryKeyRelatedField(read_only=True)
@@ -47,7 +69,7 @@ class TripMediaSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
-    """Serializer для профиля пользователя."""
+    """Serializer для отображения профиля пользователя."""
 
     trips_count = serializers.SerializerMethodField()
 
