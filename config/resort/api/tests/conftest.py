@@ -16,9 +16,7 @@ def api_client():
 def user():
     """Создание тестового пользователя."""
     return User.objects.create_user(
-        username="testuser",
-        password="testpass123",
-        email="test@example.com"
+        username="testuser", password="testpass123", email="test@example.com"
     )
 
 
@@ -26,9 +24,7 @@ def user():
 def another_user():
     """Создание второго тестового пользователя."""
     return User.objects.create_user(
-        username="anotheruser",
-        password="testpass123",
-        email="another@example.com"
+        username="anotheruser", password="testpass123", email="another@example.com"
     )
 
 
@@ -36,10 +32,7 @@ def another_user():
 def user_token(user):
     """Генерация JWT токена для тестового пользователя."""
     refresh = RefreshToken.for_user(user)
-    return {
-        "access": str(refresh.access_token),
-        "refresh": str(refresh)
-    }
+    return {"access": str(refresh.access_token), "refresh": str(refresh)}
 
 
 @pytest.fixture
@@ -108,4 +101,3 @@ def another_user_trip(another_user, resort):
         comment="Чужая публичная поездка",
         is_public=True,
     )
-

@@ -20,7 +20,6 @@ class TestAuthentication:
         assert "refresh" in response.data
         assert len(response.data["access"]) > 50
 
-
     def test_obtain_token_invalid_credentials(self, api_client, user):
         """Неверные учетные данные не должны выдавать токен."""
         url = reverse("token_obtain_pair")
@@ -33,7 +32,6 @@ class TestAuthentication:
         assert "access" not in response.data
         assert "refresh" not in response.data
 
-
     def test_refresh_token_success(self, api_client, user_token):
         """Успешное обновление access токена"""
         url = reverse("token_refresh")
@@ -45,8 +43,7 @@ class TestAuthentication:
         assert "access" in response.data
 
         # Новый access токен отличается от старого
-        assert response.data['access'] != user_token['access']
-
+        assert response.data["access"] != user_token["access"]
 
     def test_refresh_token_invalid(self, api_client, user_token):
         """Невалидный refresh токен не должен выдавать новый access токен"""
