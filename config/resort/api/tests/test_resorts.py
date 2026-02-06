@@ -32,3 +32,29 @@ class TestResortList:
 
         assert response.status_code == status.HTTP_200_OK
         assert len(response.data["results"]) == 0
+
+
+@pytest.mark.django_db
+class TestResortDetail:
+    """Тесты GET /api/resorts/{slug}/"""
+
+    def test_get_resort_by_slug(self, api_client, resort):
+        """Получение курорта по slug."""
+        url = reverse("resort-detail", kwargs={"slug": resort.slug})
+
+        response = api_client.get(url)
+
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data["id"] == resort.id
+        assert response.data["name"] == resort.name
+        assert response.data["slug"] == resort.slug
+        assert response.data["region"] == resort.region
+        assert response.data["description"] == resort.description
+
+    def test_get_resort_not_found(self, api_client):
+        """Курорт не найден."""
+        url = reverse("resort-detail", kwargs={"slug": "non-existent"})
+
+        response = api_client.get(url)
+
+        assert response.status_code == status.HTTP_404_NOT_FOUND
