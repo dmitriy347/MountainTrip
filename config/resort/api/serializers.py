@@ -26,11 +26,30 @@ class TripWriteSerializer(serializers.ModelSerializer):
         ]
 
     def validate(self, data):
-        """Валидация: дата начала не может быть позже даты окончания."""
-        if data["start_date"] > data["end_date"]:
-            raise serializers.ValidationError(
-                "Дата начала не может быть позже даты окончания."
-            )
+        """
+        Валидация: дата начала не может быть позже даты окончания.
+        Работает для POST (создание), и для PUT/PATCH (полное/частичное обновление).
+        """
+
+        # Получаем start_date и end_date из данных для валидации
+        start_date = data.get("start_date")
+        end_date = data.get("end_date")
+
+        # Если это PUT/PATCH-запрос (instance уже существует)
+        if self.instance:
+            # Если start_date или end_date не переданы - значит это PATCH
+            if start_date is None:
+                # Используем существующее значение из текущего объекта
+                start_date = self.instance.start_date
+            if end_date is None:
+                end_date = self.instance.end_date
+
+        # Проверяем только если оба поля известны
+        if start_date and end_date:
+            if start_date > end_date:
+                raise serializers.ValidationError(
+                    "Дата начала не может быть позже даты окончания."
+                )
         return data
 
 
