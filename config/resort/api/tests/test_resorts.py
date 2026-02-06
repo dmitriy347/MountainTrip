@@ -64,15 +64,30 @@ class TestResortDetail:
 class TestResortTripsEndpoint:
     """Тесты GET /api/resorts/{slug}/trips/ (вложенный эндпоинт)"""
 
-    # def test_resort_trips_as_guest(self, api_client, resort, trip, private_trip):
-    #     """Гость видит только публичные поездки курорта."""
-    #     url = reverse("resort-trips", kwargs={"slug": resort.slug})
-    #
-    #     response = api_client.get(url)
-    #
-    #     assert response.status_code == status.HTTP_200_OK
-    #     assert len(response.data) == 1
-    #     assert response.data[0]["id"] == trip.id
+    def test_resort_trips_as_guest(self, api_client, resort, trip, private_trip):
+        """Гость видит только публичные поездки курорта."""
+        url = reverse("resort-trips", kwargs={"slug": resort.slug})
+
+        response = api_client.get(url)
+
+        assert response.status_code == status.HTTP_200_OK
+        assert len(response.data) == 1
+        assert response.data[0]["id"] == trip.id
+
+    def test_resort_trips_as_authenticated(
+        self, authenticated_client, resort, trip, private_trip
+    ):
+        """Авторизованный видит свои публичные и приватные поездки."""
+        url = reverse("resort-trips", kwargs={"slug": resort.slug})
+
+        response = authenticated_client.get(url)
+
+        assert response.status_code == status.HTTP_200_OK
+        assert len(response.data) == 2
+
+        trip_ids = {t["id"] for t in response.data}
+        assert trip.id in trip_ids  # Публичная поездка
+        assert private_trip.id in trip_ids  # Приватная поездка
 
     def test_resort_trips_empty(self, api_client, resort):
         """Курорт без поездок."""

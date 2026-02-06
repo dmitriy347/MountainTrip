@@ -4,7 +4,7 @@ from rest_framework import status
 
 
 @pytest.mark.django_db
-class TestTrips:
+class TestTripList:
     """Тесты GET /api/trips/"""
 
     def test_guest_sees_only_public_trips(self, api_client, trip, private_trip):
