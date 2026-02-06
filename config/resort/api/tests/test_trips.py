@@ -34,3 +34,29 @@ class TestTrips:
         assert trip.id in trip_ids  # Своя публичная
         assert private_trip.id in trip_ids  # Своя приватная
         assert another_user_trip.id in trip_ids  # Чужая публичная
+
+
+@pytest.mark.django_db
+class TestTripDetail:
+    """Тесты GET /api/trips/{id}/"""
+
+    def test_get_public_trip_as_guest(self, api_client, trip):
+        """Гость может видеть публичную поездку."""
+        url = reverse("trip-detail", kwargs={"pk": trip.id})
+
+        response = api_client.get(url)
+
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data["id"] == trip.id
+        assert response.data["user"] == trip.user.username
+        assert "resort" in response.data
+        assert response.data["resort"]["name"] == trip.resort.name
+
+    def test_get_private_trip_as_guest(self, api_client, private_trip):
+        """Гость не может видеть приватную поездку."""
+        url = reverse("trip-detail", kwargs={"pk": private_trip.id})
+
+        response = api_client.get(url)
+
+        assert response.status_code == status.HTTP_404_NOT_FOUND
+
