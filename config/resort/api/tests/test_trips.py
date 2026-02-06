@@ -164,3 +164,34 @@ class TestTripUpdate:
         response = authenticated_client.put(url, data)
 
         assert response.status_code == status.HTTP_403_FORBIDDEN
+
+
+@pytest.mark.django_db
+class TestTripDelete:
+    """Тесты DELETE /api/trips/{id}/"""
+
+    def test_delete_own_trip(self, authenticated_client, trip):
+        """Пользователь может удалять свою поездку."""
+        url = reverse("trip-detail", kwargs={"pk": trip.id})
+
+        response = authenticated_client.delete(url)
+
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+
+        # Проверяем, что поездка удалена
+        from resort.models import Trip
+
+        assert not Trip.objects.filter(id=trip.id).exists()
+
+    def test_delete_another_user_trip(self, authenticated_client, another_user_trip):
+        """Нельзя удалять чужую поездку."""
+        url = reverse("trip-detail", kwargs={"pk": another_user_trip.id})
+
+        response = authenticated_client.delete(url)
+
+        assert response.status_code == status.HTTP_403_FORBIDDEN
+
+        # Проверяем, что поездка не удалена
+        from resort.models import Trip
+
+        assert Trip.objects.filter(id=another_user_trip.id).exists()
