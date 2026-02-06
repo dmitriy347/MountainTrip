@@ -58,3 +58,35 @@ class TestResortDetail:
         response = api_client.get(url)
 
         assert response.status_code == status.HTTP_404_NOT_FOUND
+
+
+@pytest.mark.django_db
+class TestResortTripsEndpoint:
+    """Тесты GET /api/resorts/{slug}/trips/ (вложенный эндпоинт)"""
+
+    # def test_resort_trips_as_guest(self, api_client, resort, trip, private_trip):
+    #     """Гость видит только публичные поездки курорта."""
+    #     url = reverse("resort-trips", kwargs={"slug": resort.slug})
+    #
+    #     response = api_client.get(url)
+    #
+    #     assert response.status_code == status.HTTP_200_OK
+    #     assert len(response.data) == 1
+    #     assert response.data[0]["id"] == trip.id
+
+    def test_resort_trips_empty(self, api_client, resort):
+        """Курорт без поездок."""
+        url = reverse("resort-trips", kwargs={"slug": resort.slug})
+
+        response = api_client.get(url)
+
+        assert response.status_code == status.HTTP_200_OK
+        assert len(response.data) == 0
+
+    def test_resort_trips_not_found(self, api_client):
+        """Несуществующий курорт."""
+        url = reverse("resort-trips", kwargs={"slug": "non-existent"})
+
+        response = api_client.get(url)
+
+        assert response.status_code == status.HTTP_404_NOT_FOUND
