@@ -116,3 +116,51 @@ class TestTripCreate:
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert "non_field_errors" in response.data
+
+
+@pytest.mark.django_db
+class TestTripUpdate:
+    """Тесты PUT/PATCH /api/trips/{id}/"""
+
+    def test_update_own_trip(self, authenticated_client, trip):
+        """Пользователь может обновлять свою поездку."""
+        url = reverse("trip-detail", kwargs={"pk": trip.id})
+        data = {
+            "resort": trip.resort.id,
+            "start_date": trip.start_date,
+            "end_date": "2024-05-07",
+            "comment": "Обновленная поездка",
+            "is_public": True,
+        }
+
+        response = authenticated_client.put(url, data)
+
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data["end_date"] == "2024-05-07"
+        assert response.data["comment"] == "Обновленная поездка"
+
+    def test_partial_update_own_trip(self, authenticated_client, trip):
+        """PATCH обновляет только указанные поля."""
+        url = reverse("trip-detail", kwargs={"pk": trip.id})
+        data = {"comment": "Частично обновленная поездка"}
+
+        response = authenticated_client.patch(url, data)
+
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data["comment"] == "Частично обновленная поездка"
+        assert response.data["start_date"] == str(trip.start_date)  # Не изменилось
+
+    def test_update_another_user_trip(self, authenticated_client, another_user_trip):
+        """Нельзя обновлять чужую поездку."""
+        url = reverse("trip-detail", kwargs={"pk": another_user_trip.id})
+        data = {
+            "resort": another_user_trip.resort.id,
+            "start_date": another_user_trip.start_date,
+            "end_date": another_user_trip.end_date,
+            "comment": "Попытка обновить чужую поездку",
+            "is_public": True,
+        }
+
+        response = authenticated_client.put(url, data)
+
+        assert response.status_code == status.HTTP_403_FORBIDDEN
