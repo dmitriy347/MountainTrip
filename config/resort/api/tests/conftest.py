@@ -72,7 +72,7 @@ def trip(user, resort):
         resort=resort,
         start_date="2024-01-10",
         end_date="2024-01-17",
-        comment="Публичная поездка!",
+        comment="Отличная поездка!",
         is_public=True,
     )
 
