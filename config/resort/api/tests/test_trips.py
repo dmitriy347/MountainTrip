@@ -101,7 +101,7 @@ class TestTripCreate:
         assert response.data["start_date"] == "2024-04-01"
         assert response.data["comment"] == "Новая поездка"
 
-    def test_create_trip_with_invalid_dates(self, authenticated_client, resort):
+    def test_create_trip_invalid_dates(self, authenticated_client, resort):
         """Невалидные даты: start_date > end_date."""
         url = reverse("trip-list")
         data = {
