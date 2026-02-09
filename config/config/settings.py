@@ -266,8 +266,7 @@ REST_FRAMEWORK = {
         "rest_framework.filters.OrderingFilter",  # Сортировка
         "rest_framework.filters.SearchFilter",  # Поиск
     ],
-
-    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
 
 # Настройки для Simple JWT
@@ -283,39 +282,34 @@ SIMPLE_JWT = {
 }
 
 SPECTACULAR_SETTINGS = {
-    'TITLE': 'SkiTrip Journal API',
-    'DESCRIPTION': 'API для журнала поездок на горнолыжные курорты России',
-    'VERSION': '1.0.0',
-
+    "TITLE": "SkiTrip Journal API",
+    "DESCRIPTION": "API для журнала поездок на горнолыжные курорты России",
+    "VERSION": "1.0.0",
     # Контакты
-    'CONTACT': {
-        'name': 'Dmitriy Fomenko',
-        'email': 'd.fomenko95@gmail.com',
+    "CONTACT": {
+        "name": "Dmitriy Fomenko",
+        "email": "d.fomenko95@gmail.com",
     },
-
     # Лицензия
-    'LICENSE': {
-        'name': 'MIT License',
+    "LICENSE": {
+        "name": "MIT License",
     },
-
     # Настройки UI
-    'SERVE_INCLUDE_SCHEMA': False,  # Не показывать сырую схему
-    'SWAGGER_UI_SETTINGS': {
-        'deepLinking': True,
-        'persistAuthorization': True,  # Сохранять токен после обновления страницы
-        'displayOperationId': False,
+    "SERVE_INCLUDE_SCHEMA": False,  # Не показывать сырую схему
+    "SWAGGER_UI_SETTINGS": {
+        "deepLinking": True,
+        "persistAuthorization": True,  # Сохранять токен после обновления страницы
+        "displayOperationId": False,
     },
-
     # Группировка эндпоинтов по тегам
-    'TAGS': [
-        {'name': 'auth', 'description': 'Аутентификация (JWT токены)'},
-        {'name': 'resorts', 'description': 'Горнолыжные курорты'},
-        {'name': 'trips', 'description': 'Поездки пользователей'},
-        {'name': 'media', 'description': 'Фотографии поездок'},
-        {'name': 'users', 'description': 'Пользователи'},
+    "TAGS": [
+        {"name": "auth", "description": "Аутентификация (JWT токены)"},
+        {"name": "resorts", "description": "Горнолыжные курорты"},
+        {"name": "trips", "description": "Поездки пользователей"},
+        {"name": "media", "description": "Фотографии поездок"},
+        {"name": "users", "description": "Пользователи"},
     ],
-
     # Схемы аутентификации
-    'COMPONENT_SPLIT_REQUEST': True,
-    'SCHEMA_PATH_PREFIX': r'/api/',
+    "COMPONENT_SPLIT_REQUEST": True,
+    "SCHEMA_PATH_PREFIX": r"/api/",
 }
