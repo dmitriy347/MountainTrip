@@ -256,6 +256,23 @@ class TripMediaViewSet(ReadOnlyModelViewSet):
             return TripMedia.objects.filter(trip__is_public=True).select_related("trip")
 
 
+@extend_schema_view(
+    list=extend_schema(
+        summary="Список пользователей",
+        description="Получить список всех пользователей (публичные профили).",
+        tags=['users']
+    ),
+    retrieve=extend_schema(
+        summary="Профиль пользователя",
+        description="Получить публичный профиль пользователя.",
+        tags=['users']
+    ),
+    trips=extend_schema(
+        summary="Поездки пользователя",
+        description="Получить публичные поездки конкретного пользователя.",
+        tags=['users']
+    ),
+)
 class UserViewSet(ReadOnlyModelViewSet):
     """ViewSet для профиля пользователя."""
 
