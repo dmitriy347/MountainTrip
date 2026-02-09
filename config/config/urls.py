@@ -20,6 +20,11 @@ from django.contrib import admin
 from django.urls import path, include
 from django.contrib.auth import views as auth_views
 from django.views.static import serve
+from drf_spectacular.views import (  # ✨ Импорт
+    SpectacularAPIView,
+    SpectacularSwaggerView,
+    SpectacularRedocView,
+)
 
 from config import settings
 from resort.views import page_not_found
@@ -29,6 +34,7 @@ urlpatterns = [
     path("accounts/", include("allauth.urls")),
     path("", include("resort.urls")),
     path("users/", include("users.urls", namespace="users")),
+    # Password reset URLs
     path(
         "password-reset/", auth_views.PasswordResetView.as_view(), name="password_reset"
     ),
@@ -57,7 +63,16 @@ urlpatterns = [
         auth_views.PasswordChangeDoneView.as_view(),
         name="password_change_done",
     ),
+    # API URLs
     path("api/", include("resort.api.urls")),
+    # API Documentation URLs
+    path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
+    path(
+        "api/docs/",
+        SpectacularSwaggerView.as_view(url_name="schema"),
+        name="swagger-ui",
+    ),
+    path("api/redoc/", SpectacularRedocView.as_view(url_name="schema"), name="redoc"),
 ]
 
 if settings.DEBUG:
