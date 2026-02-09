@@ -1,7 +1,6 @@
 from django.urls import path
 from rest_framework.routers import DefaultRouter
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
-from drf_spectacular.utils import extend_schema
 
 from .views import ResortViewSet, TripViewSet, TripMediaViewSet, UserViewSet
 
