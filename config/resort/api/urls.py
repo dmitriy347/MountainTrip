@@ -18,18 +18,19 @@ urlpatterns = [
         "auth/token/",
         extend_schema(
             tags=["auth"],
-            summary='Получить JWT токены',
-            description='Аутентификация пользователя. Возвращает access и refresh токены.',
+            summary="Получить JWT токены",
+            description="Аутентификация пользователя. "
+            "Возвращает access и refresh токены.",
         )(TokenObtainPairView.as_view()),
-        name="token_obtain_pair"
+        name="token_obtain_pair",
     ),
     path(
         "auth/token/refresh/",
         extend_schema(
-            tags=['auth'],
-            summary='Обновить access токен',
-            description='Обновить истёкший access токен, используя refresh токен.',
+            tags=["auth"],
+            summary="Обновить access токен",
+            description="Обновить истёкший access токен, используя refresh токен.",
         )(TokenRefreshView.as_view()),
-        name="token_refresh"
+        name="token_refresh",
     ),
 ] + router.urls

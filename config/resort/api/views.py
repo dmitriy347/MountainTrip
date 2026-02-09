@@ -25,18 +25,21 @@ from drf_spectacular.utils import extend_schema, extend_schema_view
 @extend_schema_view(
     list=extend_schema(
         summary="Список курортов",
-        description="Получить список всех горнолыжных курортов с пагинацией, фильтрацией и поиском.",
-        tags=['resorts']
+        description="Получить список всех горнолыжных курортов с пагинацией, "
+        "фильтрацией и поиском.",
+        tags=["resorts"],
     ),
     retrieve=extend_schema(
         summary="Детали курорта",
         description="Получить подробную информацию о конкретном курорте по slug.",
-        tags=['resorts']
+        tags=["resorts"],
     ),
     trips=extend_schema(
         summary="Поездки на курорт",
-        description="Получить список поездок на конкретный курорт. Гости видят только публичные поездки, авторизованные пользователи видят публичные + свои приватные.",
-        tags=['resorts']
+        description="Получить список поездок на конкретный курорт. Гости видят только "
+        "публичные поездки, авторизованные пользователи видят публичные +"
+        " свои приватные.",
+        tags=["resorts"],
     ),
 )
 class ResortViewSet(ReadOnlyModelViewSet):
@@ -85,38 +88,42 @@ class ResortViewSet(ReadOnlyModelViewSet):
 @extend_schema_view(
     list=extend_schema(
         summary="Список поездок",
-        description="Получить список поездок с фильтрацией, поиском и сортировкой. Гости видят только публичные, авторизованные видят публичные + свои.",
-        tags=['trips']
+        description="Получить список поездок с фильтрацией, поиском и сортировкой. "
+        "Гости видят только публичные, авторизованные видят публичные + свои.",
+        tags=["trips"],
     ),
     retrieve=extend_schema(
         summary="Детали поездки",
         description="Получить подробную информацию о конкретной поездке.",
-        tags=['trips']
+        tags=["trips"],
     ),
     create=extend_schema(
         summary="Создать поездку",
-        description="Создать новую поездку. Требуется аутентификация. User автоматически берётся из токена.",
-        tags=['trips']
+        description="Создать новую поездку. Требуется аутентификация. "
+        "User автоматически берётся из токена.",
+        tags=["trips"],
     ),
     update=extend_schema(
         summary="Обновить поездку (полностью)",
-        description="Полное обновление поездки (PUT). Только владелец может обновить свою поездку.",
-        tags=['trips']
+        description="Полное обновление поездки (PUT). "
+        "Только владелец может обновить свою поездку.",
+        tags=["trips"],
     ),
     partial_update=extend_schema(
         summary="Обновить поездку (частично)",
-        description="Частичное обновление поездки (PATCH). Можно обновить только нужные поля. Только владелец.",
-        tags=['trips']
+        description="Частичное обновление поездки (PATCH). "
+        "Можно обновить только нужные поля. Только владелец.",
+        tags=["trips"],
     ),
     destroy=extend_schema(
         summary="Удалить поездку",
         description="Удалить поездку. Только владелец может удалить свою поездку.",
-        tags=['trips']
+        tags=["trips"],
     ),
     media=extend_schema(
         summary="Фото поездки",
         description="Получить список фотографий конкретной поездки.",
-        tags=['trips']
+        tags=["trips"],
     ),
 )
 class TripViewSet(ModelViewSet):
@@ -260,17 +267,17 @@ class TripMediaViewSet(ReadOnlyModelViewSet):
     list=extend_schema(
         summary="Список пользователей",
         description="Получить список всех пользователей (публичные профили).",
-        tags=['users']
+        tags=["users"],
     ),
     retrieve=extend_schema(
         summary="Профиль пользователя",
         description="Получить публичный профиль пользователя.",
-        tags=['users']
+        tags=["users"],
     ),
     trips=extend_schema(
         summary="Поездки пользователя",
         description="Получить публичные поездки конкретного пользователя.",
-        tags=['users']
+        tags=["users"],
     ),
 )
 class UserViewSet(ReadOnlyModelViewSet):
