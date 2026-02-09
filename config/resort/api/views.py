@@ -19,8 +19,26 @@ from .serializers import (
     UserSerializer,
 )
 from rest_framework.filters import OrderingFilter, SearchFilter
+from drf_spectacular.utils import extend_schema, extend_schema_view
 
 
+@extend_schema_view(
+    list=extend_schema(
+        summary="Список курортов",
+        description="Получить список всех горнолыжных курортов с пагинацией, фильтрацией и поиском.",
+        tags=['resorts']
+    ),
+    retrieve=extend_schema(
+        summary="Детали курорта",
+        description="Получить подробную информацию о конкретном курорте по slug.",
+        tags=['resorts']
+    ),
+    trips=extend_schema(
+        summary="Поездки на курорт",
+        description="Получить список поездок на конкретный курорт. Гости видят только публичные поездки, авторизованные пользователи видят публичные + свои приватные.",
+        tags=['resorts']
+    ),
+)
 class ResortViewSet(ReadOnlyModelViewSet):
     """ViewSet для модели Resort."""
 
