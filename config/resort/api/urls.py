@@ -11,26 +11,8 @@ router.register(r"trips", TripViewSet, basename="trip")
 router.register(r"media", TripMediaViewSet, basename="tripmedia")
 router.register(r"users", UserViewSet, basename="user")
 
-# Оборачиваем JWT эндпоинты в extend_schema для документации
 urlpatterns = [
     # JWT эндпоинты
-    path(
-        "auth/token/",
-        extend_schema(
-            tags=["auth"],
-            summary="Получить JWT токены",
-            description="Аутентификация пользователя. "
-            "Возвращает access и refresh токены.",
-        )(TokenObtainPairView.as_view()),
-        name="token_obtain_pair",
-    ),
-    path(
-        "auth/token/refresh/",
-        extend_schema(
-            tags=["auth"],
-            summary="Обновить access токен",
-            description="Обновить истёкший access токен, используя refresh токен.",
-        )(TokenRefreshView.as_view()),
-        name="token_refresh",
-    ),
+    path("auth/token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
+    path("auth/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
 ] + router.urls
