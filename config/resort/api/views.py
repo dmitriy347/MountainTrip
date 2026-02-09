@@ -82,6 +82,43 @@ class ResortViewSet(ReadOnlyModelViewSet):
         return Response(serializer.data)
 
 
+@extend_schema_view(
+    list=extend_schema(
+        summary="Список поездок",
+        description="Получить список поездок с фильтрацией, поиском и сортировкой. Гости видят только публичные, авторизованные видят публичные + свои.",
+        tags=['trips']
+    ),
+    retrieve=extend_schema(
+        summary="Детали поездки",
+        description="Получить подробную информацию о конкретной поездке.",
+        tags=['trips']
+    ),
+    create=extend_schema(
+        summary="Создать поездку",
+        description="Создать новую поездку. Требуется аутентификация. User автоматически берётся из токена.",
+        tags=['trips']
+    ),
+    update=extend_schema(
+        summary="Обновить поездку (полностью)",
+        description="Полное обновление поездки (PUT). Только владелец может обновить свою поездку.",
+        tags=['trips']
+    ),
+    partial_update=extend_schema(
+        summary="Обновить поездку (частично)",
+        description="Частичное обновление поездки (PATCH). Можно обновить только нужные поля. Только владелец.",
+        tags=['trips']
+    ),
+    destroy=extend_schema(
+        summary="Удалить поездку",
+        description="Удалить поездку. Только владелец может удалить свою поездку.",
+        tags=['trips']
+    ),
+    media=extend_schema(
+        summary="Фото поездки",
+        description="Получить список фотографий конкретной поездки.",
+        tags=['trips']
+    ),
+)
 class TripViewSet(ModelViewSet):
     """
     ViewSet для поездок из модели Trip с полным CRUD.
