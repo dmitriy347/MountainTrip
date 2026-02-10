@@ -3,7 +3,7 @@ name: CD - Deploy to Production
 on:
   push:
     branches: [ main, master ]
-    pulls_request:
+    pull_request:
       branches: [ main, master ]
   workflow_dispatch:  # Можно запустить вручную
 
