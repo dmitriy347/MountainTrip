@@ -3,8 +3,8 @@ name: CD - Deploy to Production
 on:
   push:
     branches: [ main, master ]
-    pull_request:
-      branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
   workflow_dispatch:  # Можно запустить вручную
 
 env:
