@@ -3,8 +3,8 @@ name: CD - Deploy to Production
 on:
   push:
     branches: [ main, master ]
-    pulls_request:
-      branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
   workflow_dispatch:  # Можно запустить вручную
 
 env:
@@ -133,7 +133,7 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
-            type=sha,prefix={{branch}}-
+            type=sha
             type=raw,value=latest,enable={{is_default_branch}}
 
       - name: Build and push Docker image

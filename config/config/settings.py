@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 import os
+from datetime import timedelta
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -55,6 +56,10 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django.contrib.sites",
+    "rest_framework",
+    "rest_framework_simplejwt",
+    "rest_framework_simplejwt.token_blacklist",
+    "drf_spectacular",
     "allauth",
     "allauth.account",
     "allauth.socialaccount",
@@ -63,6 +68,7 @@ INSTALLED_APPS = [
     "resort.apps.ResortConfig",
     "users.apps.UsersConfig",
     "debug_toolbar",
+    "django_filters",
 ]
 
 MIDDLEWARE = [
@@ -233,4 +239,77 @@ SOCIALACCOUNT_PROVIDERS = {
             "key": "",
         },
     }
+}
+
+# Django REST Framework settings
+REST_FRAMEWORK = {
+    # Форматы ответов по умолчанию
+    "DEFAULT_RENDERER_CLASSES": [
+        "rest_framework.renderers.JSONRenderer",
+        "rest_framework.renderers.BrowsableAPIRenderer",  # Для удобного просмотра в браузере
+    ],
+    # Пагинация по умолчанию
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    "PAGE_SIZE": 10,
+    # Аутентификация (пока оставим базовую)
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework_simplejwt.authentication.JWTAuthentication",  # JWT аутентификация
+        "rest_framework.authentication.SessionAuthentication",  # Для browsable API
+    ],
+    # Права доступа по умолчанию
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.AllowAny",  # Пока разрешаем всем (потом ограничим)
+    ],
+    # Фильтрация и сортировка и поиск по умолчанию
+    "DEFAULT_FILTER_BACKENDS": [
+        "django_filters.rest_framework.DjangoFilterBackend",  # Фильтрация
+        "rest_framework.filters.OrderingFilter",  # Сортировка
+        "rest_framework.filters.SearchFilter",  # Поиск
+    ],
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+}
+
+# Настройки для Simple JWT
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=15),  # Access токен живёт 15 минут
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),  # Refresh токен живёт 7 дней
+    "ROTATE_REFRESH_TOKENS": True,  # Обновлять refresh при каждом использовании
+    "BLACKLIST_AFTER_ROTATION": True,  # Старые токены в чёрный список
+    "ALGORITHM": "HS256",
+    "SIGNING_KEY": SECRET_KEY,
+    "AUTH_HEADER_TYPES": ("Bearer",),  # Формат: Authorization: Bearer <token>
+    "AUTH_HEADER_NAME": "HTTP_AUTHORIZATION",
+}
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "SkiTrip Journal API",
+    "DESCRIPTION": "API для журнала поездок на горнолыжные курорты России",
+    "VERSION": "1.0.0",
+    # Контакты
+    "CONTACT": {
+        "name": "Dmitriy Fomenko",
+        "email": "d.fomenko95@gmail.com",
+    },
+    # Лицензия
+    "LICENSE": {
+        "name": "MIT License",
+    },
+    # Настройки UI
+    "SERVE_INCLUDE_SCHEMA": False,  # Не показывать сырую схему
+    "SWAGGER_UI_SETTINGS": {
+        "deepLinking": True,
+        "persistAuthorization": True,  # Сохранять токен после обновления страницы
+        "displayOperationId": False,
+    },
+    # Группировка эндпоинтов по тегам
+    "TAGS": [
+        {"name": "auth", "description": "Аутентификация (JWT токены)"},
+        {"name": "resorts", "description": "Горнолыжные курорты"},
+        {"name": "trips", "description": "Поездки пользователей"},
+        {"name": "media", "description": "Фотографии поездок"},
+        {"name": "users", "description": "Пользователи"},
+    ],
+    # Схемы аутентификации
+    "COMPONENT_SPLIT_REQUEST": True,
+    "SCHEMA_PATH_PREFIX": r"/api/",
 }
