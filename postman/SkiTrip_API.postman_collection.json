@@ -1,0 +1,962 @@
+{
+  "info": {
+    "_postman_id": "8c3dfd7f-9985-4aa5-878a-374d4064dbc8",
+    "name": "SkiTrip API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "48201313",
+    "_collection_link": "https://go.postman.co/collection/48201313-8c3dfd7f-9985-4aa5-878a-374d4064dbc8?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Get Token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "",
+                  "// Проверяем, что запрос успешен",
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "// Парсим ответ",
+                  "const responseJson = pm.response.json();",
+                  "",
+                  "// Сохраняем токены в Environment",
+                  "if (responseJson.access) {",
+                  "    pm.environment.set(\"access_token\", responseJson.access);",
+                  "    console.log(\"✅ Access token saved\");",
+                  "}",
+                  "",
+                  "if (responseJson.refresh) {",
+                  "    pm.environment.set(\"refresh_token\", responseJson.refresh);",
+                  "    console.log(\"✅ Refresh token saved\");",
+                  "}",
+                  "",
+                  "// Проверяем, что токены есть в ответе",
+                  "pm.test(\"Access token exists\", function () {",
+                  "    pm.expect(responseJson.access).to.exist;",
+                  "});",
+                  "",
+                  "pm.test(\"Refresh token exists\", function () {",
+                  "    pm.expect(responseJson.refresh).to.exist;",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"username\": \"testuser\",\n    \"password\": \"testuser\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/token/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "token",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Refresh Token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Тесты автообновление токенов",
+                  "",
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const responseJson = pm.response.json();",
+                  "",
+                  "// Обновляем access токен",
+                  "if (responseJson.access) {",
+                  "    pm.environment.set(\"access_token\", responseJson.access);",
+                  "    console.log(\"✅ Access token refreshed\");",
+                  "}",
+                  "",
+                  "// Если вернулся новый refresh (ROTATE_REFRESH_TOKENS=True)",
+                  "if (responseJson.refresh) {",
+                  "    pm.environment.set(\"refresh_token\", responseJson.refresh);",
+                  "    console.log(\"✅ Refresh token rotated\");",
+                  "}",
+                  "",
+                  "pm.test(\"New access token exists\", function () {",
+                  "    pm.expect(responseJson.access).to.exist;",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"refresh\": \"{{refresh_token}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/token/refresh/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "token",
+                "refresh",
+                ""
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Resorts",
+      "item": [
+        {
+          "name": "List Resorts",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "bearer"
+            },
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": []
+            },
+            "url": {
+              "raw": "{{base_url}}/api/resorts?region=Свердловская&ordering=name&search=бела",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "resorts"
+              ],
+              "query": [
+                {
+                  "key": "region",
+                  "value": "Свердловская",
+                  "type": "text"
+                },
+                {
+                  "key": "ordering",
+                  "value": "name",
+                  "type": "text"
+                },
+                {
+                  "key": "search",
+                  "value": "бела",
+                  "type": "text"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Resort Detail",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/resorts/belaya",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "resorts",
+                "belaya"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Resort Trips (вложенный эндпоинт)",
+          "request": {
+            "auth": {
+              "type": "bearer"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/resorts/belaya/trips/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "resorts",
+                "belaya",
+                "trips",
+                ""
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Trips",
+      "item": [
+        {
+          "name": "List Trips",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has pagination\", function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json).to.have.property('results');",
+                  "    pm.expect(json).to.have.property('count');",
+                  "});",
+                  "",
+                  "pm.test(\"Results is array\", function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json.results).to.be.an('array');",
+                  "});",
+                  "",
+                  "pm.test(\"First trip has required fields\", function () {",
+                  "    const json = pm.response.json();",
+                  "    if (json.results.length > 0) {",
+                  "        const trip = json.results[0];",
+                  "        pm.expect(trip).to.have.property('id');",
+                  "        pm.expect(trip).to.have.property('resort');",
+                  "        pm.expect(trip).to.have.property('start_date');",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/trips/?is_public=true&resort=15&resort_region=Свердл&start_date_from=2024-03-05&ordering=-start_date",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "trips",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "is_public",
+                  "value": "true"
+                },
+                {
+                  "key": "resort",
+                  "value": "15"
+                },
+                {
+                  "key": "resort_region",
+                  "value": "Свердл"
+                },
+                {
+                  "key": "start_date_from",
+                  "value": "2024-03-05"
+                },
+                {
+                  "key": "ordering",
+                  "value": "-start_date"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "List Trips (is_public=false)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/trips/?is_public=false",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "trips",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "is_public",
+                  "value": "false"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Trip Detail",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Trip has all required fields\", function () {",
+                  "    const trip = pm.response.json();",
+                  "    pm.expect(trip).to.have.property('id');",
+                  "    pm.expect(trip).to.have.property('user');",
+                  "    pm.expect(trip).to.have.property('resort');",
+                  "    pm.expect(trip.resort).to.have.property('name');",
+                  "});",
+                  "",
+                  "pm.test(\"Dates are valid format\", function () {",
+                  "    const trip = pm.response.json();",
+                  "    // Проверяем формат YYYY-MM-DD",
+                  "    pm.expect(trip.start_date).to.match(/^\\d{4}-\\d{2}-\\d{2}$/);",
+                  "    pm.expect(trip.end_date).to.match(/^\\d{4}-\\d{2}-\\d{2}$/);",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/trips/1/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "trips",
+                "1",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Trip Media (вложенный эндпоинт)",
+          "request": {
+            "auth": {
+              "type": "bearer"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/trips/1/media/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "trips",
+                "1",
+                "media",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Trip (with auth)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201 Created\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has trip ID\", function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json.id).to.exist;",
+                  "    pm.expect(json.id).to.be.a('number');",
+                  "});",
+                  "",
+                  "pm.test(\"User is set automatically\", function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json.user).to.exist;",
+                  "});",
+                  "",
+                  "pm.test(\"Resort details are included\", function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json.resort).to.be.an('object');",
+                  "    pm.expect(json.resort.name).to.exist;",
+                  "});",
+                  "",
+                  "// Сохраним ID созданной поездки для дальнейших тестов",
+                  "const json = pm.response.json();",
+                  "if (json.id) {",
+                  "    pm.environment.set(\"last_trip_id\", json.id);",
+                  "    console.log(\"✅ Created trip ID:\", json.id);",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"resort\": 1,\n  \"start_date\": \"2024-03-01\",\n  \"end_date\": \"2024-03-07\",\n  \"comment\": \"Отличная поездка, много снега!\",\n  \"is_public\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/trips/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "trips",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Trip (without auth)",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"resort\": 1,\n  \"start_date\": \"2024-03-01\",\n  \"end_date\": \"2024-03-07\",\n  \"comment\": \"Отличная поездка, много снега!\",\n  \"is_public\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/trips/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "trips",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Trip",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Comment was updated\", function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json.comment).to.include(\"продлили поездку\");",
+                  "});",
+                  "",
+                  "pm.test(\"End date was updated\", function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json.end_date).to.equal(\"2024-03-10\");",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"resort\": 1,\n  \"start_date\": \"2024-03-01\",\n  \"end_date\": \"2024-03-10\",\n  \"comment\": \"Обновлённый комментарий — продлили поездку!\",\n  \"is_public\": false\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/trips/{{last_trip_id}}/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "trips",
+                "{{last_trip_id}}",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Trip (not owner)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 403 Forbidden\", function () {",
+                  "    pm.response.to.have.status(403);",
+                  "});",
+                  "",
+                  "pm.test(\"Response contains permission error\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.detail).to.include(\"недостаточно прав\");",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"resort\": 1,\n  \"start_date\": \"2024-03-01\",\n  \"end_date\": \"2024-03-10\",\n  \"comment\": \"Обновлённый комментарий — продлили поездку!\",\n  \"is_public\": false\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/trips/3/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "trips",
+                "3",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Partial Update Trip",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"is_public was updated\", function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json.is_public).to.be.true;",
+                  "});",
+                  "",
+                  "pm.test(\"Other fields unchanged\", function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json.comment).to.include(\"продлили поездку\");",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disabledSystemHeaders": {}
+          },
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"is_public\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/trips/{{last_trip_id}}/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "trips",
+                "{{last_trip_id}}",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Partial Update Trip (invalid date)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test(\"Error message is correct\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "",
+                  "    pm.expect(jsonData.non_field_errors).to.include(",
+                  "        \"Дата начала не может быть позже даты окончания.\"",
+                  "    );",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disabledSystemHeaders": {
+              "content-type": true
+            }
+          },
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"end_date\": \"2024-02-01\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/trips/{{last_trip_id}}/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "trips",
+                "{{last_trip_id}}",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete trip",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 204 No Content\", function () {",
+                  "    pm.response.to.have.status(204);",
+                  "});",
+                  "",
+                  "pm.test(\"Response body is empty\", function () {",
+                  "    pm.expect(pm.response.text()).to.be.empty;",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/trips/{{last_trip_id}}/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "trips",
+                "{{last_trip_id}}",
+                ""
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Media",
+      "item": [
+        {
+          "name": "List Media",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/media/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "media",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Media Detail",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/media/1/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "media",
+                "1",
+                ""
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "List Users",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/users/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "User Detail",
+          "request": {
+            "auth": {
+              "type": "bearer"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/users/1/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "1",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "User Trips (вложенный эндпоинт)",
+          "request": {
+            "auth": {
+              "type": "bearer"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/users/1/trips/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "1",
+                "trips",
+                ""
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{access_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ]
+}
