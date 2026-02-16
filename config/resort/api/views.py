@@ -6,7 +6,7 @@ from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenObtainPairView
-from .throttles import AuthThrottle
+from .throttles import AuthThrottle, TripCreateThrottle
 
 from resort.models import Resort, Trip, TripMedia
 from rest_framework.viewsets import ReadOnlyModelViewSet, ModelViewSet
@@ -238,6 +238,14 @@ class TripViewSet(ModelViewSet):
             media_files, many=True, context={"request": request}
         )
         return Response(serializer.data)
+
+    def get_throttles(self):
+        """Применяем разные throttles для разных действий."""
+        if self.action == "create":
+            # Для создания поездок - строгий лимит
+            return [TripCreateThrottle()]
+        # Для остальных действий - стандартные throttles из настроек
+        return super().get_throttles()
 
 
 class TripMediaViewSet(ReadOnlyModelViewSet):
