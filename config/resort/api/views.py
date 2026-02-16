@@ -5,6 +5,8 @@ from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
+from rest_framework_simplejwt.views import TokenObtainPairView
+from .throttles import AuthThrottle
 
 from resort.models import Resort, Trip, TripMedia
 from rest_framework.viewsets import ReadOnlyModelViewSet, ModelViewSet
@@ -297,3 +299,11 @@ class UserViewSet(ReadOnlyModelViewSet):
 
         serializer = TripReadSerializer(trips, many=True, context={"request": request})
         return Response(serializer.data)
+
+
+class ThrottledTokenObtainPairView(TokenObtainPairView):
+    """
+    JWT токен с защитой от bruteforce
+    Лимит 5 попыток в минуту
+    """
+    throttle_classes = [AuthThrottle]
