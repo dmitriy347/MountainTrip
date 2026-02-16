@@ -1,4 +1,4 @@
-from rest_framework.throttling import AnonRateThrottle
+from rest_framework.throttling import AnonRateThrottle, UserRateThrottle
 
 
 class AuthThrottle(AnonRateThrottle):
@@ -8,3 +8,12 @@ class AuthThrottle(AnonRateThrottle):
     """
 
     scope = "auth"  # Имя кастомного лимита
+
+
+class TripCreateThrottle(UserRateThrottle):
+    """
+    Ограничение создания поездок
+    Защита от спама
+    """
+
+    scope = "trips_create"  # Имя кастомного лимита
