@@ -306,4 +306,5 @@ class ThrottledTokenObtainPairView(TokenObtainPairView):
     JWT токен с защитой от bruteforce
     Лимит 5 попыток в минуту
     """
+
     throttle_classes = [AuthThrottle]

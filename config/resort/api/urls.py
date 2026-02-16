@@ -2,7 +2,13 @@ from django.urls import path
 from rest_framework.routers import DefaultRouter
 from rest_framework_simplejwt.views import TokenRefreshView
 
-from .views import ResortViewSet, TripViewSet, TripMediaViewSet, UserViewSet, ThrottledTokenObtainPairView
+from .views import (
+    ResortViewSet,
+    TripViewSet,
+    TripMediaViewSet,
+    UserViewSet,
+    ThrottledTokenObtainPairView,
+)
 
 router = DefaultRouter()
 router.register(r"resorts", ResortViewSet, basename="resort")
@@ -12,6 +18,8 @@ router.register(r"users", UserViewSet, basename="user")
 
 urlpatterns = [
     # JWT эндпоинты
-    path("auth/token/", ThrottledTokenObtainPairView.as_view(), name="token_obtain_pair"),
+    path(
+        "auth/token/", ThrottledTokenObtainPairView.as_view(), name="token_obtain_pair"
+    ),
     path("auth/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
 ] + router.urls
