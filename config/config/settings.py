@@ -267,6 +267,18 @@ REST_FRAMEWORK = {
         "rest_framework.filters.SearchFilter",  # Поиск
     ],
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+    # Список классов для ограничения количества запросов
+    "DEFAULT_THROTTLE_CLASSES": [
+        "rest_framework.throttling.AnonRateThrottle",
+        "rest_framework.throttling.UserRateThrottle",
+    ],
+    # Глобальные лимиты для каждого класса
+    "DEFAULT_THROTTLE_RATES": {
+        "anon": "10/minute",  # Гости - 10 запросов в минуту
+        "user": "100/minute",  # Авторизованные - 100 запросов в минуту
+        "auth": "5/minute",  # Лимит для получения JWT токенов
+        "trips_create": "10/hour",  # Лимит для создания поездок
+    },
 }
 
 # Настройки для Simple JWT
