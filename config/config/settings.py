@@ -276,6 +276,7 @@ REST_FRAMEWORK = {
     "DEFAULT_THROTTLE_RATES": {
         "anon": "10/minute",  # Гости - 10 запросов в минуту
         "user": "100/minute",  # Авторизованные - 100 запросов в минуту
+        "auth": "5/minute",  # Лимит для получения JWT токенов
     },
 }
 
