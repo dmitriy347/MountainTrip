@@ -22,7 +22,10 @@ def create_thumbnail_on_upload(sender, instance, created, **kwargs):
     if created and instance.image:
         # Запускаем задачу асинхронно через Celery
         generate_thumbnail.delay(instance.id)
-        print(f"📤 Задача генерации thumbnail отправлена в Celery для media_id={instance.id}")
+        print(
+            f"📤 Задача генерации thumbnail отправлена в Celery "
+            f"для media_id={instance.id}"
+        )
 
 
 @receiver(post_delete, sender=TripMedia)
