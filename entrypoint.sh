@@ -14,42 +14,48 @@ while ! nc -z db 5432; do
 done
 echo -e "${GREEN}✓ PostgreSQL started${NC}"
 
-# Применяем миграции без запроса подтверждения
-echo -e "${YELLOW}Applying database migrations...${NC}"
-python config/manage.py migrate --noinput
-echo -e "${GREEN}✓ Migrations applied${NC}"
+# Всё что ниже — только для web-сервера, не для Celery Worker
+if [ "$1" != "celery" ]; then
 
-# Проверяем переменную окружения DEBUG
-if [ "$DEBUG" = "True" ]; then
-  # Загружаем тестовые данные из fixtures
-  echo -e "${YELLOW}Loading fixtures...${NC}"
-  python config/manage.py loaddata resorts.json
-  python config/manage.py loaddata users.json
-  python config/manage.py loaddata trips.json
-  echo -e "${GREEN}✓ Test data loaded${NC}"
+  # Применяем миграции без запроса подтверждения
+  echo -e "${YELLOW}Applying database migrations...${NC}"
+  python config/manage.py migrate --noinput
+  echo -e "${GREEN}✓ Migrations applied${NC}"
 
-# Обрабатываем медиафайлы
-  # Если директория с медиафайлами существует, копируем их в новую директорию media, игнорируя ошибки
-  if [ -d "config/fixtures/media/trip_photos" ]; then
-    echo -e "${YELLOW}Copying media files...${NC}"
-    mkdir -p config/media/trip_photos
-    cp -r config/fixtures/media/trip_photos/* config/media/trip_photos/ 2>/dev/null || true
-    echo -e "${GREEN}✓ Media files copied${NC}"
+  # Проверяем переменную окружения DEBUG
+  if [ "$DEBUG" = "True" ]; then
+    # Загружаем тестовые данные из fixtures
+    echo -e "${YELLOW}Loading fixtures...${NC}"
+    python config/manage.py loaddata resorts.json
+    python config/manage.py loaddata users.json
+    python config/manage.py loaddata trips.json
+    echo -e "${GREEN}✓ Test data loaded${NC}"
 
-    # Загружаем fixture с медиа
-    echo -e "${YELLOW}Loading media fixtures...${NC}"
-    python config/manage.py loaddata trip_media.json
-    echo -e "${GREEN}✓ Media fixtures loaded${NC}"
-  else
-    echo -e "${YELLOW}⚠️  fixtures/media/trip_photos not found, skipping media${NC}"
+  # Обрабатываем медиафайлы
+    # Если директория с медиафайлами существует, копируем их в новую директорию media, игнорируя ошибки
+    if [ -d "config/fixtures/media/trip_photos" ]; then
+      echo -e "${YELLOW}Copying media files...${NC}"
+      mkdir -p config/media/trip_photos
+      cp -r config/fixtures/media/trip_photos/* config/media/trip_photos/ 2>/dev/null || true
+      echo -e "${GREEN}✓ Media files copied${NC}"
+
+      # Загружаем fixture с медиа
+      echo -e "${YELLOW}Loading media fixtures...${NC}"
+      python config/manage.py loaddata trip_media.json
+      echo -e "${GREEN}✓ Media fixtures loaded${NC}"
+    else
+      echo -e "${YELLOW}⚠️  fixtures/media/trip_photos not found, skipping media${NC}"
+    fi
   fi
+
+  # Собираем статику (для продакшена)
+   echo -e "${YELLOW}Collecting static files...${NC}"
+   python config/manage.py collectstatic --noinput
+   echo -e "${GREEN}✓ Static files collected${NC}"
+
+  # Запускаем сервер
+  echo -e "${GREEN}=== Starting Django server ===${NC}"
 fi
 
-# Собираем статику (для продакшена)
- echo -e "${YELLOW}Collecting static files...${NC}"
- python config/manage.py collectstatic --noinput
- echo -e "${GREEN}✓ Static files collected${NC}"
-
-# Запускаем сервер
-echo -e "${GREEN}=== Starting Django server ===${NC}"
+# Запускаем переданную команду (gunicorn или celery)
 exec "$@"
