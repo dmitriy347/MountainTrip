@@ -5,8 +5,8 @@ from django.core.files.base import ContentFile
 from io import BytesIO
 
 
-@shared_task
-def generate_thumbnail(media_id):
+@shared_task(bind=True, max_retries=3, default_retry_delay=60)
+def generate_thumbnail(self, media_id):
     """
     Генерация миниатюры (thumbnail) для загруженного изображения.
 
@@ -56,6 +56,5 @@ def generate_thumbnail(media_id):
         print(f"❌ TripMedia с id={media_id} не найден")
         return f"Error: TripMedia {media_id} not found"
 
-    except Exception as e:
-        print(f"❌ Ошибка при создании thumbnail для media_id={media_id}: {str(e)}")
-        raise  # Перебрасываем ошибку, чтобы Celery мог её залогировать
+    except Exception as exc:
+        raise self.retry(exc=exc)
