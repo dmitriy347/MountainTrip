@@ -327,7 +327,7 @@ SPECTACULAR_SETTINGS = {
 }
 
 # Celery конфигурация
-# Broker (используем тот же Redis, что и для кэширования)
+# Broker (используем используем Redis базу 0 для Celery)
 CELERY_BROKER_URL = "redis://redis:6379/0"
 
 # Backend для хранения результатов задач
