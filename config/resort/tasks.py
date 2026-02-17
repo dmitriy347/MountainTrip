@@ -20,6 +20,11 @@ def generate_thumbnail(media_id):
         # Получаем объект медиафайла
         media = TripMedia.objects.get(id=media_id)
 
+        # Если миниатюра уже существует, пропускаем
+        if media.thumbnail:
+            print(f"⚠️ Thumbnail уже существует для media_id={media_id}")
+            return f"Thumbnail already exists for media_id={media_id}"
+
         # Открываем исходное изображение
         image_path = media.image.path
         img = Image.open(image_path)
