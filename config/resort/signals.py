@@ -4,6 +4,25 @@ from django.dispatch import receiver
 
 from .cache_keys import CacheKeys
 from .models import TripMedia, Resort, Trip
+from .tasks import generate_thumbnail
+
+
+@receiver(post_save, sender=TripMedia)
+def create_thumbnail_on_upload(sender, instance, created, **kwargs):
+    """
+    Автоматически создаёт миниатюру при загрузке нового изображения.
+
+    Args:
+        sender: модель TripMedia
+        instance: созданный объект TripMedia
+        created: True если объект новый (не обновлённый)
+        **kwargs: Дополнительные аргументы
+    """
+    # Запускаем задачу только для новых объектов и если у них есть изображение
+    if created and instance.image:
+        # Запускаем задачу асинхронно через Celery
+        generate_thumbnail.delay(instance.id)
+        print(f"📤 Задача генерации thumbnail отправлена в Celery для media_id={instance.id}")
 
 
 @receiver(post_delete, sender=TripMedia)
@@ -11,6 +30,9 @@ def delete_trip_media_file(sender, instance, **kwargs):
     """Удаление файла изображения из файловой системы при удалении объекта TripMedia."""
     if instance.image:
         instance.image.delete(save=False)
+
+    if instance.thumbnail:
+        instance.thumbnail.delete(save=False)
 
 
 @receiver([post_save, post_delete], sender=Resort)
