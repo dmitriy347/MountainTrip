@@ -85,6 +85,12 @@ class TripMedia(models.Model):
     image = models.ImageField(
         upload_to="trip_photos/", verbose_name="Фотография"
     )  # Для работы с ImageField требуется Pillow
+    thumbnail = models.ImageField(
+        upload_to="trip_photos/thumbnails/",
+        verbose_name="Миниатюра",
+        blank=True,
+        null=True,
+    )
     uploaded_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата загрузки")
 
     def __str__(self):
