@@ -7,6 +7,7 @@
 [![DRF](https://img.shields.io/badge/DRF-3.15-092E20?logo=django&logoColor=white)](https://www.django-rest-framework.org/)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-4169E1?logo=postgresql&logoColor=white)](https://www.postgresql.org/)
 [![Redis](https://img.shields.io/badge/Redis-7-DC382D?logo=redis&logoColor=white)](https://redis.io/)
+[![Celery](https://img.shields.io/badge/Celery-5.4-37814A?logo=celery&logoColor=white)](https://docs.celeryq.dev/)
 [![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?logo=docker&logoColor=white)](https://www.docker.com/)
 [![Tests](https://img.shields.io/badge/Tests-Passing-success)](https://github.com/dmitriy347/MountainTrip)
 [![Deployment](https://img.shields.io/badge/Deployment-Production-success)](https://snowlog.ru)
@@ -20,8 +21,10 @@
 - 🏔️ База данных курортов России
 - 📸 Загрузка фотографий с поездок
 - 🔒 Публичные и приватные поездки
-- 🔌 REST API с JWT аутентификацией
 - 🔐 OAuth через GitHub
+- 🔌 REST API с JWT аутентификацией
+- 🛡️ Rate Limiting для защиты API от злоупотреблений
+- ⚡ Асинхронная генерация миниатюр (Celery)
 - 🚀 Production-ready (CI/CD, Docker, SSL)
 
 
@@ -38,6 +41,8 @@
 - **Django REST Framework 3.15** - REST API
 - **PostgreSQL 16** - реляционная база данных
 - **Redis 7** - кэширование и очереди задач
+- **Celery 5.4** - асинхронная обработка задач
+
 
 ### API:
 - **JWT Authentication** - безопасная аутентификация
@@ -71,12 +76,12 @@
 │(Reverse Proxy)│      │   (Django)   │      │              │
 └───────────────┘      └──────────────┘      └──────────────┘
                               │
-                              │
-                              ▼
-                       ┌─────────────┐
-                       │    Redis    │
-                       │(Кэширование)│
-                       └─────────────┘
+                   ┌──────────┴──────────┐ 
+                   ▼                     ▼
+         ┌────────────────┐       ┌────────────────┐
+         │     Redis      │ ────▶ │     Celery     │
+         │(Cache + Broker)│       │     Worker     │
+         └────────────────┘       └────────────────┘
 ```
 ### Поток запроса:
 
@@ -85,8 +90,10 @@
 3. Gunicorn передаёт запрос Django-приложению.
 4. Django:
    - работает с PostgreSQL (основная БД),
-   - использует Redis для кэширования.
-5. Ответ возвращается обратно через Nginx клиенту.
+   - использует Redis для кэширования,
+   - отправляет тяжёлые задачи (генерация thumbnail) в очередь Redis.
+5. Celery Worker забирает задачи из очереди и выполняет их асинхронно.
+6. Ответ возвращается клиенту немедленно, не дожидаясь завершения задачи.
 
 ---
 
@@ -95,8 +102,10 @@
 - Использование select_related / prefetch_related для снижения количества SQL-запросов
 - Добавление индексов в моделях для ускорения фильтрации
 - Проектирование REST API: ViewSets, Serializers, JWT, фильтрация, пагинация
+- Настройка Rate Limiting в DRF: защита эндпоинтов от злоупотреблений (AnonRateThrottle, UserRateThrottle)
 - Проектирование структуры БД в PostgreSQL
 - Реализация кэширования через Redis с инвалидацией
+- Настройка асинхронных задач через Celery + Redis: генерация thumbnail при загрузке фото
 - Контейнеризация приложения: Docker, docker-compose
 - Настройка CI/CD: GitHub Actions для тестов, линтинга и деплоя
 - Настройка production-окружения: Nginx, Gunicorn, SSL, автоматические бэкапы
@@ -177,6 +186,7 @@ docker-compose up --build
 - **Веб-сервер:** Nginx + Gunicorn
 - **База данных:** PostgreSQL 16 в Docker
 - **Кэш:** Redis 7 в Docker
+- **Celery** - асинхронный воркер для обработки задач
 - **Бэкапы:** Автоматические бэкапы БД в Yandex Object Storage (ежедневно)
 
 ---
@@ -201,7 +211,9 @@ MountainTrip/
 ├── config/                  # Django проект
 │   ├── config/              # Настройки проекта
 │   │   ├── settings.py      # Основные настройки
+│   │   ├── settings_test.py # Настройки для тестов
 │   │   ├── urls.py          # Главный URL-роутинг
+│   │   ├── celery.py        # Конфигурация Celery
 │   │   └── wsgi.py          # WSGI конфигурация
 │   │
 │   ├── fixtures/            # Демонстрационные данные
@@ -217,6 +229,7 @@ MountainTrip/
 │   │   ├── urls.py          # URL-маршруты
 │   │   ├── admin.py         # Настройки админ-панели
 │   │   ├── signals.py       # Сигналы (удаление файлов, кэш)
+│   │   ├── tasks.py         # Асинхронные задачи Celery
 │   │   ├── cache_keys.py    # Управление кэшем
 │   │   ├── mixins.py        # OwnerQuerySetMixin
 │   │   ├── tests/           # Тесты
@@ -226,6 +239,7 @@ MountainTrip/
 │   │       ├── urls.py          # API роутинг
 │   │       ├── filters.py       # Фильтры для django-filter
 │   │       ├── permissions.py   # Кастомные permissions
+│   │       ├── throttles.py     # Rate Limiting
 │   │       └── tests/           # Тесты
 │   │
 │   ├── users/               # Приложение пользователей

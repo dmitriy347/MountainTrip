@@ -8,3 +8,7 @@ REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"] = {
     "auth": "100000/minute",
     "trips_create": "100000/hour",
 }
+
+# Celery в тестах: выполнять задачи синхронно, без реального брокера
+CELERY_TASK_ALWAYS_EAGER = True
+CELERY_TASK_EAGER_PROPAGATES = True

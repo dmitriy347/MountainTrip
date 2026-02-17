@@ -325,3 +325,29 @@ SPECTACULAR_SETTINGS = {
     "COMPONENT_SPLIT_REQUEST": True,
     "SCHEMA_PATH_PREFIX": r"/api/",
 }
+
+# Celery конфигурация
+# Broker (используем используем Redis базу 0 для Celery)
+CELERY_BROKER_URL = "redis://redis:6379/0"
+
+# Backend для хранения результатов задач
+CELERY_RESULT_BACKEND = "redis://redis:6379/0"
+
+# Формат сериализации (JSON безопаснее, чем pickle)
+CELERY_ACCEPT_CONTENT = ["json"]
+CELERY_TASK_SERIALIZER = "json"
+CELERY_RESULT_SERIALIZER = "json"
+
+# Часовой пояс для Celery (синхронизируем с Django)
+CELERY_TIMEZONE = TIME_ZONE
+
+# Автоматически удалять результаты задач через 1 день
+CELERY_RESULT_EXPIRES = 86400  # 24 часа в секундах
+
+# Логирование задач
+CELERY_TASK_TRACK_STARTED = True
+CELERY_TASK_TIME_LIMIT = 30 * 60  # 30 минут максимум на задачу
+
+# Настройки надёжности
+CELERY_TASK_ACKS_LATE = True  # Подтверждать задачу только после выполнения
+CELERY_WORKER_PREFETCH_MULTIPLIER = 1  # Брать по 1 задаче (не накапливать)
