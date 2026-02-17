@@ -11,7 +11,7 @@ services:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DB_USER}"]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -49,6 +49,25 @@ services:
       GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET}
     ports:
       - "8000:8000"
+    env_file:
+      - .env
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - skitrip_network
+
+  # Celery Worker
+  celery:
+    build: .
+    container_name: skitrip_celery
+    restart: unless-stopped
+    command: sh -c "cd /app/config && celery -A config worker --loglevel=info"
+    volumes:
+      - .:/app
+      - ./config/media:/app/config/media
     env_file:
       - .env
     depends_on:
